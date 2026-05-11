@@ -37,7 +37,8 @@ brew install \
     libtool \
     autoconf \
     automake \
-    pkg-config
+    pkg-config \
+    texinfo
 
 # ccache is strongly recommended; first-time build is ~60–90 min without it.
 if ! command -v ccache &>/dev/null; then
