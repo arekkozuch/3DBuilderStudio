@@ -1,5 +1,5 @@
 // PchipInterpolatorHelper.cpp
-// OrcaSlicer
+// MeshForge
 //
 // Implementation file for the PchipInterpolatorHelper class
 

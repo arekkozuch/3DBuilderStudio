@@ -72,7 +72,7 @@ using namespace nlohmann;
 #include "libslic3r/PNGReadWrite.hpp"
 #include "libslic3r/ObjColorUtils.hpp"
 
-#include "OrcaSlicer.hpp"
+#include "MeshForge.hpp"
 //BBS: add exception handler for win32
 #include <wx/stdpaths.h>
 #ifdef WIN32
@@ -133,8 +133,8 @@ std::map<int, std::string> cli_errors = {
     {CLI_OBJECT_ORIENT_FAILED, "An error occurred when auto-orienting object(s)."},
     {CLI_MODIFIED_PARAMS_TO_PRINTER, "Found modified parameter in printer preset in the 3mf file, which should not be changed."},
         {CLI_FILE_VERSION_NOT_SUPPORTED, "Unsupported 3MF version. Please make sure the 3MF file was created with the official version of Bambu Studio, not a beta version."},
-    {CLI_NO_SUITABLE_OBJECTS, "One of the plate is empty or has no object fully inside it. Please check that the 3mf contains no empty plate in Orca Slicer before uploading."},
-    {CLI_VALIDATE_ERROR, "There are some incorrect slicing parameters in the 3mf. Please verify the slicing of all plates in Orca Slicer before uploading."},
+    {CLI_NO_SUITABLE_OBJECTS, "One of the plate is empty or has no object fully inside it. Please check that the 3mf contains no empty plate in MeshForge before uploading."},
+    {CLI_VALIDATE_ERROR, "There are some incorrect slicing parameters in the 3mf. Please verify the slicing of all plates in MeshForge before uploading."},
     {CLI_OBJECTS_PARTLY_INSIDE, "Some objects are located over the boundary of the heated bed."},
     {CLI_EXPORT_CACHE_DIRECTORY_CREATE_FAILED, "Failed creating directory when exporting cache data."},
     {CLI_EXPORT_CACHE_WRITE_FAILED, "Failed exporting cache data."},
@@ -144,17 +144,17 @@ std::map<int, std::string> cli_errors = {
     {CLI_SLICING_TIME_EXCEEDS_LIMIT, "Slicing time of a certain plate exceeds the limit. Please simplify the model or use a larger slicing layer height."},
     {CLI_TRIANGLE_COUNT_EXCEEDS_LIMIT, "Triangle count of single plate exceeds the limit. Please simplify the model and try to upload again."},
     {CLI_NO_SUITABLE_OBJECTS_AFTER_SKIP, "No printable objects to slice after skipping."},
-    {CLI_FILAMENT_NOT_MATCH_BED_TYPE, "Filaments are not compatible with the plate type. Please verify the slicing of all plates in Orca Slicer before uploading."},
-    {CLI_FILAMENTS_DIFFERENT_TEMP, "The temperature difference of the filaments used is too large. Please verify the slicing of all plates in Orca Slicer before uploading."},
-    {CLI_OBJECT_COLLISION_IN_SEQ_PRINT, "Object conflicts were detected when using print-by-object mode. Please verify the slicing of all plates in Orca Slicer before uploading."},
-    {CLI_OBJECT_COLLISION_IN_LAYER_PRINT, "Object conflicts were detected. Please verify the slicing of all plates in Orca Slicer before uploading."},
-    {CLI_SPIRAL_MODE_INVALID_PARAMS, "Some slicing parameters cannot work with Spiral Vase mode. Please solve the issue in Orca Slicer before uploading."},
+    {CLI_FILAMENT_NOT_MATCH_BED_TYPE, "Filaments are not compatible with the plate type. Please verify the slicing of all plates in MeshForge before uploading."},
+    {CLI_FILAMENTS_DIFFERENT_TEMP, "The temperature difference of the filaments used is too large. Please verify the slicing of all plates in MeshForge before uploading."},
+    {CLI_OBJECT_COLLISION_IN_SEQ_PRINT, "Object conflicts were detected when using print-by-object mode. Please verify the slicing of all plates in MeshForge before uploading."},
+    {CLI_OBJECT_COLLISION_IN_LAYER_PRINT, "Object conflicts were detected. Please verify the slicing of all plates in MeshForge before uploading."},
+    {CLI_SPIRAL_MODE_INVALID_PARAMS, "Some slicing parameters cannot work with Spiral Vase mode. Please solve the issue in MeshForge before uploading."},
     {CLI_FILAMENT_CAN_NOT_MAP, "Some filaments cannot be mapped to correct extruders for multi-extruder Printer."},
     {CLI_ONLY_ONE_TPU_SUPPORTED, "Not support printing 2 or more TPU filaments."},
     {CLI_FILAMENTS_NOT_SUPPORTED_BY_EXTRUDER, "Some filaments cannot be printed on the extruder mapped to."},
-    {CLI_SLICING_ERROR, "Failed slicing the model. Please verify the slicing of all plates on Orca Slicer before uploading."},
-    {CLI_GCODE_PATH_CONFLICTS, " G-code conflicts detected after slicing. Please make sure the 3mf file can be successfully sliced in the latest Orca Slicer. If the file slices normally in Orca Slicer, try moving the wipe tower further from other models, as we use more conservative parameters for it during upload."},
-    {CLI_GCODE_PATH_IN_UNPRINTABLE_AREA, "Found G-code in unprintable area of multi-extruder printers after slicing. Please make sure the 3mf file can be successfully sliced in the latest Orca Slicer."}
+    {CLI_SLICING_ERROR, "Failed slicing the model. Please verify the slicing of all plates on MeshForge before uploading."},
+    {CLI_GCODE_PATH_CONFLICTS, " G-code conflicts detected after slicing. Please make sure the 3mf file can be successfully sliced in the latest MeshForge. If the file slices normally in MeshForge, try moving the wipe tower further from other models, as we use more conservative parameters for it during upload."},
+    {CLI_GCODE_PATH_IN_UNPRINTABLE_AREA, "Found G-code in unprintable area of multi-extruder printers after slicing. Please make sure the 3mf file can be successfully sliced in the latest MeshForge."}
 };
 
 typedef struct  _sliced_plate_info{
@@ -1180,7 +1180,7 @@ static void load_downward_settings_list_from_config(std::string config_file, std
 int CLI::run(int argc, char **argv)
 {
     // Mark the main thread for the debugger and for runtime checks.
-    set_current_thread_name("orcaslicer_main");
+    set_current_thread_name("meshforge_main");
     // Save the thread ID of the main thread.
     save_main_thread_id();
 
@@ -1332,7 +1332,7 @@ int CLI::run(int argc, char **argv)
         //BBS: remove GCodeViewer as separate APP logic
         //params.start_as_gcodeviewer = start_as_gcodeviewer;
 
-        BOOST_LOG_TRIVIAL(info) << "begin to launch OrcaSlicer GUI soon";
+        BOOST_LOG_TRIVIAL(info) << "begin to launch MeshForge GUI soon";
         return Slic3r::GUI::GUI_Run(params);
 #else // SLIC3R_GUI
         // No GUI support. Just print out a help.
@@ -1352,7 +1352,7 @@ int CLI::run(int argc, char **argv)
     }
 
     global_begin_time = (long long)Slic3r::Utils::get_current_time_utc();
-    BOOST_LOG_TRIVIAL(warning) << boost::format("cli mode, Current OrcaSlicer Version %1%")%SoftFever_VERSION;
+    BOOST_LOG_TRIVIAL(warning) << boost::format("cli mode, Current MeshForge Version %1%")%MESHFORGE_VERSION;
 
     //BBS: add plate data related logic
     PlateDataPtrs plate_data_src;
@@ -1578,9 +1578,9 @@ int CLI::run(int argc, char **argv)
                         BOOST_LOG_TRIVIAL(info) << "object "<<o->name <<", id :" << o->id().id << ", from bbl 3mf\n";
                     }*/
 
-                    Semver cli_ver = *Semver::parse(SoftFever_VERSION);
+                    Semver cli_ver = *Semver::parse(MESHFORGE_VERSION);
                     if (!allow_newer_file && ((cli_ver.maj() < file_version.maj()) || ((cli_ver.maj() == file_version.maj()) && (cli_ver.min() < file_version.min())))){
-                        BOOST_LOG_TRIVIAL(error) << boost::format("Version Check: File Version %1% not supported by current cli version %2%")%file_version.to_string() %SoftFever_VERSION;
+                        BOOST_LOG_TRIVIAL(error) << boost::format("Version Check: File Version %1% not supported by current cli version %2%")%file_version.to_string() %MESHFORGE_VERSION;
                         record_exit_reson(outfile_dir, CLI_FILE_VERSION_NOT_SUPPORTED, 0, cli_errors[CLI_FILE_VERSION_NOT_SUPPORTED], sliced_info);
                         flush_and_exit(CLI_FILE_VERSION_NOT_SUPPORTED);
                     }
@@ -5493,7 +5493,7 @@ int CLI::run(int argc, char **argv)
             //FIXME check for mixing the FFF / SLA parameters.
             // or better save fff_print_config vs. sla_print_config
             //m_print_config.save(m_config.opt_string("save"));
-            m_print_config.save_to_json(m_config.opt_string(opt_key), std::string("project_settings"), std::string("project"), std::string(SoftFever_VERSION));
+            m_print_config.save_to_json(m_config.opt_string(opt_key), std::string("project_settings"), std::string("project"), std::string(MESHFORGE_VERSION));
         } else if (opt_key == "info") {
             // --info works on unrepaired model
             for (Model &model : m_models) {
@@ -7029,17 +7029,17 @@ bool CLI::setup(int argc, char **argv)
     detect_platform();
 
 #ifdef WIN32
-    // Notify user that a blacklisted DLL was injected into OrcaSlicer process (for example Nahimic, see GH #5573).
-    // We hope that if a DLL is being injected into a OrcaSlicer process, it happens at the very start of the application,
+    // Notify user that a blacklisted DLL was injected into MeshForge process (for example Nahimic, see GH #5573).
+    // We hope that if a DLL is being injected into a MeshForge process, it happens at the very start of the application,
     // thus we shall detect them now.
     if (BlacklistedLibraryCheck::get_instance().perform_check()) {
-        std::wstring text = L"Following DLLs have been injected into the OrcaSlicer process:\n\n";
+        std::wstring text = L"Following DLLs have been injected into the MeshForge process:\n\n";
         text += BlacklistedLibraryCheck::get_instance().get_blacklisted_string();
         text += L"\n\n"
-                L"OrcaSlicer is known to not run correctly with these DLLs injected. "
+                L"MeshForge is known to not run correctly with these DLLs injected. "
                 L"We suggest stopping or uninstalling these services if you experience "
-                L"crashes or unexpected behaviour while using OrcaSlicer.\n"
-                L"For example, ASUS Sonic Studio injects a Nahimic driver, which makes OrcaSlicer "
+                L"crashes or unexpected behaviour while using MeshForge.\n"
+                L"For example, ASUS Sonic Studio injects a Nahimic driver, which makes MeshForge "
                 L"to crash on a secondary monitor";
         MessageBoxW(NULL, text.c_str(), L"Warning"/*L"Incopatible library found"*/, MB_OK);
     }
@@ -7068,7 +7068,7 @@ bool CLI::setup(int argc, char **argv)
     // The resources are packed to 'resources'
     // Path from Slic3r binary to resources:
     boost::filesystem::path path_resources = boost::filesystem::canonical(path_to_binary).parent_path().parent_path() / "resources";
-    //Orca: for build systems that support multiple configurations, the binary may be in a subdirectory like "bin/Release" or "bin/Debug".
+    // MeshForge: for build systems that support multiple configurations, the binary may be in a subdirectory like "bin/Release" or "bin/Debug".
     if( !boost::filesystem::exists(path_resources)) {
         // If the resources directory does not exist, try to use the resources directory
         path_resources = boost::filesystem::canonical(path_to_binary).parent_path().parent_path().parent_path() / "resources";
@@ -7167,9 +7167,9 @@ void CLI::print_help(bool include_print_options, PrinterTechnology printer_techn
     attach_console_on_demand();
 
     boost::nowide::cout
-        << SLIC3R_APP_KEY <<"-"<< SoftFever_VERSION << ":"
+        << SLIC3R_APP_KEY <<"-"<< MESHFORGE_VERSION << ":"
         << std::endl
-        << "Usage: orca-slicer [ OPTIONS ] [ file.3mf/file.stl ... ]" << std::endl
+        << "Usage: meshforge [ OPTIONS ] [ file.3mf/file.stl ... ]" << std::endl
         << std::endl
         << "OPTIONS:" << std::endl;
     cli_misc_config_def.print_cli_help(boost::nowide::cout, false);
@@ -7409,7 +7409,7 @@ LONG WINAPI VectoredExceptionHandler(PEXCEPTION_POINTERS pExceptionInfo)
 
 #if defined(_MSC_VER) || defined(__MINGW32__)
 extern "C" {
-    __declspec(dllexport) int __stdcall orcaslicer_main(int argc, wchar_t **argv)
+    __declspec(dllexport) int __stdcall meshforge_main(int argc, wchar_t **argv)
     {
         // Convert wchar_t arguments to UTF8.
         std::vector<std::string> 	argv_narrow;

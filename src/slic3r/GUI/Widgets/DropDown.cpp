@@ -41,7 +41,7 @@ DropDown::DropDown(std::vector<Item> &items)
         std::make_pair(0x363636, (int) StateColor::Normal))
     , selector_border_color(std::make_pair(0x009688, (int) StateColor::Hovered),
         std::make_pair(*wxWHITE, (int) StateColor::Normal))
-    , selector_background_color(std::make_pair(0xBFE1DE, (int) StateColor::Checked), // ORCA updated background color for checked item
+    , selector_background_color(std::make_pair(0xBFE1DE, (int) StateColor::Checked), // MeshForge updated background color for checked item
         std::make_pair(*wxWHITE, (int) StateColor::Normal))
 {
 }
@@ -564,12 +564,12 @@ void DropDown::messureSize()
         subDropDown->use_content_width = true;
         subDropDown->Create(GetParent());
 #ifdef __WXGTK__
-        // Orca:  Keep the wx parent as the combobox so wxPopupTransientWindow installs
+        // MeshForge:  Keep the wx parent as the combobox so wxPopupTransientWindow installs
         // its capture handlers on the main dropdown, but make the native GTK
         // popup transient for the currently open popup to satisfy Wayland's
         // xdg-shell rule that a popup's parent must be the topmost mapped popup.
         gtk_window_set_transient_for(GTK_WINDOW(subDropDown->GetHandle()), GTK_WINDOW(GetHandle()));
-        // Orca: On Wayland, while the sub holds an xdg_popup grab, motion events for
+        // MeshForge: On Wayland, while the sub holds an xdg_popup grab, motion events for
         // the cursor over main may not be delivered (Mutter drops motion
         // outside the grabbing surface). Poll on idle and synthesize a
         // mouseMove on main so its hover highlight tracks and it can dismiss

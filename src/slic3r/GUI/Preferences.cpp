@@ -1155,7 +1155,7 @@ wxBoxSizer* PreferencesDialog::create_item_downloads(wxString title, wxString to
 wxBoxSizer* PreferencesDialog::create_item_link_association( wxString url_prefix, wxString website_name)
 {
     wxString title = _L("Associate") + (boost::format(" %1%://") % url_prefix.c_str()).str();
-    wxString tooltip = _L("Associate") + " " + url_prefix + ":// " + _L("with OrcaSlicer so that Orca can open models from") + " " + website_name;
+    wxString tooltip = _L("Associate") + " " + url_prefix + ":// " + _L("with MeshForge so that MeshForge can open models from") + " " + website_name;
 
     std::wstring registered_bin; // not used, just here to provide a ref to check fn
     bool reg_to_current_instance = wxGetApp().check_url_association(url_prefix.ToStdWstring(), registered_bin);
@@ -1315,7 +1315,7 @@ void PreferencesDialog::Split(const std::string &src, const std::string &separat
 
 void PreferencesDialog::create_items()
 {
-    // ORCA
+    // MeshForge
     // Window focus follows item creation order. so below code has to be in same order with UI
     // Create functions for custom controls to keep list clean
     // Tooltips added automatically from related title if its empty
@@ -1351,12 +1351,12 @@ void PreferencesDialog::create_items()
     g_sizer->Add(item_darkmode);
 #endif
 
-    auto item_single_instance  = create_item_checkbox(_L("Allow only one OrcaSlicer instance"),
+    auto item_single_instance  = create_item_checkbox(_L("Allow only one MeshForge instance"),
     #if __APPLE__
             _L("On OSX there is always only one instance of app running by default. However it is allowed to run multiple instances "
                 "of same app from the command line. In such case this settings will allow only one instance."),
     #else
-            _L("If this is enabled, when starting OrcaSlicer and another instance of the same OrcaSlicer is already running, that instance will be reactivated instead."),
+            _L("If this is enabled, when starting MeshForge and another instance of the same MeshForge is already running, that instance will be reactivated instead."),
     #endif
             "single_instance");
     g_sizer->Add(item_single_instance);
@@ -1408,7 +1408,7 @@ void PreferencesDialog::create_items()
     //// GENERAL > Preset
     g_sizer->Add(create_item_title(_L("Preset")), 1, wxEXPAND);
 
-    auto item_remember_printer = create_item_checkbox(_L("Remember printer configuration"), _L("If enabled, Orca will remember and switch filament/process configuration for each printer automatically."), "remember_printer_config");
+    auto item_remember_printer = create_item_checkbox(_L("Remember printer configuration"), _L("If enabled, MeshForge will remember and switch filament/process configuration for each printer automatically."), "remember_printer_config");
     g_sizer->Add(item_remember_printer);
 
     auto item_filament_preset_grouping = create_item_combobox(_L("Group user filament presets"), _L("Group user filament presets based on selection"),
@@ -1472,7 +1472,7 @@ void PreferencesDialog::create_items()
 
     auto item_auto_reslice = create_item_auto_reslice(
         _L("Auto slice after changes"),
-        _L("If enabled, OrcaSlicer will re-slice automatically whenever slicing-related settings change."),
+        _L("If enabled, MeshForge will re-slice automatically whenever slicing-related settings change."),
         _L("Delay in seconds before auto slicing starts, allowing multiple edits to be grouped. Use 0 to slice immediately."));
     g_sizer->Add(item_auto_reslice);
 
@@ -1536,7 +1536,7 @@ void PreferencesDialog::create_items()
     auto item_region           = create_item_region_combobox(_L("Login region"), "");
     g_sizer->Add(item_region);
  
-    auto item_stealth_mode     = create_item_checkbox(_L("Stealth mode"), _L("This disables all cloud services e.g. Orca Cloud and Bambu Cloud. This stops the transmission of data to Bambu's cloud services too. Users who don't use BBL machines or use LAN mode only can safely turn on this function."), "stealth_mode");
+    auto item_stealth_mode     = create_item_checkbox(_L("Stealth mode"), _L("This disables all cloud services e.g. MeshForge Cloud and Bambu Cloud. This stops the transmission of data to Bambu's cloud services too. Users who don't use BBL machines or use LAN mode only can safely turn on this function."), "stealth_mode");
     g_sizer->Add(item_stealth_mode);
 
     auto item_network_test     = create_item_button(_L("Network test"), _L("Test") + " " + dots, "", _L("Open Network Test"), []() {
@@ -1556,7 +1556,7 @@ void PreferencesDialog::create_items()
             wxDefaultPosition, DESIGN_TITLE_SIZE, wxST_NO_AUTORESIZE);
         text->SetForegroundColour(DESIGN_GRAY900_COLOR);
         text->SetFont(::Label::Body_14);
-        text->SetToolTip(_L("Allow logging into Bambu Cloud alongside Orca Cloud. When enabled, a Bambu login section appears on the homepage."));
+        text->SetToolTip(_L("Allow logging into Bambu Cloud alongside MeshForge Cloud. When enabled, a Bambu login section appears on the homepage."));
         text->Wrap(DESIGN_TITLE_SIZE.x);
 
         auto cb = new ::CheckBox(m_parent);
@@ -1743,25 +1743,22 @@ void PreferencesDialog::create_items()
     g_sizer->AddGrowableCol(0, 1);
 
     //// ASSOCIATE > Extensions
-    g_sizer->Add(create_item_title(_L("Associate files to OrcaSlicer")), 1, wxEXPAND);
+    g_sizer->Add(create_item_title(_L("Associate files to MeshForge")), 1, wxEXPAND);
 
-    auto item_associate_3mf    = create_item_checkbox(_L("Associate 3MF files to OrcaSlicer"), _L("If enabled, sets OrcaSlicer as default application to open 3MF files.") , "associate_3mf");
+    auto item_associate_3mf    = create_item_checkbox(_L("Associate 3MF files to MeshForge"), _L("If enabled, sets MeshForge as default application to open 3MF files.") , "associate_3mf");
     g_sizer->Add(item_associate_3mf);
 
-    auto item_associate_drc = create_item_checkbox(_L("Associate DRC files to OrcaSlicer"), _L("If enabled, sets OrcaSlicer as default application to open DRC files."), "associate_drc");
+    auto item_associate_drc = create_item_checkbox(_L("Associate DRC files to MeshForge"), _L("If enabled, sets MeshForge as default application to open DRC files."), "associate_drc");
     g_sizer->Add(item_associate_drc);
 
-    auto item_associate_stl    = create_item_checkbox(_L("Associate STL files to OrcaSlicer"), _L("If enabled, sets OrcaSlicer as default application to open STL files.") , "associate_stl");
+    auto item_associate_stl    = create_item_checkbox(_L("Associate STL files to MeshForge"), _L("If enabled, sets MeshForge as default application to open STL files.") , "associate_stl");
     g_sizer->Add(item_associate_stl);
 
-    auto item_associate_step   = create_item_checkbox(_L("Associate STEP files to OrcaSlicer"), _L("If enabled, sets OrcaSlicer as default application to open STEP files."), "associate_step");
+    auto item_associate_step   = create_item_checkbox(_L("Associate STEP files to MeshForge"), _L("If enabled, sets MeshForge as default application to open STEP files."), "associate_step");
     g_sizer->Add(item_associate_step);
 
     //// ASSOCIATE > WebLinks
-    g_sizer->Add(create_item_title(_L("Associate web links to OrcaSlicer")), 1, wxEXPAND);
-
-    auto associate_url_prusa   = create_item_link_association(L"prusaslicer", "Printables.com");
-    g_sizer->Add(associate_url_prusa);
+    g_sizer->Add(create_item_title(_L("Associate web links to MeshForge")), 1, wxEXPAND);
 
     auto associate_url_bambu   = create_item_link_association(L"bambustudio", "Makerworld.com");
     g_sizer->Add(associate_url_bambu);
@@ -1904,7 +1901,7 @@ wxBoxSizer* PreferencesDialog::create_debug_page()
     auto item_internal_developer = create_item_checkbox(_L("Internal developer mode"), _L("Internal developer mode"), "internal_developer_mode");
 
     auto title_host = create_item_title(_L("Host Setting"));
-    // ORCA RadioGroup
+    // MeshForge RadioGroup
     auto radio_group = new RadioGroup(m_parent, {
         _L("DEV host: api-dev.bambu-lab.com/v1"), // 0
         _L("QA  host: api-qa.bambu-lab.com/v1"),  // 1
@@ -1992,7 +1989,7 @@ wxBoxSizer* PreferencesDialog::create_debug_page()
                     wxGetApp().request_user_logout();
                     agent->set_country_code(country_code);
                 }
-                ConfirmBeforeSendDialog confirm_dlg(this, wxID_ANY, _L("Warning"), ConfirmBeforeSendDialog::VisibleButtons::ONLY_CONFIRM);  // ORCA VisibleButtons instead ButtonStyle 
+                ConfirmBeforeSendDialog confirm_dlg(this, wxID_ANY, _L("Warning"), ConfirmBeforeSendDialog::VisibleButtons::ONLY_CONFIRM);  // MeshForge VisibleButtons instead ButtonStyle 
                 confirm_dlg.update_text(_L("Cloud environment switched, please login again!"));
                 confirm_dlg.on_show();
             }

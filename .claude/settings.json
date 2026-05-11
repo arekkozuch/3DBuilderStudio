@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -riP *)",
+      "Bash(grep -rP *)",
+      "Bash(grep -nP *)",
+      "Bash(git -C * log *)",
+      "Bash(git -C * ls-tree *)",
+      "Bash(git -C * reflog *)",
+      "Bash(git -C * show *)",
+      "Bash(git -C * diff *)",
+      "Bash(git -C * status *)"
+    ]
+  }
+}

@@ -14,7 +14,7 @@
 #include <vector>
 
 namespace Slic3r {
-static constexpr char ORCA_PRINTER_AGENT_ID[] = "orca";
+static constexpr char MESHFORGE_PRINTER_AGENT_ID[] = "orca";
 static constexpr char BBL_PRINTER_AGENT_ID[] = "bbl";
 
 // Factory function type for creating printer agents
@@ -130,7 +130,7 @@ public:
      */
     static std::shared_ptr<ICloudServiceAgent> create_cloud_agent(const std::string& provider, const std::string& log_dir)
     {
-        if (provider == ORCA_CLOUD_PROVIDER) {
+        if (provider == MESHFORGE_CLOUD_PROVIDER) {
             return std::make_shared<OrcaCloudServiceAgent>(log_dir);
         } else if (provider == BBL_CLOUD_PROVIDER) {
             auto& plugin = BBLNetworkPlugin::instance();

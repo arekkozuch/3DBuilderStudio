@@ -212,10 +212,10 @@ private:
 #endif // __WXGTK__
 
 #ifdef __APPLE__
-class OrcaSlicerTaskBarIcon : public wxTaskBarIcon
+class MeshForgeTaskBarIcon : public wxTaskBarIcon
 {
 public:
-    OrcaSlicerTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
+    MeshForgeTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
     wxMenu *CreatePopupMenu() override {
         wxMenu *menu = new wxMenu;
         if (wxGetApp().app_config->get("single_instance") == "false") {
@@ -266,7 +266,7 @@ static wxIcon main_frame_icon(GUI_App::EAppMode app_mode)
     }
     return wxIcon(path, wxBITMAP_TYPE_ICO);
 #else // _WIN32
-    return wxIcon(Slic3r::var("OrcaSlicer_128px.png"), wxBITMAP_TYPE_PNG);
+    return wxIcon(Slic3r::var("MeshForge_128px.png"), wxBITMAP_TYPE_PNG);
 #endif // _WIN32
 }
 
@@ -392,8 +392,8 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
     switch (wxGetApp().get_app_mode()) {
     default:
     case GUI_App::EAppMode::Editor:
-        m_taskbar_icon = std::make_unique<OrcaSlicerTaskBarIcon>(wxTBI_DOCK);
-        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("OrcaSlicer-mac_256px.ico"), wxBITMAP_TYPE_ICO), "OrcaSlicer");
+        m_taskbar_icon = std::make_unique<MeshForgeTaskBarIcon>(wxTBI_DOCK);
+        m_taskbar_icon->SetIcon(wxIcon(Slic3r::var("MeshForge-mac_256px.ico"), wxBITMAP_TYPE_ICO), "MeshForge");
         break;
     case GUI_App::EAppMode::GCodeViewer:
         break;
@@ -487,7 +487,7 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
 #endif
         wxQueueEvent(wxGetApp().plater(), new SimpleEvent(EVT_NOTICE_CHILDE_SIZE_CHANGED));
 
-        fit_tab_labels(); // ORCA on resize
+        fit_tab_labels(); // MeshForge on resize
     });
 
     //BBS
@@ -731,7 +731,7 @@ DPIFrame(NULL, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, BORDERLESS_FRAME_
         if (evt.CmdDown() && evt.GetKeyCode() == 'P')
 #endif
         {
-            // Orca: Use GUI_App::open_preferences instead of direct call so windows associations are updated on exit
+            // MeshForge: Use GUI_App::open_preferences instead of direct call so windows associations are updated on exit
             wxGetApp().open_preferences();
             plater()->get_current_canvas3D()->force_set_focus();
             return;
@@ -795,7 +795,7 @@ void MainFrame::bind_diff_dialog()
 
 #ifdef __WXMSW__
 
-// Orca: Fix maximized window overlaps taskbar when taskbar auto hide is enabled (#8085)
+// MeshForge: Fix maximized window overlaps taskbar when taskbar auto hide is enabled (#8085)
 // Adopted from https://gist.github.com/MortenChristiansen/6463580
 static void AdjustWorkingAreaForAutoHide(const HWND hWnd, MINMAXINFO* mmi)
 {
@@ -1265,7 +1265,7 @@ void MainFrame::init_tabpanel() {
                 wxPostEvent(m_plater, SimpleEvent(EVT_GLVIEWTOOLBAR_PREVIEW));
                 m_param_panel->OnActivate();
             }
-            fit_tab_labels(); // ORCA on switching prepare / preview
+            fit_tab_labels(); // MeshForge on switching prepare / preview
         }
         //else if (panel == m_param_panel)
         //    m_param_panel->OnActivate();
@@ -1365,12 +1365,12 @@ void MainFrame::init_tabpanel() {
     }
 }
 
-// SoftFever
+// MeshForge
 void MainFrame::show_device(bool bBBLPrinter) {
     auto idx = -1;
     if (bBBLPrinter) {
         if (m_tabpanel->FindPage(m_monitor) != wxNOT_FOUND) {
-            fit_tab_labels(); // ORCA on printer change - same button layout
+            fit_tab_labels(); // MeshForge on printer change - same button layout
             return;
         }
         // Remove printer view
@@ -1413,7 +1413,7 @@ void MainFrame::show_device(bool bBBLPrinter) {
 
     } else {
         if (m_tabpanel->FindPage(m_printer_view) != wxNOT_FOUND) {
-            fit_tab_labels(); // ORCA on printer change - same button layout
+            fit_tab_labels(); // MeshForge on printer change - same button layout
             return;
         }
         if ((idx = m_tabpanel->FindPage(m_calibration)) != wxNOT_FOUND) {
@@ -1441,7 +1441,7 @@ void MainFrame::show_device(bool bBBLPrinter) {
         m_tabpanel->InsertPage(tpMonitor, m_printer_view, _L("Device"), std::string("tab_monitor_active"),
                                std::string("tab_monitor_active"));
     }
-    fit_tab_labels(); // ORCA on printer change
+    fit_tab_labels(); // MeshForge on printer change
 }
 
 void MainFrame::fit_tab_labels()
@@ -1971,7 +1971,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                 m_slice_enable = get_enable_slice_status();
                 m_slice_btn->Enable(m_slice_enable);
                 this->Layout();
-                fit_tab_labels(); // ORCA on label change
+                fit_tab_labels(); // MeshForge on label change
                 if(m_slice_option_pop_up)
                     m_slice_option_pop_up->Dismiss();
                 });
@@ -1982,7 +1982,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                 m_slice_enable = get_enable_slice_status();
                 m_slice_btn->Enable(m_slice_enable);
                 this->Layout();
-                fit_tab_labels(); // ORCA on label change
+                fit_tab_labels(); // MeshForge on label change
                 if(m_slice_option_pop_up)
                     m_slice_option_pop_up->Dismiss();
                 });
@@ -2007,7 +2007,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                     });
 
@@ -2020,7 +2020,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                     });
 
@@ -2028,7 +2028,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                 p->append_button(export_gcode_btn);
             }
             else {
-                //Orca Slicer Buttons
+                //MeshForge Buttons
                 SideButton* print_plate_btn = new SideButton(p, _L("Print plate"), "");
                 print_plate_btn->SetCornerRadius(0);
 
@@ -2047,7 +2047,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                     });
 
@@ -2059,7 +2059,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                     });
 
@@ -2069,7 +2069,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                     });
 
@@ -2081,7 +2081,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                     });
 
@@ -2091,7 +2091,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                     });
 
@@ -2101,7 +2101,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                     });
 
@@ -2140,7 +2140,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                         m_print_enable = get_enable_print_status();
                         m_print_btn->Enable(m_print_enable);
                         this->Layout();
-                        fit_tab_labels(); // ORCA on label change
+                        fit_tab_labels(); // MeshForge on label change
                         p->Dismiss();
                     });
                     p->append_button(print_multi_machine_btn);
@@ -2155,7 +2155,7 @@ wxBoxSizer* MainFrame::create_side_tools()
                     m_print_enable = get_enable_print_status();
                     m_print_btn->Enable(m_print_enable);
                     this->Layout();
-                    fit_tab_labels(); // ORCA on label change
+                    fit_tab_labels(); // MeshForge on label change
                     p->Dismiss();
                 });
                 p->append_button(export_gcode_btn);
@@ -2474,7 +2474,7 @@ void MainFrame::on_dpi_changed(const wxRect& suggested_rect)
 
     this->Maximize(is_maximized);
 
-    fit_tab_labels(); // ORCA
+    fit_tab_labels(); // MeshForge
 }
 
 void MainFrame::on_sys_color_changed()
@@ -2526,7 +2526,7 @@ void MainFrame::on_sys_color_changed()
 }
 
 // On macOS, we use system menu bar, which handles the key accelerators automatically and breaks key handling in normal typing
-// See https://github.com/OrcaSlicer/OrcaSlicer/issues/8152
+// See https://github.com/MeshForge/MeshForge/issues/8152
 // So we disable some of the accelerators on macOS, by replacing the accelerator seperator to a hyphen.
 #ifdef __APPLE__
 static const wxString sep = " - ";
@@ -2555,7 +2555,7 @@ static wxMenu* generate_help_menu()
         });
 
     // Report a bug
-    //append_menu_item(helpMenu, wxID_ANY, _L("Report Bug(TODO)"), _L("Report a bug of OrcaSlicer"),
+    //append_menu_item(helpMenu, wxID_ANY, _L("Report Bug(TODO)"), _L("Report a bug of MeshForge"),
     //    [](wxCommandEvent&) {
     //        //TODO
     //    });
@@ -3115,7 +3115,7 @@ void MainFrame::init_menubar_as_editor()
 #ifdef __APPLE__
     wxWindowID bambu_studio_id_base = wxWindow::NewControlId(int(2));
     wxMenu* parent_menu = m_menubar->OSXGetAppleMenu();
-    //auto preference_item = new wxMenuItem(parent_menu, OrcaSlicerMenuPreferences + bambu_studio_id_base, _L("Preferences") + "\t" + ctrl + ",", "");
+    //auto preference_item = new wxMenuItem(parent_menu, MeshForgeMenuPreferences + bambu_studio_id_base, _L("Preferences") + "\t" + ctrl + ",", "");
 #else
     wxMenu* parent_menu = m_topbar->GetTopMenu();
     auto preference_item = new wxMenuItem(parent_menu, ConfigMenuPreferences + config_id_base, _L("Preferences") + "\t" + ctrl + "P", "");
@@ -3190,13 +3190,13 @@ void MainFrame::init_menubar_as_editor()
 
 #ifdef __APPLE__
     wxString about_title = wxString::Format(_L("&About %s"), SLIC3R_APP_FULL_NAME);
-    //auto about_item = new wxMenuItem(parent_menu, OrcaSlicerMenuAbout + bambu_studio_id_base, about_title, "");
+    //auto about_item = new wxMenuItem(parent_menu, MeshForgeMenuAbout + bambu_studio_id_base, about_title, "");
         //parent_menu->Bind(wxEVT_MENU, [this, bambu_studio_id_base](wxEvent& event) {
         //    switch (event.GetId() - bambu_studio_id_base) {
-        //        case OrcaSlicerMenuAbout:
+        //        case MeshForgeMenuAbout:
         //            Slic3r::GUI::about();
         //            break;
-        //        case OrcaSlicerMenuPreferences:
+        //        case MeshForgeMenuPreferences:
         //            CallAfter([this] {
         //                PreferencesDialog dlg(this);
         //                dlg.ShowModal();
@@ -3239,7 +3239,7 @@ void MainFrame::init_menubar_as_editor()
     append_menu_item(
         m_topbar->GetTopMenu(), wxID_ANY, _L("Preferences") + "\t" + ctrl + "P", "",
         [this](wxCommandEvent &) {
-            // Orca: Use GUI_App::open_preferences instead of direct call so windows associations are updated on exit
+            // MeshForge: Use GUI_App::open_preferences instead of direct call so windows associations are updated on exit
             wxGetApp().open_preferences();
         },
         "", nullptr, []() { return true; }, this);
@@ -3247,7 +3247,7 @@ void MainFrame::init_menubar_as_editor()
         append_menu_item(
         m_topbar->GetTopMenu(), wxID_ANY, _L("Preset Bundle") + "\t", "",
         [this](wxCommandEvent &) {
-            // Orca: Use GUI_App::open_preferences instead of direct call so windows associations are updated on exit
+            // MeshForge: Use GUI_App::open_preferences instead of direct call so windows associations are updated on exit
             wxGetApp().open_presetbundledialog();
             plater()->get_current_canvas3D()->force_set_focus();
         },
@@ -3258,7 +3258,7 @@ void MainFrame::init_menubar_as_editor()
     //m_topbar->AddDropDownMenuItem(config_item);
     m_topbar->AddDropDownSubMenu(helpMenu, _L("Help"));
 
-    // SoftFever calibrations
+    // MeshForge calibrations
 
     // Temperature
     append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Temperature"), _L("Temperature Calibration"),
@@ -3348,7 +3348,7 @@ void MainFrame::init_menubar_as_editor()
 
     // help
     append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Calibration Guide"), _L("Calibration Guide"), [this](wxCommandEvent &)
-                     { wxLaunchDefaultBrowser("https://www.orcaslicer.com/wiki/calibration_guide", wxBROWSER_NEW_WINDOW); }, "", nullptr, [this]()
+                     { wxLaunchDefaultBrowser("https://www.meshforge.com/wiki/calibration_guide", wxBROWSER_NEW_WINDOW); }, "", nullptr, [this]()
                      {return m_plater->is_view3D_shown();; }, this);
 
 #else
@@ -3369,7 +3369,7 @@ void MainFrame::init_menubar_as_editor()
     /*if (publishMenu)
         m_menubar->Append(publishMenu, wxString::Format("&%s", _L("3D Models")));*/
 
-    // SoftFever calibrations
+    // MeshForge calibrations
     auto calib_menu = new wxMenu();
 
     // Temperature
@@ -3400,7 +3400,7 @@ void MainFrame::init_menubar_as_editor()
         [this]() {return m_plater->is_view3D_shown();; }, this);
 
     // Flowrate (with submenu)
-    // ORCA: Flow rate (Wizard Dialog)
+    // MeshForge: Flow rate (Wizard Dialog)
     append_menu_item(calib_menu, wxID_ANY, _L("Flow ratio"), _L("Flow Rate Calibration"),
         [this](wxCommandEvent&) {
             if (!m_plater) return;
@@ -3460,7 +3460,7 @@ void MainFrame::init_menubar_as_editor()
         [this]() {return m_plater->is_view3D_shown();; }, this);
     // help
     append_menu_item(calib_menu, wxID_ANY, _L("Calibration Guide"), _L("Calibration Guide"),
-        [this](wxCommandEvent&) { wxLaunchDefaultBrowser("https://www.orcaslicer.com/wiki/calibration_guide", wxBROWSER_NEW_WINDOW); }, "", nullptr,
+        [this](wxCommandEvent&) { wxLaunchDefaultBrowser("https://www.meshforge.com/wiki/calibration_guide", wxBROWSER_NEW_WINDOW); }, "", nullptr,
         [this]() {return m_plater->is_view3D_shown();; }, this);
 
     m_menubar->Append(calib_menu,wxString::Format("&%s", _L("Calibration")));
@@ -3663,7 +3663,7 @@ void MainFrame::load_config_file()
  //       return;
     wxFileDialog dlg(this, _L("Select profile to load:"),
         !m_last_config.IsEmpty() ? get_dir_name(m_last_config) : wxGetApp().app_config->get_last_dir(),
-        "config.json", "Config files (*.json;*.zip;*.orca_printer;*.orca_bundle;*.orca_filament)|*.json;*.zip;*.orca_printer;*.orca_bundle;*.orca_filament", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+        "config.json", "Config files (*.json;*.zip;*.meshforge_printer;*.meshforge_bundle;*.meshforge_filament)|*.json;*.zip;*.meshforge_printer;*.meshforge_bundle;*.meshforge_filament", wxFD_OPEN | wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
      wxArrayString files;
     if (dlg.ShowModal() != wxID_OK)
         return;
@@ -4236,7 +4236,7 @@ void MainFrame::update_side_preset_ui()
 void MainFrame::on_select_default_preset(SimpleEvent& evt)
 {
     MessageDialog dialog(this,
-                    _L("Do you want to synchronize your personal data from Orca Cloud?\n"
+                    _L("Do you want to synchronize your personal data from MeshForge Cloud?\n"
                         "It contains the following information:\n"
                         "1. The Process presets\n"
                         "2. The Filament presets\n"
@@ -4313,7 +4313,7 @@ SettingsDialog::SettingsDialog(MainFrame* mainframe)
         SetIcon(wxIcon(szExeFileName, wxBITMAP_TYPE_ICO));
     }
 #else
-    SetIcon(wxIcon(var("OrcaSlicer_128px.png"), wxBITMAP_TYPE_PNG));
+    SetIcon(wxIcon(var("MeshForge_128px.png"), wxBITMAP_TYPE_PNG));
 #endif // _WIN32
 
     //just hide the Frame on closing

@@ -108,7 +108,7 @@ static wxString update_custom_filaments()
 }
 
 GuideFrame::GuideFrame(GUI_App *pGUI, long style)
-    : DPIDialog((wxWindow *) (pGUI->mainframe), wxID_ANY, "OrcaSlicer", wxDefaultPosition, wxDefaultSize, style),
+    : DPIDialog((wxWindow *) (pGUI->mainframe), wxID_ANY, "MeshForge", wxDefaultPosition, wxDefaultSize, style),
 	m_appconfig_new()
 {
     SetBackgroundColour(*wxWHITE);
@@ -655,7 +655,7 @@ bool GuideFrame::IsFirstUse()
 
 int GuideFrame::SaveProfile()
 {
-    // SoftFever: don't collect info
+    // MeshForge: don't collect info
     //privacy
     // if (PrivacyUse == true) {
     //     m_MainPtr->app_config->set(std::string(m_SectionName.mb_str()), "privacyuse", "1");
@@ -834,9 +834,9 @@ bool GuideFrame::apply_config(AppConfig *app_config, PresetBundle *preset_bundle
                             if (std::find(model_it.second.begin(), model_it.second.end(), vt.name) != model_it.second.end()) { variant = vt.name; break; }
                         }
                     }
-                    else if (variant != PresetBundle::ORCA_DEFAULT_PRINTER_VARIANT){
-                        if (std::find(model_it.second.begin(), model_it.second.end(), PresetBundle::ORCA_DEFAULT_PRINTER_VARIANT) != model_it.second.end())
-                            variant = PresetBundle::ORCA_DEFAULT_PRINTER_VARIANT;
+                    else if (variant != PresetBundle::MESHFORGE_DEFAULT_PRINTER_VARIANT){
+                        if (std::find(model_it.second.begin(), model_it.second.end(), PresetBundle::MESHFORGE_DEFAULT_PRINTER_VARIANT) != model_it.second.end())
+                            variant = PresetBundle::MESHFORGE_DEFAULT_PRINTER_VARIANT;
                     }
                 }
 
@@ -861,10 +861,10 @@ bool GuideFrame::apply_config(AppConfig *app_config, PresetBundle *preset_bundle
         return std::string();
     };
     // Orca "custom" printers are considered first, then 3rd party.
-    if (preferred_model = get_preferred_printer_model(PresetBundle::ORCA_DEFAULT_BUNDLE, preferred_variant);
+    if (preferred_model = get_preferred_printer_model(PresetBundle::MESHFORGE_DEFAULT_BUNDLE, preferred_variant);
         preferred_model.empty()) {
         for (const auto& bundle : enabled_vendors) {
-            if (bundle.first == PresetBundle::ORCA_DEFAULT_BUNDLE) { continue; }
+            if (bundle.first == PresetBundle::MESHFORGE_DEFAULT_BUNDLE) { continue; }
             if (preferred_model = get_preferred_printer_model(bundle.first, preferred_variant);
                 !preferred_model.empty())
                     break;
@@ -882,21 +882,21 @@ bool GuideFrame::apply_config(AppConfig *app_config, PresetBundle *preset_bundle
     // Not switch filament
     //get_first_added_material_preset(AppConfig::SECTION_FILAMENTS, first_added_filament);
 
-    // ORCA: functionality moved to PresetBundle::apply_vendor_config; keeping for future reference
+    // MeshForge: functionality moved to PresetBundle::apply_vendor_config; keeping for future reference
     // // For each @System filament, check if a vendor-specific override exists
     // // in the loaded profiles. If so, replace the @System variant with the
     // // override (e.g. replace "Generic ABS @System" with BBL "Generic ABS").
     // // When printers from the default bundle are also selected, keep @System
     // // too since those printers need it.
     // static const std::string system_suffix              = " @System";
-    // auto                     it_default                 = enabled_vendors.find(PresetBundle::ORCA_DEFAULT_BUNDLE);
+    // auto                     it_default                 = enabled_vendors.find(PresetBundle::MESHFORGE_DEFAULT_BUNDLE);
     // bool                     has_default_bundle_printer = it_default != enabled_vendors.end() && !it_default->second.empty();
     // bool                     has_filament_profiles      = m_ProfileJson.contains("filament");
 
     // // Check if any non-default vendor has selected printers
     // bool has_vendor_printer = false;
     // for (const auto& [vendor, models] : enabled_vendors) {
-    //     if (vendor != PresetBundle::ORCA_DEFAULT_BUNDLE && !models.empty()) {
+    //     if (vendor != PresetBundle::MESHFORGE_DEFAULT_BUNDLE && !models.empty()) {
     //         has_vendor_printer = true;
     //         break;
     //     }
@@ -1007,10 +1007,10 @@ bool GuideFrame::run()
             //we install the default here
             bool apply_keeped_changes = false;
             //clear filament section and use default materials
-            app.app_config->set_variant(PresetBundle::ORCA_DEFAULT_BUNDLE,
-                PresetBundle::ORCA_DEFAULT_PRINTER_MODEL, PresetBundle::ORCA_DEFAULT_PRINTER_VARIANT, "true");
+            app.app_config->set_variant(PresetBundle::MESHFORGE_DEFAULT_BUNDLE,
+                PresetBundle::MESHFORGE_DEFAULT_PRINTER_MODEL, PresetBundle::MESHFORGE_DEFAULT_PRINTER_VARIANT, "true");
             app.app_config->clear_section(AppConfig::SECTION_FILAMENTS);
-            app.preset_bundle->load_selections(*app.app_config, {PresetBundle::ORCA_DEFAULT_PRINTER_MODEL, PresetBundle::ORCA_DEFAULT_PRINTER_VARIANT, PresetBundle::ORCA_DEFAULT_FILAMENT, std::string()});
+            app.preset_bundle->load_selections(*app.app_config, {PresetBundle::MESHFORGE_DEFAULT_PRINTER_MODEL, PresetBundle::MESHFORGE_DEFAULT_PRINTER_VARIANT, PresetBundle::MESHFORGE_DEFAULT_FILAMENT, std::string()});
 
             app.app_config->set_legacy_datadir(false);
             app.update_mode();
@@ -1142,13 +1142,13 @@ int GuideFrame::LoadProfileData()
         vendor_dir      = (boost::filesystem::path(Slic3r::data_dir()) / PRESET_SYSTEM_DIR).make_preferred();
         rsrc_vendor_dir = (boost::filesystem::path(resources_dir()) / "profiles").make_preferred();
 
-        // Orca: add custom as default
-        // Orca: add json logic for vendor bundle
+        // MeshForge: add custom as default
+        // MeshForge: add json logic for vendor bundle
         orca_bundle_rsrc = true;
 
         // search if there exists a .json file in vendor_dir folder, if exists, set orca_bundle_rsrc to false
         for (const auto& entry : boost::filesystem::directory_iterator(vendor_dir)) {
-            if (!boost::filesystem::is_directory(entry) && boost::iequals(entry.path().extension().string(), ".json") && !boost::iequals(entry.path().stem().string(), PresetBundle::ORCA_FILAMENT_LIBRARY)) {
+            if (!boost::filesystem::is_directory(entry) && boost::iequals(entry.path().extension().string(), ".json") && !boost::iequals(entry.path().stem().string(), PresetBundle::MESHFORGE_FILAMENT_LIBRARY)) {
                 orca_bundle_rsrc = false;
                 break;
             }
@@ -1156,15 +1156,15 @@ int GuideFrame::LoadProfileData()
 
         // load the default filament library first
         std::set<std::string> loaded_vendors;
-        auto filament_library_name = boost::filesystem::path(PresetBundle::ORCA_FILAMENT_LIBRARY).replace_extension(".json");
+        auto filament_library_name = boost::filesystem::path(PresetBundle::MESHFORGE_FILAMENT_LIBRARY).replace_extension(".json");
         if (boost::filesystem::exists(vendor_dir / filament_library_name)) {
-            m_OrcaFilaLibPath = (vendor_dir / PresetBundle::ORCA_FILAMENT_LIBRARY).string();
-            LoadProfileFamily(PresetBundle::ORCA_FILAMENT_LIBRARY, (vendor_dir / filament_library_name).string());
+            m_OrcaFilaLibPath = (vendor_dir / PresetBundle::MESHFORGE_FILAMENT_LIBRARY).string();
+            LoadProfileFamily(PresetBundle::MESHFORGE_FILAMENT_LIBRARY, (vendor_dir / filament_library_name).string());
         } else {
-            m_OrcaFilaLibPath = (rsrc_vendor_dir / PresetBundle::ORCA_FILAMENT_LIBRARY).string();
-            LoadProfileFamily(PresetBundle::ORCA_FILAMENT_LIBRARY, (rsrc_vendor_dir / filament_library_name).string());
+            m_OrcaFilaLibPath = (rsrc_vendor_dir / PresetBundle::MESHFORGE_FILAMENT_LIBRARY).string();
+            LoadProfileFamily(PresetBundle::MESHFORGE_FILAMENT_LIBRARY, (rsrc_vendor_dir / filament_library_name).string());
         }
-        loaded_vendors.insert(PresetBundle::ORCA_FILAMENT_LIBRARY);
+        loaded_vendors.insert(PresetBundle::MESHFORGE_FILAMENT_LIBRARY);
 
         //load custom bundle from user data path
         boost::filesystem::directory_iterator endIter;
@@ -1488,7 +1488,7 @@ int GuideFrame::LoadProfileFamily(std::string strVendor, std::string strFilePath
 
             }
         }
-        if(strVendor == PresetBundle::ORCA_FILAMENT_LIBRARY)
+        if(strVendor == PresetBundle::MESHFORGE_FILAMENT_LIBRARY)
             m_OrcaFilaList = tFilaList;
 
         // process

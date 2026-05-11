@@ -157,7 +157,7 @@ void NetworkAgent::apply_printer_callbacks(const std::shared_ptr<IPrinterAgent>&
 
 std::shared_ptr<ICloudServiceAgent> NetworkAgent::get_cloud_agent(const std::string& provider) const
 {
-    const auto& key = (provider.empty() || provider == ORCA_CLOUD_PROVIDER) ? ORCA_CLOUD_PROVIDER : provider;
+    const auto& key = (provider.empty() || provider == MESHFORGE_CLOUD_PROVIDER) ? MESHFORGE_CLOUD_PROVIDER : provider;
     auto it = m_cloud_agents.find(key);
     return it != m_cloud_agents.end() ? it->second : nullptr;
 }

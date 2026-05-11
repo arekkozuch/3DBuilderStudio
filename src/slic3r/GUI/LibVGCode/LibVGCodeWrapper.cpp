@@ -54,7 +54,7 @@ Slic3r::ColorRGBA convert(const Color& c)
 
 Color convert(const Slic3r::ColorRGBA& c)
 {
-    // ORCA: Fix dark color rendering. Ensure minimal brightness.
+    // MeshForge: Fix dark color rendering. Ensure minimal brightness.
     auto safe_val = [](float v) -> uint8_t {
         return std::max((uint8_t)(v * 255.0f), (uint8_t)48);
     };
@@ -86,7 +86,7 @@ Slic3r::ExtrusionRole convert(EGCodeExtrusionRole role)
     case EGCodeExtrusionRole::SupportMaterialInterface: { return Slic3r::ExtrusionRole::erSupportMaterialInterface; }
     case EGCodeExtrusionRole::WipeTower:                { return Slic3r::ExtrusionRole::erWipeTower; }
     case EGCodeExtrusionRole::Custom:                   { return Slic3r::ExtrusionRole::erCustom; }
-    // ORCA
+    // MeshForge
     case EGCodeExtrusionRole::BottomSurface:            { return Slic3r::ExtrusionRole::erBottomSurface; }
     case EGCodeExtrusionRole::InternalBridgeInfill:     { return Slic3r::ExtrusionRole::erInternalBridgeInfill; }
     case EGCodeExtrusionRole::Brim:                     { return Slic3r::ExtrusionRole::erBrim; }
@@ -115,7 +115,7 @@ EGCodeExtrusionRole convert(Slic3r::ExtrusionRole role)
     case Slic3r::ExtrusionRole::erSupportMaterialInterface:    { return EGCodeExtrusionRole::SupportMaterialInterface; }
     case Slic3r::ExtrusionRole::erWipeTower:                   { return EGCodeExtrusionRole::WipeTower; }
     case Slic3r::ExtrusionRole::erCustom:                      { return EGCodeExtrusionRole::Custom; }
-    // ORCA
+    // MeshForge
     case Slic3r::ExtrusionRole::erBottomSurface:               { return EGCodeExtrusionRole::BottomSurface; }
     case Slic3r::ExtrusionRole::erInternalBridgeInfill:        { return EGCodeExtrusionRole::InternalBridgeInfill; }
     case Slic3r::ExtrusionRole::erBrim:                        { return EGCodeExtrusionRole::Brim; }
@@ -215,7 +215,7 @@ GCodeInputData convert(const Slic3r::GCodeProcessorResult& result, const std::ve
         const EOptionType option_type = move_type_to_option(curr_type);
         if (option_type == EOptionType::COUNT || option_type == EOptionType::Travels || option_type == EOptionType::Wipes) {
             if (ret.vertices.empty() || prev.type != curr.type || prev.extrusion_role != curr.extrusion_role
-                // ORCA: Fix issue with flow rate changes being visualized incorrectly
+                // MeshForge: Fix issue with flow rate changes being visualized incorrectly
                 || prev.mm3_per_mm != curr.mm3_per_mm) {
                 // to allow libvgcode to properly detect the start/end of a path we need to add a 'phantom' vertex
                 // equal to the current one with the exception of the position, which should match the previous move position,

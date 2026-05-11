@@ -37,11 +37,11 @@ namespace Slic3r {
  * implementation.
  */
 
-static const std::string ORCA_CLOUD_PROVIDER("orca");
+static const std::string MESHFORGE_CLOUD_PROVIDER("orca");
 static const std::string BBL_CLOUD_PROVIDER("bbl");
 
 struct CloudEvent {
-    std::string provider;  // ORCA_CLOUD_PROVIDER or BBL_CLOUD_PROVIDER
+    std::string provider;  // MESHFORGE_CLOUD_PROVIDER or BBL_CLOUD_PROVIDER
 };
 
 using AppOnServerConnectedFn = std::function<void(CloudEvent event, int return_code, int reason_code)>;

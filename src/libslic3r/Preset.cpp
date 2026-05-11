@@ -233,7 +233,7 @@ void extend_default_config_length(DynamicPrintConfig& config, const bool set_nil
     int process_variant_length = default_param_length;
     int machine_variant_length = default_param_length;
 
-    // Orca: use nozzle/extruder count as the default printer variant length
+    // MeshForge: use nozzle/extruder count as the default printer variant length
     // because non-BBL multi-extruder printers currently do not support extruder variant.
     if (config.has("nozzle_diameter")) {
         auto* nozzle_diameter = dynamic_cast<const ConfigOptionFloats*>(config.option("nozzle_diameter"));
@@ -743,7 +743,7 @@ std::string Preset::label(bool no_alias) const
 
 bool is_compatible_with_print(const PresetWithVendorProfile &preset, const PresetWithVendorProfile &active_print, const PresetWithVendorProfile &active_printer)
 {
-    // Orca: we allow cross vendor compatibility
+    // MeshForge: we allow cross vendor compatibility
 	// if (preset.vendor != nullptr && preset.vendor != active_printer.vendor)
 	// 	// The current profile has a vendor assigned and it is different from the active print's vendor.
 	// 	return false;
@@ -781,15 +781,15 @@ bool is_compatible_with_parent_printer(const PresetWithVendorProfile& preset, co
 
 bool is_compatible_with_printer(const PresetWithVendorProfile &preset, const PresetWithVendorProfile &active_printer, const DynamicPrintConfig *extra_config)
 {
-    // Orca: we allow cross vendor compatibility
+    // MeshForge: we allow cross vendor compatibility
 	// if (preset.vendor != nullptr && preset.vendor != active_printer.vendor)
 	// 	// The current profile has a vendor assigned and it is different from the active print's vendor.
 	// 	return false;
 
-    // Orca: check excluded printers
+    // MeshForge: check excluded printers
     if (preset.vendor != nullptr && preset.preset.type == Preset::TYPE_FILAMENT) {
         const auto& excluded_printers = preset.preset.m_excluded_from;
-        const auto  excluded         = preset.vendor->name == PresetBundle::ORCA_FILAMENT_LIBRARY &&
+        const auto  excluded         = preset.vendor->name == PresetBundle::MESHFORGE_FILAMENT_LIBRARY &&
                               excluded_printers.find(active_printer.preset.name) != excluded_printers.end();
         if (excluded)
             return false;
@@ -1294,7 +1294,7 @@ static std::vector<std::string> s_Preset_filament_options {/*"filament_colour", 
     "filament_wipe_distance", "additional_cooling_fan_speed",
     "nozzle_temperature_range_low", "nozzle_temperature_range_high",
     "filament_extruder_variant",
-    //SoftFever
+    //MeshForge
     "enable_pressure_advance", "pressure_advance","adaptive_pressure_advance","adaptive_pressure_advance_model","adaptive_pressure_advance_overhangs", "adaptive_pressure_advance_bridges","chamber_temperature", "filament_shrink","filament_shrinkage_compensation_z", "support_material_interface_fan_speed","internal_bridge_fan_speed", "filament_notes" /*,"filament_seam_gap"*/,
     "ironing_fan_speed",
     // Filament ironing overrides
@@ -1318,7 +1318,7 @@ static std::vector<std::string> s_Preset_machine_limits_options {
     "machine_max_junction_deviation",
     //resonance avoidance ported from qidi slicer
     "resonance_avoidance", "min_resonance_avoidance_speed", "max_resonance_avoidance_speed",
-    // Orca: input shaping
+    // MeshForge: input shaping
     "input_shaping_emit", "input_shaping_type", "input_shaping_freq_x", "input_shaping_freq_y", "input_shaping_damp_x", "input_shaping_damp_y",
 };
 
@@ -1625,7 +1625,7 @@ void PresetCollection::load_presets(
                     if (key_values.find(BBL_JSON_KEY_INSTANTIATION) != key_values.end())
                         preset.is_visible = key_values[BBL_JSON_KEY_INSTANTIATION] != "false";
 
-                    //Orca: find and use the inherit config as the base
+                    // MeshForge: find and use the inherit config as the base
                     Preset* inherit_preset = nullptr;
                     ConfigOption* inherits_config = config.option(BBL_JSON_KEY_INHERITS);
 
@@ -1633,7 +1633,7 @@ void PresetCollection::load_presets(
                     if (inherits_config) {
                         ConfigOptionString * option_str = dynamic_cast<ConfigOptionString *> (inherits_config);
                         std::string inherits_value = option_str->value;
-                        // Orca: try to find if the parent preset has been renamed
+                        // MeshForge: try to find if the parent preset has been renamed
                         inherit_preset = this->find_preset2(inherits_value);
                     } else {
                         ;
@@ -1839,7 +1839,7 @@ int PresetCollection::get_differed_values_to_update(Preset& preset, std::map<std
     }
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << " uploading user preset name is: " << preset.name << "and create filament_id is: " << preset.filament_id
                             << " and base_id is: " << preset.base_id;
-    key_values[ORCA_JSON_KEY_UPDATE_TIME] = std::to_string(preset.updated_time);
+    key_values[MESHFORGE_JSON_KEY_UPDATE_TIME] = std::to_string(preset.updated_time);
     key_values[BBL_JSON_KEY_TYPE] = Preset::get_iot_type_string(preset.type);
     return 0;
 }
@@ -2146,8 +2146,8 @@ bool PresetCollection::load_user_preset(std::string name, std::map<std::string, 
 
     //update_time
     long long cloud_update_time = 0;
-    if (preset_values.find(ORCA_JSON_KEY_UPDATE_TIME) != preset_values.end()) {
-        cloud_update_time = std::atoll(preset_values[ORCA_JSON_KEY_UPDATE_TIME].c_str());
+    if (preset_values.find(MESHFORGE_JSON_KEY_UPDATE_TIME) != preset_values.end()) {
+        cloud_update_time = std::atoll(preset_values[MESHFORGE_JSON_KEY_UPDATE_TIME].c_str());
     }
 
     //user_id
@@ -2411,7 +2411,7 @@ std::pair<Preset*, bool> PresetCollection::load_external_preset(
 {
     // Load the preset over a default preset, so that the missing fields are filled in from the default preset.
     DynamicPrintConfig cfg(this->default_preset_for(combined_config).config);
-    // SoftFever: ignore print connection info from project
+    // MeshForge: ignore print connection info from project
     auto        keys = cfg.keys();
     keys.erase(std::remove_if(keys.begin(), keys.end(),
                               [](std::string &val) {
@@ -2930,7 +2930,7 @@ bool PresetCollection::delete_preset(const std::string& name, bool force)
         return false;
 
     Preset& preset = *it;
-    // ORCA: if the preset can't be overridden then don't allow deletion
+    // MeshForge: if the preset can't be overridden then don't allow deletion
     // force=true bypasses this for bundle preset cleanup from cloud sync
     if (!force && !preset.can_overwrite())
         return false;
@@ -3122,7 +3122,7 @@ Preset* PresetCollection::find_preset2(const std::string& name, bool auto_match/
         if (_name != nullptr)
             preset = find_preset(*_name, false, true);
         if (auto_match && preset == nullptr) {
-            //Orca: one more try, find the most likely preset in OrcaFilamentLibrary
+            // MeshForge: one more try, find the most likely preset in OrcaFilamentLibrary
             if (name.find("Generic") != std::string::npos) {
                 // The regex pattern matches an optional prefix ending in '_' then "Generic" followed by the material name.
                 std::regex re(R"(^(?:.*?\b(?:\w+_)?)(Generic)\b\s+([^@]+?)\s*(?:@.*)?$)");
@@ -3146,7 +3146,7 @@ size_t PresetCollection::first_visible_idx() const
     size_t first_visible = -1;
     size_t idx = m_default_suppressed ? m_num_default_presets : 0;
     for (; idx < m_presets.size(); ++ idx)
-        if (m_presets[idx].is_visible && m_presets[idx].get_printer_id() == PresetBundle::ORCA_FILAMENT_LIBRARY) {
+        if (m_presets[idx].is_visible && m_presets[idx].get_printer_id() == PresetBundle::MESHFORGE_FILAMENT_LIBRARY) {
             if (first_visible == -1)
                 first_visible = idx;
             if (m_type != Preset::TYPE_FILAMENT)
@@ -3594,10 +3594,10 @@ void PresetCollection::update_map_alias_to_profile_name()
 
 void PresetCollection::update_library_profile_excluded_from()
 {
-    // Orca: Collect all filament presets that has empty compatible_printers and belongs to the Orca Filament Library.
+    // MeshForge: Collect all filament presets that has empty compatible_printers and belongs to the Orca Filament Library.
     std::map<std::string, std::set<std::string>*> excluded_froms;
     for (Preset& preset : m_presets) {
-        if (preset.vendor != nullptr && preset.vendor->name == PresetBundle::ORCA_FILAMENT_LIBRARY) {
+        if (preset.vendor != nullptr && preset.vendor->name == PresetBundle::MESHFORGE_FILAMENT_LIBRARY) {
             // check if the preset has empty compatible_printers
             const auto* compatible_printers = dynamic_cast<const ConfigOptionStrings*>(preset.config.option("compatible_printers"));
             if (compatible_printers == nullptr || compatible_printers->values.empty())
@@ -3607,7 +3607,7 @@ void PresetCollection::update_library_profile_excluded_from()
 
     // Check all presets that has the same alias as the filament presets with empty compatible_printers in Orca Filament Library.
     for (const Preset& preset : m_presets) {
-        if (preset.vendor == nullptr || preset.vendor->name == PresetBundle::ORCA_FILAMENT_LIBRARY)
+        if (preset.vendor == nullptr || preset.vendor->name == PresetBundle::MESHFORGE_FILAMENT_LIBRARY)
             continue;
 
         const auto* compatible_printers = dynamic_cast<const ConfigOptionStrings*>(preset.config.option("compatible_printers"));

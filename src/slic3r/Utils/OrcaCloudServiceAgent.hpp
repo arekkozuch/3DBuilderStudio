@@ -1,5 +1,5 @@
-#ifndef __ORCA_CLOUD_SERVICE_AGENT_HPP__
-#define __ORCA_CLOUD_SERVICE_AGENT_HPP__
+#ifndef __MESHFORGE_CLOUD_SERVICE_AGENT_HPP__
+#define __MESHFORGE_CLOUD_SERVICE_AGENT_HPP__
 
 #include "ICloudServiceAgent.hpp"
 #include <string>
@@ -33,8 +33,8 @@ namespace auth_constants {
 // ============================================================================
 // Note: These may also be defined in OrcaNetwork.hpp - guards prevent redefinition
 
-#ifndef ORCA_SYNC_STRUCTS_DEFINED
-#define ORCA_SYNC_STRUCTS_DEFINED
+#ifndef MESHFORGE_SYNC_STRUCTS_DEFINED
+#define MESHFORGE_SYNC_STRUCTS_DEFINED
 
 struct ProfileUpsert {
     std::string id;
@@ -63,7 +63,7 @@ struct SyncState {
     long long last_sync_timestamp;
 };
 
-#endif // ORCA_SYNC_STRUCTS_DEFINED
+#endif // MESHFORGE_SYNC_STRUCTS_DEFINED
 
 /**
  * OrcaCloudServiceAgent - Native cloud service and authentication implementation for Orca Cloud.
@@ -111,7 +111,7 @@ public:
     explicit OrcaCloudServiceAgent(std::string log_dir);
     ~OrcaCloudServiceAgent() override;
 
-    std::string get_id() const override { return ORCA_CLOUD_PROVIDER; }
+    std::string get_id() const override { return MESHFORGE_CLOUD_PROVIDER; }
 
     // Configuration
     void configure_urls(AppConfig* app_config);
@@ -369,4 +369,4 @@ private:
 
 } // namespace Slic3r
 
-#endif // __ORCA_CLOUD_SERVICE_AGENT_HPP__
+#endif // __MESHFORGE_CLOUD_SERVICE_AGENT_HPP__

@@ -102,7 +102,7 @@ These are legally required. Do not remove them.
 
 **Verification command** (run before every PR):
 ```bash
-grep -ri "bambu\|orca\|softfever\|prusaslicer" \
+grep -riP "\b(bambu|orca|softfever|prusaslicer)\b" \
   --include="*.cpp" --include="*.h" --include="*.mm" \
   --exclude-dir=deps src/ \
   | grep -iv "copyright\|license\|based on\|adapted from\|originally"

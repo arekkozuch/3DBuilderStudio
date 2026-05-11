@@ -1,4 +1,4 @@
-#include "OrcaCloudServiceAgent.hpp"
+#include "MeshForgeCloudServiceAgent.hpp"
 #include "Http.hpp"
 #include "libslic3r/Utils.hpp"
 #include "slic3r/GUI/GUI_App.hpp"
@@ -47,30 +47,30 @@ using json = nlohmann::json;
 namespace Slic3r {
 
 namespace {
-constexpr const char* ORCA_DEFAULT_API_URL = "api.orcaslicer.com";
-constexpr const char* ORCA_DEFAULT_AUTH_URL = "https://auth.orcaslicer.com";
-constexpr const char* ORCA_DEFAULT_CLOUD_URL = "https://cloud.orcaslicer.com";
-// Orca: This is a public key with no secret, used to identify the client application to the backend.
-constexpr const char* ORCA_DEFAULT_PUB_KEY = "sb_publishable_lvVe_whOi80SU9BPSxM1kA_tbt9AbR_";
+constexpr const char* MESHFORGE_DEFAULT_API_URL = "api.meshforge.com";
+constexpr const char* MESHFORGE_DEFAULT_AUTH_URL = "https://auth.meshforge.com";
+constexpr const char* MESHFORGE_DEFAULT_CLOUD_URL = "https://cloud.meshforge.com";
+// MeshForge: This is a public key with no secret, used to identify the client application to the backend.
+constexpr const char* MESHFORGE_DEFAULT_PUB_KEY = "sb_publishable_lvVe_whOi80SU9BPSxM1kA_tbt9AbR_";
 
-constexpr const char* ORCA_HEALTH_PATH = "/api/v1/health";
-constexpr const char* ORCA_SYNC_PULL_PATH = "/api/v1/sync/pull";
-constexpr const char* ORCA_SYNC_PUSH_PATH = "/api/v1/sync/push";
-constexpr const char* ORCA_SYNC_DELETE_PATH = "/api/v1/sync/delete";
-constexpr const char* ORCA_PROFILES_PATH = "/api/v1/sync/profiles";
-constexpr const char* ORCA_SUBSCRIPTIONS_PATH = "/api/v1/subscriptions";
-constexpr const char* ORCA_SYNC_STATE_FILE = "sync_state";
-constexpr const char* ORCA_SYNC_PROFILE_TABLE = "profiles";
-constexpr size_t ORCA_SYNC_MAX_PAYLOAD_SIZE = 1048576; // 1MB size limit
+constexpr const char* MESHFORGE_HEALTH_PATH = "/api/v1/health";
+constexpr const char* MESHFORGE_SYNC_PULL_PATH = "/api/v1/sync/pull";
+constexpr const char* MESHFORGE_SYNC_PUSH_PATH = "/api/v1/sync/push";
+constexpr const char* MESHFORGE_SYNC_DELETE_PATH = "/api/v1/sync/delete";
+constexpr const char* MESHFORGE_PROFILES_PATH = "/api/v1/sync/profiles";
+constexpr const char* MESHFORGE_SUBSCRIPTIONS_PATH = "/api/v1/subscriptions";
+constexpr const char* MESHFORGE_SYNC_STATE_FILE = "sync_state";
+constexpr const char* MESHFORGE_SYNC_PROFILE_TABLE = "profiles";
+constexpr size_t MESHFORGE_SYNC_MAX_PAYLOAD_SIZE = 1048576; // 1MB size limit
 
-constexpr const char* ORCA_CLOUD_LOGIN_PATH = "/orcaslicer-login";
+constexpr const char* MESHFORGE_CLOUD_LOGIN_PATH = "/meshforge-login";
 
-constexpr const char* CONFIG_ORCA_API_URL = "orca_api_url";
-constexpr const char* CONFIG_ORCA_AUTH_URL = "orca_auth_url";
-constexpr const char* CONFIG_ORCA_CLOUD_URL = "orca_cloud_url";
-constexpr const char* CONFIG_ORCA_PUB_KEY = "orca_pub_key";
+constexpr const char* CONFIG_MESHFORGE_API_URL = "orca_api_url";
+constexpr const char* CONFIG_MESHFORGE_AUTH_URL = "orca_auth_url";
+constexpr const char* CONFIG_MESHFORGE_CLOUD_URL = "orca_cloud_url";
+constexpr const char* CONFIG_MESHFORGE_PUB_KEY = "orca_pub_key";
 
-constexpr const char* SECRET_STORE_SERVICE = "OrcaSlicer/Auth";
+constexpr const char* SECRET_STORE_SERVICE = "MeshForge/Auth";
 constexpr const char* SECRET_STORE_USER    = "orca_refresh_token";
 constexpr std::chrono::seconds TOKEN_REFRESH_SKEW{900}; // 15 minutes
 
@@ -158,7 +158,7 @@ std::string sha256_base64url(const std::string& input)
 
 std::string os_machine_id()
 {
-    // Orca: OS-level identifiers that live outside data_dir, so a copied data_dir
+    // MeshForge: OS-level identifiers that live outside data_dir, so a copied data_dir
     // on another machine yields a different key and the stored refresh
     // token silently fails to decrypt (forcing a normal sign-in).
 #if defined(__linux__)
@@ -266,14 +266,14 @@ int choose_loopback_port()
 {
     int base_port = auth_constants::LOOPBACK_PORT;
 
-    if (const char* env_port = std::getenv("ORCA_LOOPBACK_PORT")) {
+    if (const char* env_port = std::getenv("MESHFORGE_LOOPBACK_PORT")) {
         try {
             int parsed = std::stoi(env_port);
             if (parsed > 0 && parsed <= 65535) {
                 base_port = parsed;
             }
         } catch (...) {
-            BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: invalid ORCA_LOOPBACK_PORT value, falling back to default";
+            BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: invalid MESHFORGE_LOOPBACK_PORT value, falling back to default";
         }
     }
 
@@ -367,11 +367,11 @@ bool aes256gcm_decrypt(const std::string& b64_payload, const std::vector<unsigne
 
 OrcaCloudServiceAgent::OrcaCloudServiceAgent(std::string log_dir)
     : log_dir(std::move(log_dir))
-    , api_base_url(ORCA_DEFAULT_API_URL)
-    , auth_base_url(ORCA_DEFAULT_AUTH_URL)
-    , cloud_base_url(ORCA_DEFAULT_CLOUD_URL)
+    , api_base_url(MESHFORGE_DEFAULT_API_URL)
+    , auth_base_url(MESHFORGE_DEFAULT_AUTH_URL)
+    , cloud_base_url(MESHFORGE_DEFAULT_CLOUD_URL)
 {
-    auth_headers["apikey"] = ORCA_DEFAULT_PUB_KEY;
+    auth_headers["apikey"] = MESHFORGE_DEFAULT_PUB_KEY;
     pkce_bundle.loopback_port = choose_loopback_port();
     update_redirect_uri();
     regenerate_pkce();
@@ -392,22 +392,22 @@ void OrcaCloudServiceAgent::configure_urls(AppConfig* app_config)
     // Read token storage preference
     m_use_encrypted_token_file = app_config->get_bool(SETTING_USE_ENCRYPTED_TOKEN_FILE);
 
-    std::string api_url = app_config->get(CONFIG_ORCA_API_URL);
+    std::string api_url = app_config->get(CONFIG_MESHFORGE_API_URL);
     if (!api_url.empty()) {
         api_base_url = api_url;
     }
 
-    std::string auth_url = app_config->get(CONFIG_ORCA_AUTH_URL);
+    std::string auth_url = app_config->get(CONFIG_MESHFORGE_AUTH_URL);
     if (!auth_url.empty()) {
         auth_base_url = auth_url;
     }
 
-    std::string cloud_url = app_config->get(CONFIG_ORCA_CLOUD_URL);
+    std::string cloud_url = app_config->get(CONFIG_MESHFORGE_CLOUD_URL);
     if (!cloud_url.empty()) {
         cloud_base_url = cloud_url;
     }
 
-    std::string pub_key = app_config->get(CONFIG_ORCA_PUB_KEY);
+    std::string pub_key = app_config->get(CONFIG_MESHFORGE_PUB_KEY);
     if (!pub_key.empty()) {
         auth_headers["apikey"] = pub_key;
     }
@@ -542,7 +542,7 @@ int OrcaCloudServiceAgent::change_user(std::string user_info)
         std::string command = safe_str(tree, "command");
         if (command == "user_login") {
             if (!tree.contains("data") || !tree["data"].is_object()) {
-                BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: WebView login payload missing data field";
+                BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: WebView login payload missing data field";
                 return BAMBU_NETWORK_ERR_INVALID_HANDLE;
             }
             const auto& data = tree["data"];
@@ -596,11 +596,11 @@ int OrcaCloudServiceAgent::change_user(std::string user_info)
                 ? BAMBU_NETWORK_SUCCESS : BAMBU_NETWORK_ERR_INVALID_HANDLE;
         }
 
-        BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: Username/password login is disabled. Use the Orca cloud PKCE flow.";
+        BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: Username/password login is disabled. Use the MeshForge cloud PKCE flow.";
         return BAMBU_NETWORK_ERR_INVALID_HANDLE;
 
     } catch (const std::exception& e) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: change_user exception - " << e.what();
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: change_user exception - " << e.what();
         return BAMBU_NETWORK_ERR_INVALID_RESULT;
     }
 }
@@ -634,7 +634,7 @@ int OrcaCloudServiceAgent::user_logout(bool request)
 
             int result = http_post_auth(auth_constants::LOGOUT_PATH, logout_req.dump(), &response, &http_code) ? BAMBU_NETWORK_SUCCESS : BAMBU_NETWORK_ERR_INVALID_HANDLE;
             if (result != BAMBU_NETWORK_SUCCESS || http_code >= 400) {
-                BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: Orca cloud logout request failed - http_code=" << http_code;
+                BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: MeshForge cloud logout request failed - http_code=" << http_code;
             }
         }
     }
@@ -768,7 +768,7 @@ int OrcaCloudServiceAgent::connect_server()
 {
     std::string response;
     unsigned int http_code = 0;
-    int result = http_get(ORCA_HEALTH_PATH, &response, &http_code);
+    int result = http_get(MESHFORGE_HEALTH_PATH, &response, &http_code);
 
     bool connected = (result == BAMBU_NETWORK_SUCCESS && http_code >= 200 && http_code < 300);
     {
@@ -830,7 +830,7 @@ int OrcaCloudServiceAgent::get_user_presets(std::map<std::string, std::map<std::
     if (!user_presets) return BAMBU_NETWORK_ERR_INVALID_HANDLE;
 
     if (!is_user_login()) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: Not logged in";
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: Not logged in";
         return BAMBU_NETWORK_ERR_INVALID_HANDLE;
     }
 
@@ -862,8 +862,8 @@ int OrcaCloudServiceAgent::get_user_presets(std::map<std::string, std::map<std::
             if (value_map.find(BBL_JSON_KEY_USER_ID) == value_map.end()) {
                 value_map[BBL_JSON_KEY_USER_ID] = current_user_id;
             }
-            if (value_map.find(ORCA_JSON_KEY_UPDATE_TIME) == value_map.end()) {
-                value_map[ORCA_JSON_KEY_UPDATE_TIME] = std::to_string(upsert.updated_time);
+            if (value_map.find(MESHFORGE_JSON_KEY_UPDATE_TIME) == value_map.end()) {
+                value_map[MESHFORGE_JSON_KEY_UPDATE_TIME] = std::to_string(upsert.updated_time);
             }
 
             // Use preset name from content or fallback to upsert.name or upsert.id
@@ -908,7 +908,7 @@ std::string OrcaCloudServiceAgent::request_setting_id(std::string name, std::map
 {
     std::string new_id = generate_uuid_for_setting_id(name, get_user_id());
     if (new_id.empty()) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: request_setting_id failed - name is empty";
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: request_setting_id failed - name is empty";
         return "";
     }
 
@@ -935,7 +935,7 @@ std::string OrcaCloudServiceAgent::request_setting_id(std::string name, std::map
         return new_id;
     }
 
-    BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: request_setting_id failed - " << result.error_message << " - http code: " << result.http_code;
+    BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: request_setting_id failed - " << result.error_message << " - http code: " << result.http_code;
     return "";
 }
 
@@ -978,11 +978,11 @@ int OrcaCloudServiceAgent::put_setting(std::string setting_id, std::string name,
         if (values_map && result.server_version.updated_time != 0) {
             (*values_map)[IOT_JSON_KEY_UPDATED_TIME] = std::to_string(result.server_version.updated_time);
         }
-        BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: put_setting conflict - server_updated_time="
+        BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: put_setting conflict - server_updated_time="
                                    << result.server_version.updated_time;
     }
 
-    BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: put_setting failed - " << result.error_message;
+    BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: put_setting failed - " << result.error_message;
     return BAMBU_NETWORK_ERR_PUT_SETTING_FAILED;
 }
 
@@ -1089,7 +1089,7 @@ int OrcaCloudServiceAgent::get_setting_list2(std::string bundle_version, CheckFn
 
 int OrcaCloudServiceAgent::delete_setting(std::string setting_id)
 {
-    std::string path = std::string(ORCA_SYNC_DELETE_PATH) + "?resource=" + ORCA_SYNC_PROFILE_TABLE + "&id=" + setting_id;
+    std::string path = std::string(MESHFORGE_SYNC_DELETE_PATH) + "?resource=" + MESHFORGE_SYNC_PROFILE_TABLE + "&id=" + setting_id;
     std::string response;
     unsigned int http_code = 0;
 
@@ -1115,7 +1115,7 @@ int OrcaCloudServiceAgent::sync_pull(
     std::function<void(const SyncPullResponse&)> on_success,
     std::function<void(int http_code, const std::string& error)> on_error)
 {
-    std::string path = ORCA_SYNC_PULL_PATH;
+    std::string path = MESHFORGE_SYNC_PULL_PATH;
     if (sync_state.last_sync_timestamp != 0) {
         path += "?cursor=" + std::to_string(sync_state.last_sync_timestamp);
     }
@@ -1126,15 +1126,15 @@ int OrcaCloudServiceAgent::sync_pull(
 
     // Handle 410 Gone - cursor too old, need full resync
     if (http_code == 410) {
-        BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: sync_pull returned 410 Gone - cursor too old, triggering full resync";
+        BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: sync_pull returned 410 Gone - cursor too old, triggering full resync";
         clear_sync_state();
         // Retry without cursor
-        path = ORCA_SYNC_PULL_PATH;
+        path = MESHFORGE_SYNC_PULL_PATH;
         result = http_get(path, &response, &http_code);
     }
 
     if (result != BAMBU_NETWORK_SUCCESS || (http_code != 200 && http_code != 304)) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: sync_pull failed - http_code=" << http_code << " - path=" << path;
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: sync_pull failed - http_code=" << http_code << " - path=" << path;
         if (on_error) on_error(http_code, response);
         return BAMBU_NETWORK_ERR_GET_SETTING_LIST_FAILED;
     }
@@ -1157,8 +1157,8 @@ int OrcaCloudServiceAgent::sync_pull(
                 ProfileUpsert upsert;
                 upsert.id = item.value("id", "");
                 upsert.name = item.value("name", "");
-                upsert.updated_time = item.value(ORCA_JSON_KEY_UPDATE_TIME, 0);
-                upsert.created_time = item.value(ORCA_JSON_KEY_CREATED_TIME, 0);
+                upsert.updated_time = item.value(MESHFORGE_JSON_KEY_UPDATE_TIME, 0);
+                upsert.created_time = item.value(MESHFORGE_JSON_KEY_CREATED_TIME, 0);
                 if (item.contains("content")) {
                     upsert.content = item["content"];
                 }
@@ -1176,7 +1176,7 @@ int OrcaCloudServiceAgent::sync_pull(
         return BAMBU_NETWORK_SUCCESS;
 
     } catch (const std::exception& e) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: sync_pull parse error - " << e.what();
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: sync_pull parse error - " << e.what();
         if (on_error) on_error(http_code, e.what());
         return BAMBU_NETWORK_ERR_INVALID_RESULT;
     }
@@ -1203,21 +1203,21 @@ SyncPushResult OrcaCloudServiceAgent::sync_push(
 
     // Validate payload size before upload
     std::string body_str = body.dump();
-    if (body_str.size() > ORCA_SYNC_MAX_PAYLOAD_SIZE) {
+    if (body_str.size() > MESHFORGE_SYNC_MAX_PAYLOAD_SIZE) {
         result.http_code = 413; // HTTP 413 Payload Too Large
         result.success = false;
         result.error_message = "Preset content exceeds 1MB size limit (actual: " +
                               std::to_string(body_str.size()) + " bytes)";
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: sync_push payload too large - "
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: sync_push payload too large - "
                                  << "size=" << body_str.size() << " bytes, "
-                                 << "limit=" << ORCA_SYNC_MAX_PAYLOAD_SIZE << " bytes, "
+                                 << "limit=" << MESHFORGE_SYNC_MAX_PAYLOAD_SIZE << " bytes, "
                                  << "profile_id=" << profile_id;
         return result;
     }
 
     std::string response;
     unsigned int http_code = 0;
-    int http_result = http_post(ORCA_SYNC_PUSH_PATH, body_str, &response, &http_code);
+    int http_result = http_post(MESHFORGE_SYNC_PUSH_PATH, body_str, &response, &http_code);
 
     result.http_code = http_code;
 
@@ -1231,7 +1231,7 @@ SyncPushResult OrcaCloudServiceAgent::sync_push(
                 auto& profile_data = json["server_profile"];
                 result.server_version.id = profile_data.value("id", "");
                 result.server_version.name = profile_data.value("name", "");
-                result.server_version.updated_time = profile_data.value(ORCA_JSON_KEY_UPDATE_TIME, 0);
+                result.server_version.updated_time = profile_data.value(MESHFORGE_JSON_KEY_UPDATE_TIME, 0);
             }
         } catch (...) {}
         result.error_message = response;
@@ -1246,7 +1246,7 @@ SyncPushResult OrcaCloudServiceAgent::sync_push(
     // Success
     try {
         auto json = nlohmann::json::parse(response);
-        result.new_updated_time = json.value(ORCA_JSON_KEY_UPDATE_TIME, 0);
+        result.new_updated_time = json.value(MESHFORGE_JSON_KEY_UPDATE_TIME, 0);
         if (result.new_updated_time != 0) {
             result.success = true;
         } else {
@@ -1364,13 +1364,13 @@ void OrcaCloudServiceAgent::persist_refresh_token(const std::string& token)
         // Use encrypted file only
         auto key = sha256_bytes(get_encryption_key());
         if (key.empty()) {
-            BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: cannot derive key for refresh-token file storage";
+            BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: cannot derive key for refresh-token file storage";
             return;
         }
 
         std::string payload;
         if (!aes256gcm_encrypt(token, key, payload)) {
-            BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: failed to encrypt refresh token for file storage";
+            BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: failed to encrypt refresh token for file storage";
             return;
         }
 
@@ -1397,10 +1397,10 @@ void OrcaCloudServiceAgent::persist_refresh_token(const std::string& token)
                 stored = true;
             } else {
                 wxRemoveFile(wxString::FromUTF8(tmp_path.c_str()));
-                BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: failed to atomically replace refresh-token file";
+                BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: failed to atomically replace refresh-token file";
             }
         } else {
-            BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: cannot open refresh-token file for write - " << refresh_fallback_path;
+            BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: cannot open refresh-token file for write - " << refresh_fallback_path;
         }
     } else {
         // Use wxSecretStore only
@@ -1410,10 +1410,10 @@ void OrcaCloudServiceAgent::persist_refresh_token(const std::string& token)
             if (store.Save(SECRET_STORE_SERVICE, SECRET_STORE_USER, secret)) {
                 stored = true;
             } else {
-                BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: System Keychain save failed";
+                BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: System Keychain save failed";
             }
         } else {
-            BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: System Keychain not available";
+            BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: System Keychain not available";
         }
     }
 
@@ -1450,7 +1450,7 @@ bool OrcaCloudServiceAgent::load_refresh_token(std::string& out_token)
                         std::transform(computed_hmac.begin(), computed_hmac.end(), computed_hmac.begin(), ::tolower);
                         if (computed_hmac.empty() || computed_hmac != lower_stored) {
                             integrity_ok = false;
-                            BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: refresh token integrity check failed (HMAC mismatch)";
+                            BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: refresh token integrity check failed (HMAC mismatch)";
                         }
                     }
                 }
@@ -1531,7 +1531,7 @@ bool OrcaCloudServiceAgent::decode_jwt_expiry(const std::string& token, std::chr
             return true;
         }
     } catch (const std::exception& e) {
-        BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: failed to decode JWT exp - " << e.what();
+        BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: failed to decode JWT exp - " << e.what();
     }
     return false;
 }
@@ -1542,7 +1542,7 @@ bool OrcaCloudServiceAgent::refresh_now(const std::string& refresh_token, const 
 
     bool expected = false;
     if (!refresh_running.compare_exchange_strong(expected, true)) {
-        BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: refresh already running, skip (reason=" << reason << ")";
+        BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: refresh already running, skip (reason=" << reason << ")";
         return false;
     }
 
@@ -1571,7 +1571,7 @@ bool OrcaCloudServiceAgent::refresh_from_storage(const std::string& reason, bool
         load_refresh_token(refresh_token);
     }
     if (refresh_token.empty()) {
-        BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: no refresh token available for refresh (reason=" << reason << ")";
+        BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: no refresh token available for refresh (reason=" << reason << ")";
         return false;
     }
 
@@ -1602,7 +1602,7 @@ bool OrcaCloudServiceAgent::refresh_session_with_token(const std::string& refres
     unsigned int http_code = 0;
     if (!http_post_token(body, &response, &http_code, url) || http_code >= 400) {
         std::string truncated_response = response.size() > 200 ? response.substr(0, 200) + "..." : response;
-        BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: token refresh failed - http_code=" << http_code
+        BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: token refresh failed - http_code=" << http_code
                                    << ", response_body=" << truncated_response;
         return false;
     }
@@ -1616,7 +1616,7 @@ bool OrcaCloudServiceAgent::refresh_session_with_token(const std::string& refres
     try {
         return set_user_session(json::parse(response));
     } catch (const std::exception& e) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: token refresh parse exception - " << e.what();
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: token refresh parse exception - " << e.what();
         return false;
     }
 }
@@ -1657,11 +1657,11 @@ bool OrcaCloudServiceAgent::set_user_session(const std::string& token,
         if (!boost::filesystem::exists(user_dir)) {
             boost::filesystem::create_directories(user_dir);
         }
-        sync_state_path = (user_dir / ORCA_SYNC_STATE_FILE).string();
+        sync_state_path = (user_dir / MESHFORGE_SYNC_STATE_FILE).string();
         load_sync_state();
     }
 
-    BOOST_LOG_TRIVIAL(info) << "OrcaCloudServiceAgent: set_user_session - user_id=" << user_id << ", username=" << username;
+    BOOST_LOG_TRIVIAL(info) << "MeshForgeCloudServiceAgent: set_user_session - user_id=" << user_id << ", username=" << username;
     return true;
 }
 
@@ -1711,7 +1711,7 @@ bool OrcaCloudServiceAgent::set_user_session(const json& session_json, bool noti
     }
 
     if (access_token.empty() || user_id.empty()) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: session payload missing access_token or user id";
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: session payload missing access_token or user id";
         return false;
     }
 
@@ -1759,7 +1759,7 @@ std::map<std::string, std::string> OrcaCloudServiceAgent::data_headers()
 int OrcaCloudServiceAgent::http_get(const std::string& path, std::string* response_body, unsigned int* http_code)
 {
     std::string url = api_base_url + path;
-    BOOST_LOG_TRIVIAL(trace) << "OrcaCloudServiceAgent: GET " << url;
+    BOOST_LOG_TRIVIAL(trace) << "MeshForgeCloudServiceAgent: GET " << url;
 
     ensure_token_fresh("http_get_" + path);
 
@@ -1800,7 +1800,7 @@ int OrcaCloudServiceAgent::http_get(const std::string& path, std::string* respon
                 .perform_sync();
 
         } catch (const std::exception& e) {
-            BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: http_get exception - " << e.what();
+            BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: http_get exception - " << e.what();
         }
         return result;
     };
@@ -1825,7 +1825,7 @@ int OrcaCloudServiceAgent::http_get(const std::string& path, std::string* respon
 int OrcaCloudServiceAgent::http_post(const std::string& path, const std::string& body, std::string* response_body, unsigned int* http_code)
 {
     std::string url = api_base_url + path;
-    BOOST_LOG_TRIVIAL(trace) << "OrcaCloudServiceAgent: POST " << url;
+    BOOST_LOG_TRIVIAL(trace) << "MeshForgeCloudServiceAgent: POST " << url;
 
     ensure_token_fresh("http_post_" + path);
 
@@ -1869,7 +1869,7 @@ int OrcaCloudServiceAgent::http_post(const std::string& path, const std::string&
                 .perform_sync();
 
         } catch (const std::exception& e) {
-            BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: http_post exception - " << e.what();
+            BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: http_post exception - " << e.what();
         }
         return result;
     };
@@ -1894,7 +1894,7 @@ int OrcaCloudServiceAgent::http_post(const std::string& path, const std::string&
 int OrcaCloudServiceAgent::http_put(const std::string& path, const std::string& body, std::string* response_body, unsigned int* http_code)
 {
     std::string url = api_base_url + path;
-    BOOST_LOG_TRIVIAL(trace) << "OrcaCloudServiceAgent: PUT " << url;
+    BOOST_LOG_TRIVIAL(trace) << "MeshForgeCloudServiceAgent: PUT " << url;
 
     ensure_token_fresh("http_put_" + path);
 
@@ -1938,7 +1938,7 @@ int OrcaCloudServiceAgent::http_put(const std::string& path, const std::string& 
                 .perform_sync();
 
         } catch (const std::exception& e) {
-            BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: http_put exception - " << e.what();
+            BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: http_put exception - " << e.what();
         }
         return result;
     };
@@ -1963,7 +1963,7 @@ int OrcaCloudServiceAgent::http_put(const std::string& path, const std::string& 
 int OrcaCloudServiceAgent::http_delete(const std::string& path, std::string* response_body, unsigned int* http_code)
 {
     std::string url = api_base_url + path;
-    BOOST_LOG_TRIVIAL(trace) << "OrcaCloudServiceAgent: DELETE " << url;
+    BOOST_LOG_TRIVIAL(trace) << "MeshForgeCloudServiceAgent: DELETE " << url;
 
     ensure_token_fresh("http_delete_" + path);
 
@@ -2004,7 +2004,7 @@ int OrcaCloudServiceAgent::http_delete(const std::string& path, std::string* res
                 .perform_sync();
 
         } catch (const std::exception& e) {
-            BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: http_delete exception - " << e.what();
+            BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: http_delete exception - " << e.what();
         }
         return result;
     };
@@ -2044,7 +2044,7 @@ bool OrcaCloudServiceAgent::http_post_token(const std::string& body, std::string
         }
     }
 
-    BOOST_LOG_TRIVIAL(trace) << "OrcaCloudServiceAgent: POST " << url;
+    BOOST_LOG_TRIVIAL(trace) << "MeshForgeCloudServiceAgent: POST " << url;
 
     bool has_apikey = false;
     for (const auto& pair : headers_copy) {
@@ -2052,7 +2052,7 @@ bool OrcaCloudServiceAgent::http_post_token(const std::string& body, std::string
             has_apikey = true;
     }
     if (!has_apikey) {
-        BOOST_LOG_TRIVIAL(warning) << "OrcaCloudServiceAgent: http_post_token - apikey header MISSING! Token request will likely fail.";
+        BOOST_LOG_TRIVIAL(warning) << "MeshForgeCloudServiceAgent: http_post_token - apikey header MISSING! Token request will likely fail.";
     }
 
     try {
@@ -2081,7 +2081,7 @@ bool OrcaCloudServiceAgent::http_post_token(const std::string& body, std::string
                 success   = false;
                 status    = resp_status;
                 resp_body = body;
-                BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: HTTP error - " << error;
+                BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: HTTP error - " << error;
             })
             .timeout_max(30)
             .perform_sync();
@@ -2093,7 +2093,7 @@ bool OrcaCloudServiceAgent::http_post_token(const std::string& body, std::string
         return success;
 
     } catch (const std::exception& e) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: http_post_token exception - " << e.what();
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: http_post_token exception - " << e.what();
         if (http_code)
             *http_code = 0;
         return false;
@@ -2120,7 +2120,7 @@ bool OrcaCloudServiceAgent::http_post_auth(const std::string& path, const std::s
         }
     }
 
-    BOOST_LOG_TRIVIAL(trace) << "OrcaCloudServiceAgent: POST (auth) " << url;
+    BOOST_LOG_TRIVIAL(trace) << "MeshForgeCloudServiceAgent: POST (auth) " << url;
 
     try {
         auto http = Http::post(url);
@@ -2151,7 +2151,7 @@ bool OrcaCloudServiceAgent::http_post_auth(const std::string& path, const std::s
                 success   = false;
                 status    = resp_status;
                 resp_body = body;
-                BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: HTTP (auth) error - " << error;
+                BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: HTTP (auth) error - " << error;
             })
             .timeout_max(30)
             .perform_sync();
@@ -2163,7 +2163,7 @@ bool OrcaCloudServiceAgent::http_post_auth(const std::string& path, const std::s
         return success;
 
     } catch (const std::exception& e) {
-        BOOST_LOG_TRIVIAL(error) << "OrcaCloudServiceAgent: http_post_auth exception - " << e.what();
+        BOOST_LOG_TRIVIAL(error) << "MeshForgeCloudServiceAgent: http_post_auth exception - " << e.what();
         if (http_code)
             *http_code = 0;
         return false;
@@ -2220,7 +2220,7 @@ void OrcaCloudServiceAgent::invoke_server_connected_callback(int return_code, in
     }
 
     if (callback) {
-        CloudEvent event{ORCA_CLOUD_PROVIDER};
+        CloudEvent event{MESHFORGE_CLOUD_PROVIDER};
         if (queue_fn) {
             queue_fn([callback, event, return_code, reason_code]() {
                 callback(event, return_code, reason_code);
@@ -2242,7 +2242,7 @@ void OrcaCloudServiceAgent::invoke_http_error_callback(unsigned http_code, const
     }
 
     if (callback) {
-        CloudEvent event{ORCA_CLOUD_PROVIDER};
+        CloudEvent event{MESHFORGE_CLOUD_PROVIDER};
         if (queue_fn) {
             queue_fn([callback, event, http_code, http_body]() {
                 callback(event, http_code, http_body);
@@ -2291,7 +2291,7 @@ int OrcaCloudServiceAgent::set_queue_on_main_fn(QueueOnMainFn fn)
 
 int OrcaCloudServiceAgent::get_my_message(int type, int after, int limit, unsigned int* http_code, std::string* http_body)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_my_message (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_my_message (stub)";
     if (http_code) *http_code = 200;
     if (http_body) *http_body = "[]";
     return BAMBU_NETWORK_SUCCESS;
@@ -2299,7 +2299,7 @@ int OrcaCloudServiceAgent::get_my_message(int type, int after, int limit, unsign
 
 int OrcaCloudServiceAgent::check_user_task_report(int* task_id, bool* printable)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: check_user_task_report (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: check_user_task_report (stub)";
     if (task_id) *task_id = 0;
     if (printable) *printable = false;
     return BAMBU_NETWORK_SUCCESS;
@@ -2307,7 +2307,7 @@ int OrcaCloudServiceAgent::check_user_task_report(int* task_id, bool* printable)
 
 int OrcaCloudServiceAgent::get_user_print_info(unsigned int* http_code, std::string* http_body)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_user_print_info (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_user_print_info (stub)";
     if (http_code) *http_code = 200;
     if (http_body) *http_body = "{}";
     return BAMBU_NETWORK_SUCCESS;
@@ -2315,14 +2315,14 @@ int OrcaCloudServiceAgent::get_user_print_info(unsigned int* http_code, std::str
 
 int OrcaCloudServiceAgent::get_user_tasks(TaskQueryParams params, std::string* http_body)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_user_tasks (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_user_tasks (stub)";
     if (http_body) *http_body = "[]";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_printer_firmware(std::string dev_id, unsigned* http_code, std::string* http_body)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_printer_firmware (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_printer_firmware (stub)";
     if (http_code) *http_code = 200;
     if (http_body) *http_body = "{}";
     return BAMBU_NETWORK_SUCCESS;
@@ -2330,21 +2330,21 @@ int OrcaCloudServiceAgent::get_printer_firmware(std::string dev_id, unsigned* ht
 
 int OrcaCloudServiceAgent::get_task_plate_index(std::string task_id, int* plate_index)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_task_plate_index (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_task_plate_index (stub)";
     if (plate_index) *plate_index = 0;
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_user_info(int* identifier)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_user_info (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_user_info (stub)";
     if (identifier) *identifier = 0;
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_subtask_info(std::string subtask_id, std::string* task_json, unsigned int* http_code, std::string* http_body)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_subtask_info (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_subtask_info (stub)";
     if (task_json) *task_json = "{}";
     if (http_code) *http_code = 200;
     if (http_body) *http_body = "{}";
@@ -2353,14 +2353,14 @@ int OrcaCloudServiceAgent::get_subtask_info(std::string subtask_id, std::string*
 
 int OrcaCloudServiceAgent::get_slice_info(std::string project_id, std::string profile_id, int plate_index, std::string* slice_json)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_slice_info (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_slice_info (stub)";
     if (slice_json) *slice_json = "{}";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::query_bind_status(std::vector<std::string> query_list, unsigned int* http_code, std::string* http_body)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: query_bind_status (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: query_bind_status (stub)";
     if (http_code) *http_code = 200;
     if (http_body) *http_body = "{}";
     return BAMBU_NETWORK_SUCCESS;
@@ -2368,60 +2368,60 @@ int OrcaCloudServiceAgent::query_bind_status(std::vector<std::string> query_list
 
 int OrcaCloudServiceAgent::modify_printer_name(std::string dev_id, std::string dev_name)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: modify_printer_name (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: modify_printer_name (stub)";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_camera_url(std::string dev_id, std::function<void(std::string)> callback)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_camera_url (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_camera_url (stub)";
     if (callback) callback("");
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_design_staffpick(int offset, int limit, std::function<void(std::string)> callback)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_design_staffpick (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_design_staffpick (stub)";
     if (callback) callback("[]");
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::start_publish(PublishParams params, OnUpdateStatusFn update_fn, WasCancelledFn cancel_fn, std::string* out)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: start_publish (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: start_publish (stub)";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_model_publish_url(std::string* url)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_model_publish_url (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_model_publish_url (stub)";
     if (url) *url = "";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_subtask(BBLModelTask* task, OnGetSubTaskFn getsub_fn)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_subtask (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_subtask (stub)";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_model_mall_home_url(std::string* url)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_model_mall_home_url (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_model_mall_home_url (stub)";
     if (url) *url = "";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_model_mall_detail_url(std::string* url, std::string id)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_model_mall_detail_url (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_model_mall_detail_url (stub)";
     if (url) *url = "";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_my_profile(std::string token, unsigned int* http_code, std::string* http_body)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_my_profile (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_my_profile (stub)";
     if (http_code) *http_code = 200;
     if (http_body) *http_body = "{}";
     return BAMBU_NETWORK_SUCCESS;
@@ -2429,7 +2429,7 @@ int OrcaCloudServiceAgent::get_my_profile(std::string token, unsigned int* http_
 
 int OrcaCloudServiceAgent::get_my_token(std::string ticket, unsigned int* http_code, std::string* http_body)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_my_token (stub) - Orca cloud uses code-based OAuth, not tickets";
+    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_my_token (stub) - MeshForge cloud uses code-based OAuth, not tickets";
     if (http_code) *http_code = 0;
     if (http_body) *http_body = "";
     return -1;
@@ -2444,31 +2444,31 @@ int OrcaCloudServiceAgent::track_enable(bool enable)
 
 int OrcaCloudServiceAgent::track_remove_files()
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: track_remove_files (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: track_remove_files (stub)";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::track_event(std::string evt_key, std::string content)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: track_event (stub) - " << evt_key;
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: track_event (stub) - " << evt_key;
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::track_header(std::string header)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: track_header (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: track_header (stub)";
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::track_update_property(std::string name, std::string value, std::string type)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: track_update_property (stub) - " << name;
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: track_update_property (stub) - " << name;
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::track_get_property(std::string name, std::string& value, std::string type)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: track_get_property (stub) - " << name;
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: track_get_property (stub) - " << name;
     value = "";
     return BAMBU_NETWORK_SUCCESS;
 }
@@ -2481,14 +2481,14 @@ bool OrcaCloudServiceAgent::get_track_enable()
 
 int OrcaCloudServiceAgent::put_model_mall_rating(int design_id, int score, std::string content, std::vector<std::string> images, unsigned int& http_code, std::string& http_error)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: put_model_mall_rating (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: put_model_mall_rating (stub)";
     http_code = 200;
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_oss_config(std::string& config, std::string country_code, unsigned int& http_code, std::string& http_error)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_oss_config (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_oss_config (stub)";
     config = "{}";
     http_code = 200;
     return BAMBU_NETWORK_SUCCESS;
@@ -2496,14 +2496,14 @@ int OrcaCloudServiceAgent::get_oss_config(std::string& config, std::string count
 
 int OrcaCloudServiceAgent::put_rating_picture_oss(std::string& config, std::string& pic_oss_path, std::string model_id, int profile_id, unsigned int& http_code, std::string& http_error)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: put_rating_picture_oss (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: put_rating_picture_oss (stub)";
     http_code = 200;
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_model_mall_rating_result(int job_id, std::string& rating_result, unsigned int& http_code, std::string& http_error)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_model_mall_rating_result (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_model_mall_rating_result (stub)";
     rating_result = "{}";
     http_code = 200;
     return BAMBU_NETWORK_SUCCESS;
@@ -2516,7 +2516,7 @@ std::string OrcaCloudServiceAgent::get_cloud_service_host()
 
 std::string OrcaCloudServiceAgent::get_cloud_login_url(const std::string& language)
 {
-    std::string url = cloud_base_url + ORCA_CLOUD_LOGIN_PATH;
+    std::string url = cloud_base_url + MESHFORGE_CLOUD_LOGIN_PATH;
     if (!language.empty()) {
         url += "?lang=" + language;
     }
@@ -2525,21 +2525,21 @@ std::string OrcaCloudServiceAgent::get_cloud_login_url(const std::string& langua
 
 int OrcaCloudServiceAgent::get_mw_user_preference(std::function<void(std::string)> callback)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_mw_user_preference (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_mw_user_preference (stub)";
     if (callback) callback("{}");
     return BAMBU_NETWORK_SUCCESS;
 }
 
 int OrcaCloudServiceAgent::get_mw_user_4ulist(int seed, int limit, std::function<void(std::string)> callback)
 {
-    BOOST_LOG_TRIVIAL(debug) << "OrcaCloudServiceAgent: get_mw_user_4ulist (stub)";
+    BOOST_LOG_TRIVIAL(debug) << "MeshForgeCloudServiceAgent: get_mw_user_4ulist (stub)";
     if (callback) callback("[]");
     return BAMBU_NETWORK_SUCCESS;
 }
 
 std::string OrcaCloudServiceAgent::get_version()
 {
-    return "OrcaCloudServiceAgent 1.0.0";
+    return "MeshForgeCloudServiceAgent 1.0.0";
 }
 
 // ============================================================================
@@ -2548,7 +2548,7 @@ std::string OrcaCloudServiceAgent::get_version()
 
 bool OrcaCloudServiceAgent::unsubscribe_bundle(const std::string& bundle_id)
 {
-    std::string path = std::string(ORCA_SUBSCRIPTIONS_PATH) + "/" + bundle_id;
+    std::string path = std::string(MESHFORGE_SUBSCRIPTIONS_PATH) + "/" + bundle_id;
     std::string response;
     unsigned int http_code = 0;
 
@@ -2690,8 +2690,8 @@ int OrcaCloudServiceAgent::get_shared_bundle(const std::string& bundle_id, std::
                 // Use bundle_id as a placeholder to indicate source
                 value_map[BBL_JSON_KEY_USER_ID] = "bundle:" + bundle_id;
             }
-            if (preset_object.contains("updated_time") && value_map.find(ORCA_JSON_KEY_UPDATE_TIME) == value_map.end()) {
-                value_map[ORCA_JSON_KEY_UPDATE_TIME] = preset_object["updated_time"].dump();
+            if (preset_object.contains("updated_time") && value_map.find(MESHFORGE_JSON_KEY_UPDATE_TIME) == value_map.end()) {
+                value_map[MESHFORGE_JSON_KEY_UPDATE_TIME] = preset_object["updated_time"].dump();
             }
             if (value_map.find(BBL_JSON_KEY_NAME) == value_map.end()) {
                 value_map[BBL_JSON_KEY_NAME] = preset_name;

@@ -1,4 +1,4 @@
-#include "OrcaPrinterAgent.hpp"
+#include "MeshForgePrinterAgent.hpp"
 #include "NetworkAgentFactory.hpp"
 
 namespace Slic3r {
@@ -124,7 +124,7 @@ int OrcaPrinterAgent::set_user_selected_machine(std::string dev_id)
 // ============================================================================
 AgentInfo OrcaPrinterAgent::get_agent_info_static()
 {
-    return AgentInfo{ORCA_PRINTER_AGENT_ID, "Orca", OrcaPrinterAgent_VERSION, "Orca Printer Communication Protocol Agent"};
+    return AgentInfo{MESHFORGE_PRINTER_AGENT_ID, "MeshForge", OrcaPrinterAgent_VERSION, "MeshForge Printer Communication Protocol Agent"};
 }
 
 // ============================================================================

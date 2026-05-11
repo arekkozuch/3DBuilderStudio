@@ -27,7 +27,7 @@
 
 #include <sstream>
 #include <slic3r/GUI/Widgets/WebView.hpp>
-#include <slic3r/GUI/Widgets/HyperLink.hpp> // ORCA
+#include <slic3r/GUI/Widgets/HyperLink.hpp> // MeshForge
 using namespace std;
 
 using namespace nlohmann;
@@ -85,7 +85,7 @@ int ZUserLogin::ensure_loopback_port()
 }
 
 ZUserLogin::ZUserLogin(std::shared_ptr<ICloudServiceAgent> cloud_agent)
-    : wxDialog((wxWindow*) (wxGetApp().mainframe), wxID_ANY, "OrcaSlicer"), m_cloud_agent(cloud_agent)
+    : wxDialog((wxWindow*) (wxGetApp().mainframe), wxID_ANY, "MeshForge"), m_cloud_agent(cloud_agent)
 {
     SetBackgroundColour(*wxWHITE);
 
@@ -96,7 +96,7 @@ ZUserLogin::ZUserLogin(std::shared_ptr<ICloudServiceAgent> cloud_agent)
         m_sizer_main->Add(m_line_top, 0, wxEXPAND, 0);
 
         auto* m_message = new wxStaticText(this, wxID_ANY,
-                                          _L("Cloud agent is not available. Please restart OrcaSlicer and try again."),
+                                          _L("Cloud agent is not available. Please restart MeshForge and try again."),
                                           wxDefaultPosition, wxDefaultSize, 0);
         m_message->SetForegroundColour(*wxBLACK);
         m_message->Wrap(FromDIP(360));
@@ -126,7 +126,7 @@ ZUserLogin::ZUserLogin(std::shared_ptr<ICloudServiceAgent> cloud_agent)
         m_message->SetForegroundColour(*wxBLACK);
         m_message->Wrap(FromDIP(360));
 
-        // ORCA standardized HyperLink
+        // MeshForge standardized HyperLink
         auto m_download_hyperlink = new HyperLink(this, _L("Click here to download it."));
         m_download_hyperlink->Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent& event) {
             this->Close();

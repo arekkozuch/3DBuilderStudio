@@ -2,7 +2,7 @@
 #include "IPrinterAgent.hpp"
 #include "ICloudServiceAgent.hpp"
 #include "BBLPrinterAgent.hpp"
-#include "OrcaPrinterAgent.hpp"
+#include "MeshForgePrinterAgent.hpp"
 #include "QidiPrinterAgent.hpp"
 #include "SnapmakerPrinterAgent.hpp"
 #include "MoonrakerPrinterAgent.hpp"
@@ -155,7 +155,7 @@ std::unique_ptr<NetworkAgent> create_agent_from_config(const std::string& log_di
         return std::make_unique<NetworkAgent>(nullptr, nullptr);
 
     // Always create Orca cloud agent as the primary provider
-    auto cloud_agent = NetworkAgentFactory::create_cloud_agent(ORCA_CLOUD_PROVIDER, log_dir);
+    auto cloud_agent = NetworkAgentFactory::create_cloud_agent(MESHFORGE_CLOUD_PROVIDER, log_dir);
     if (!cloud_agent) {
         BOOST_LOG_TRIVIAL(error) << "Failed to create cloud agent";
     }
@@ -172,7 +172,7 @@ std::unique_ptr<NetworkAgent> create_agent_from_config(const std::string& log_di
         // Initialize third-party cloud agents from config
         auto providers = app_config->get_cloud_providers();
         for (const auto& provider : providers) {
-            if (provider == ORCA_CLOUD_PROVIDER)
+            if (provider == MESHFORGE_CLOUD_PROVIDER)
                 continue; // Primary agent already created above
             auto third_party_agent = NetworkAgentFactory::create_cloud_agent(provider, log_dir);
             if (third_party_agent) {

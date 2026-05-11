@@ -169,7 +169,7 @@ size_t get_shapes_count(const NSVGimage &image)
 //         << "width=\"" << size.x() << "mm\" "
 //         << "height=\"" << size.y() << "mm\" "
 //         << "viewBox=\"0 0 " << size.x() << " " << size.y() << "\" >\n";
-//    data << "<!-- Created with PrusaSlicer (https://www.prusa3d.com/prusaslicer/) -->\n";
+// SVG comment stripped — was upstream tool attribution
 //
 //    std::array<char, 128> buffer;
 //    auto write_point = [&tl, &buffer](std::string &d, const float *p) {

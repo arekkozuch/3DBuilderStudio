@@ -54,12 +54,12 @@ static std::vector<std::string> s_project_options {
     "filament_map"
 };
 
-//Orca: add custom as default
-const char *PresetBundle::ORCA_DEFAULT_BUNDLE = "Custom";
-const char *PresetBundle::ORCA_DEFAULT_PRINTER_MODEL = "MyKlipper 0.4 nozzle";
-const char *PresetBundle::ORCA_DEFAULT_PRINTER_VARIANT = "0.4";
-const char *PresetBundle::ORCA_DEFAULT_FILAMENT = "Generic PLA @System";
-const char *PresetBundle::ORCA_FILAMENT_LIBRARY = "OrcaFilamentLibrary";
+// MeshForge: add custom as default
+const char *PresetBundle::MESHFORGE_DEFAULT_BUNDLE = "Custom";
+const char *PresetBundle::MESHFORGE_DEFAULT_PRINTER_MODEL = "MyKlipper 0.4 nozzle";
+const char *PresetBundle::MESHFORGE_DEFAULT_PRINTER_VARIANT = "0.4";
+const char *PresetBundle::MESHFORGE_DEFAULT_FILAMENT = "Generic PLA @System";
+const char *PresetBundle::MESHFORGE_FILAMENT_LIBRARY = "MeshForgeFilamentLibrary";
 
 DynamicPrintConfig PresetBundle::construct_full_config(
     Preset& in_printer_preset,
@@ -645,7 +645,7 @@ bool PresetBundle::use_bbl_device_tab() {
 
 bool PresetBundle::backup_user_folder() const
 {
-    const std::string backup_folderpath = data_dir() + "/" + (boost::format("user_backup-v%1%") % SoftFever_VERSION).str();
+    const std::string backup_folderpath = data_dir() + "/" + (boost::format("user_backup-v%1%") % MESHFORGE_VERSION).str();
 
     // Check if backup file already exists
     if (boost::filesystem::exists(boost::filesystem::path(backup_folderpath)))
@@ -1167,13 +1167,13 @@ bool PresetBundle::apply_vendor_config(
     // When printers from the default bundle are also selected, keep @System
     // too since those printers need it.
     static const std::string system_suffix              = " @System";
-    auto                     it_default                 = new_vendors.find(PresetBundle::ORCA_DEFAULT_BUNDLE);
+    auto                     it_default                 = new_vendors.find(PresetBundle::MESHFORGE_DEFAULT_BUNDLE);
     bool                     has_default_bundle_printer = it_default != new_vendors.end() && !it_default->second.empty();
 
     // Check if any non-default vendor has selected printers
     bool has_vendor_printer = false;
     for (const auto& [vendor, models] : new_vendors) {
-        if (vendor != PresetBundle::ORCA_DEFAULT_BUNDLE && !models.empty()) {
+        if (vendor != PresetBundle::MESHFORGE_DEFAULT_BUNDLE && !models.empty()) {
             has_vendor_printer = true;
             break;
         }
@@ -1190,7 +1190,7 @@ bool PresetBundle::apply_vendor_config(
                 // For @System filaments, we check if the short_name exists as a vendor-specific filament
                 bool has_vendor_filament = false;
                 for (const auto& [vendor, models] : new_vendors) {
-                    if (vendor != PresetBundle::ORCA_DEFAULT_BUNDLE) {
+                    if (vendor != PresetBundle::MESHFORGE_DEFAULT_BUNDLE) {
                         auto vendor_it = this->vendors.find(vendor);
                         // Check if this vendor is loaded in the preset bundle
                         if (vendor_it != this->vendors.end()) {
@@ -1294,7 +1294,7 @@ PresetsConfigSubstitutions PresetBundle::import_presets(std::vector<std::string>
             import_json_presets(substitutions, file, override_confirm, rule, overwrite, result);
         }
         // Determine if it is a preset bundle
-        if (boost::iends_with(file, ".orca_printer") || boost::iends_with(file, ".orca_bundle") || boost::iends_with(file, ".orca_filament") || boost::iends_with(file, ".zip")) {
+        if (boost::iends_with(file, ".meshforge_printer") || boost::iends_with(file, ".meshforge_bundle") || boost::iends_with(file, ".meshforge_filament") || boost::iends_with(file, ".zip")) {
             boost::system::error_code ec;
             // create user folder
             fs::path user_folder(data_dir() + "/" + PRESET_USER_DIR);
@@ -1586,7 +1586,7 @@ void PresetBundle::check_and_fix_user_presets_syncinfo(const std::string& user_i
     process_collection(this->printers);
 }
 
-//Orca: Import subscribed bundle presets (load and save to disk in one operation)
+// MeshForge: Import subscribed bundle presets (load and save to disk in one operation)
 PresetsConfigSubstitutions PresetBundle::update_subscribed_presets(
     AppConfig& config,
     const std::map<std::string, std::map<std::string, std::string>>& bundle_presets,
@@ -2076,7 +2076,7 @@ void PresetBundle::remove_users_preset(AppConfig &config, std::map<std::string, 
     }
 
     if (need_reset_printer_preset) {
-        std::string default_printer_model = ORCA_DEFAULT_PRINTER_MODEL;
+        std::string default_printer_model = MESHFORGE_DEFAULT_PRINTER_MODEL;
         std::string default_printer_name;
         for (auto it = printers.begin(); it != printers.end(); it++) {
             if (it->config.has("printer_model")) {
@@ -2179,9 +2179,9 @@ std::pair<PresetsConfigSubstitutions, std::string> PresetBundle::load_system_pre
         vendor_name.erase(vendor_name.size() - 5);
         vendor_names.push_back(vendor_name);
     }
-    // Move ORCA_FILAMENT_LIBRARY to the beginning of the list
+    // Move MESHFORGE_FILAMENT_LIBRARY to the beginning of the list
     for (size_t i = 0; i < vendor_names.size(); ++ i) {
-        if (vendor_names[i] == ORCA_FILAMENT_LIBRARY) {
+        if (vendor_names[i] == MESHFORGE_FILAMENT_LIBRARY) {
             std::swap(vendor_names[0], vendor_names[i]);
             break;
         }
@@ -2189,7 +2189,7 @@ std::pair<PresetsConfigSubstitutions, std::string> PresetBundle::load_system_pre
 
     for (auto &vendor_name : vendor_names)
     {
-        if (validation_mode && !vendor_to_validate.empty() && vendor_name != vendor_to_validate && vendor_name != ORCA_FILAMENT_LIBRARY)
+        if (validation_mode && !vendor_to_validate.empty() && vendor_name != vendor_to_validate && vendor_name != MESHFORGE_FILAMENT_LIBRARY)
             continue;
 
         try {
@@ -2556,7 +2556,7 @@ void PresetBundle::load_installed_sla_materials(AppConfig &config)
 void PresetBundle::update_selections(AppConfig &config)
 {
     std::string initial_printer_profile_name    = printers.get_selected_preset_name();
-    // Orca: load from orca_presets
+    // MeshForge: load from orca_presets
     std::string initial_print_profile_name        = config.get_printer_setting(initial_printer_profile_name, PRESET_PRINT_NAME);
     std::string initial_filament_profile_name     = config.get_printer_setting(initial_printer_profile_name, PRESET_FILAMENT_NAME);
 
@@ -2672,7 +2672,7 @@ void PresetBundle::load_selections(AppConfig &config, const PresetPreferences& p
     printers.select_preset_by_name(preferred_printer ? preferred_printer->name : initial_printer_profile_name, true);
     CNumericLocalesSetter locales_setter;
 
-    // Orca: load from orca_presets
+    // MeshForge: load from orca_presets
     // const auto os_presets = config.get_machine_settings(initial_printer_profile_name);
     std::string initial_print_profile_name        = config.get_printer_setting(initial_printer_profile_name, PRESET_PRINT_NAME);
     std::string initial_filament_profile_name     = config.get_printer_setting(initial_printer_profile_name, PRESET_FILAMENT_NAME);
@@ -3127,7 +3127,7 @@ unsigned int PresetBundle::sync_ams_list(std::vector<std::pair<DynamicPrintConfi
                 }
                 ams_multi_color_filment.push_back(filament_multi_color);
             } else if (is_placeholder) {
-                // Orca: push placeholders to keep index alignment with ams_infos
+                // MeshForge: push placeholders to keep index alignment with ams_infos
                 ams_filament_presets.push_back("");
                 ams_filament_colors.push_back("");
                 ams_filament_color_types.push_back("");
@@ -3412,7 +3412,7 @@ unsigned int PresetBundle::sync_ams_list(std::vector<std::pair<DynamicPrintConfi
         bool has_placeholders = std::any_of(ams_infos.begin(), ams_infos.end(),
                                              [](const AmsInfo& a) { return a.is_placeholder; });
         if (has_placeholders) {
-            // Orca: merge — keep existing filaments for empty slots
+            // MeshForge: merge — keep existing filaments for empty slots
             auto exist_colors       = filament_color->values;
             auto exist_color_types  = filament_color_type->values;
             auto exist_presets      = this->filament_presets;
@@ -3665,7 +3665,7 @@ Preset *PresetBundle::get_similar_printer_preset(std::string printer_model, std:
 {
     if (printer_model.empty())
         printer_model = printers.get_selected_preset().config.opt_string("printer_model");
-    if (printer_model.empty()) // ORCA ensure a compatible model exist. fixes switches to blank preset if preset has no inherited value
+    if (printer_model.empty()) // MeshForge ensure a compatible model exist. fixes switches to blank preset if preset has no inherited value
         return nullptr;
     auto printer_variant_old = printers.get_selected_preset().config.opt_string("printer_variant");
     std::map<std::string, Preset*> printer_presets;
@@ -4229,7 +4229,7 @@ void PresetBundle::load_config_file_config(const std::string &name_or_path, bool
             filament_self_indice[index] = index + 1;
     }
     std::vector<int> filament_self_indice = std::move(config.option<ConfigOptionInts>("filament_self_index")->values);
-    // ORCA: Initialize filament_extruder_variant for backward compatibility with old 3mf files
+    // MeshForge: Initialize filament_extruder_variant for backward compatibility with old 3mf files
     // that don't have this option saved or have it with default single-element value
     ConfigOptionStrings* filament_extruder_variant_opt = config.option<ConfigOptionStrings>("filament_extruder_variant");
     if (!filament_extruder_variant_opt || filament_extruder_variant_opt->size() < num_filaments) {
@@ -4832,8 +4832,8 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
             if (config.has("alias"))
                 alias_name = (dynamic_cast<const ConfigOptionString *>(config.option("alias")))->value;
 
-            if (key_values.find(ORCA_JSON_KEY_RENAMED_FROM) != key_values.end()) {
-                if (!unescape_strings_cstyle(key_values[ORCA_JSON_KEY_RENAMED_FROM], renamed_from)) {
+            if (key_values.find(MESHFORGE_JSON_KEY_RENAMED_FROM) != key_values.end()) {
+                if (!unescape_strings_cstyle(key_values[MESHFORGE_JSON_KEY_RENAMED_FROM], renamed_from)) {
                     BOOST_LOG_TRIVIAL(error) << "Error in a Config \"" << path << "\": The preset \"" << preset_name
                                              << "\" contains invalid \"renamed_from\" key, which is being ignored.";
                 }
@@ -4915,7 +4915,7 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
             loaded.description = description;
             loaded.setting_id = setting_id;
             loaded.filament_id = filament_id;
-            loaded.m_from_orca_filament_lib = is_from_lib;
+            loaded.m_from_meshforge_filament_lib = is_from_lib;
             BOOST_LOG_TRIVIAL(debug) << __FUNCTION__ << " " << __LINE__ << ", " << loaded.name << " load filament_id: " << filament_id;
             if (presets_collection->type() == Preset::TYPE_FILAMENT) {
                 if (filament_id.empty() && "Template" != vendor_name) {
@@ -4982,11 +4982,11 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
     presets = &this->filaments;
     configs.clear();
     filament_id_maps.clear();
-    const auto is_orca_lib = vendor_name == ORCA_FILAMENT_LIBRARY;
+    const auto is_meshforge_lib = vendor_name == MESHFORGE_FILAMENT_LIBRARY;
     for (auto& subfile : filament_subfiles)
     {
         std::string reason = parse_subfile(substitution_context, substitutions, flags, subfile, configs, filament_id_maps, presets,
-                                           presets_loaded, is_orca_lib);
+                                           presets_loaded, is_meshforge_lib);
         if (!reason.empty()) {
             ++m_errors;
             //parse error
@@ -4995,7 +4995,7 @@ std::pair<PresetsConfigSubstitutions, size_t> PresetBundle::load_vendor_configs_
             throw ConfigurationError((boost::format("Failed loading configuration file %1%\nSuggest cleaning the directory %2% firstly") % subfile_path % path).str());
         }
     }
-    if (is_orca_lib) {
+    if (is_meshforge_lib) {
         m_config_maps      = configs;
         m_filament_id_maps = filament_id_maps;
     }
@@ -5330,12 +5330,12 @@ bool PresetBundle::has_errors() const
         return true;
 
     bool has_errors = false;
-    // Orca: check if all filament presets have compatible_printers setting
+    // MeshForge: check if all filament presets have compatible_printers setting
     for (auto& preset : filaments) {
         if (!preset.is_system)
             continue;
         // It's per design that the Orca Filament Library can have the empty compatible_printers.
-        if(preset.vendor->name == PresetBundle::ORCA_FILAMENT_LIBRARY)
+        if(preset.vendor->name == PresetBundle::MESHFORGE_FILAMENT_LIBRARY)
             continue;
         auto* compatible_printers = dynamic_cast<const ConfigOptionStrings*>(preset.config.option("compatible_printers"));
         if (compatible_printers == nullptr || compatible_printers->values.empty()) {
@@ -5347,7 +5347,7 @@ bool PresetBundle::has_errors() const
     return has_errors;
 }
 
-// Orca: BundleMetadata method implementations
+// MeshForge: BundleMetadata method implementations
 bool BundleMetadata::load_from_json(const std::string& path)
 {
     try {

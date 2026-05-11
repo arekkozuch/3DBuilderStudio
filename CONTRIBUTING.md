@@ -45,7 +45,7 @@ Every PR description must include the following, filled in:
 
 ## Brand Scrub Verified
 <!-- Paste output of: -->
-<!-- grep -ri "bambu\|orca\|softfever\|prusaslicer" \ -->
+<!-- grep -riP "\b(bambu|orca|softfever|prusaslicer)\b" \ -->
 <!--   --include="*.cpp" --include="*.h" --include="*.mm" \ -->
 <!--   --exclude-dir=deps src/ | grep -iv "copyright\|license\|based on\|adapted from\|originally" -->
 <!-- Must be empty. -->
@@ -68,7 +68,7 @@ It runs in order; stops on first failure.
 
 1. **Brand scrub check**
    ```bash
-   grep -ri "bambu\|orca\|softfever\|prusaslicer" \
+   grep -riP "\b(bambu|orca|softfever|prusaslicer)\b" \
      --include="*.cpp" --include="*.h" --include="*.mm" \
      --exclude-dir=deps src/ \
      | grep -iv "copyright\|license\|based on\|adapted from\|originally"

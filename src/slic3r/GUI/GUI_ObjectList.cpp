@@ -92,18 +92,18 @@ class wxRenderer : public wxDelegateRendererNative
 public:
     wxRenderer() : wxDelegateRendererNative(wxRendererNative::Get()) {}
     virtual void DrawItemSelectionRect(wxWindow *win, wxDC& dc, const wxRect& rect, int flags = 0) override
-    {   // ORCA draw selection background to improve consistency between platforms
+    {   // MeshForge draw selection background to improve consistency between platforms
         dc.SetBrush(StateColor::darkModeColorFor(wxColour("#BFE1DE")));
         dc.DrawRectangle(rect);
         //GetGeneric().DrawItemSelectionRect(win, dc, rect, flags);
     }
     virtual void DrawFocusRect(        wxWindow *win, wxDC& dc, const wxRect& rect, int flags = 0) override
-    {   // ORCA draw focus rectangle to improve consistency between platforms
+    {   // MeshForge draw focus rectangle to improve consistency between platforms
         dc.SetPen(  StateColor::darkModeColorFor(wxColour("#009688")));
         dc.DrawRectangle(rect);
     }
     virtual void DrawTreeItemButton(   wxWindow *win, wxDC& dc, const wxRect& rect, int flags = 0) override
-    {   // ORCA draw custom triangle to improve consistency between platforms
+    {   // MeshForge draw custom triangle to improve consistency between platforms
         dc.SetPen(  StateColor::darkModeColorFor(wxColour("#7C8282")));
         dc.SetBrush(StateColor::darkModeColorFor(wxColour("#7C8282")));
         bool expanded = (flags == wxCONTROL_EXPANDED || flags == (wxCONTROL_CURRENT | wxCONTROL_EXPANDED));
@@ -125,7 +125,7 @@ public:
         int flags = 0, // wxCONTROL_SELECTED wxCONTROL_FOCUSED wxCONTROL_DISABLED 
         wxEllipsizeMode ellipsizeMode = wxELLIPSIZE_END
     ) override
-    {   // ORCA draw custom text to improve consistency between platforms
+    {   // MeshForge draw custom text to improve consistency between platforms
         //dc.SetFont(win->GetFont()); Without SetFont it pulls font from window
         dc.SetTextForeground(StateColor::darkModeColorFor(wxColour("#262E30"))); // use same color for selected / non-selected
         dc.DrawText(text,wxPoint(rect.x, rect.y));
@@ -133,13 +133,13 @@ public:
 };
 
 ObjectList::ObjectList(wxWindow* parent) :
-    wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_MULTIPLE | wxNO_BORDER | wxDV_NO_HEADER) // ORCA: Remove border and header
+    wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxDV_MULTIPLE | wxNO_BORDER | wxDV_NO_HEADER) // MeshForge: Remove border and header
 {
     wxGetApp().UpdateDVCDarkUI(this, true);
 
 #ifdef __linux__
     // Temporary fix for incorrect dark mode application regarding list item's text color.
-    // See: https://github.com/OrcaSlicer/OrcaSlicer/issues/2086
+    // See: https://github.com/MeshForge/MeshForge/issues/2086
     this->SetForegroundColour(*wxBLACK);
 #endif
 
@@ -1597,7 +1597,7 @@ void ObjectList::show_context_menu(const bool evt_context_menu)
                 const ModelVolume *volume = object(obj_idx)->volumes[vol_idx];
 
                 menu = volume->is_text() ? plater->text_part_menu() :
-			volume->is_svg() ? plater->svg_part_menu() : // ORCA fixes missing "Edit SVG" item for Add/Negative/Modifier SVG objects in object list
+			volume->is_svg() ? plater->svg_part_menu() : // MeshForge fixes missing "Edit SVG" item for Add/Negative/Modifier SVG objects in object list
                     plater->part_menu();
             }
             else
@@ -2325,7 +2325,7 @@ void ObjectList::load_modifier(const wxArrayString& input_files, ModelObject& mo
         ModelVolume* new_volume = model_object.add_volume(std::move(mesh), type);
         new_volume->name = boost::filesystem::path(input_file).filename().string();
 
-        // adjust offset as prusaslicer ObjectList::load_from_files does (works) instead of BBS method
+        // adjust offset as upstream ObjectList::load_from_files does (works) — originally from upstream
         //// BBS: object_mesh.get_init_shift() keep the relative position
         //TriangleMesh object_mesh = model_object.volumes[0]->mesh();
         //new_volume->set_offset(new_volume->mesh().get_init_shift() - object_mesh.get_init_shift());
@@ -5387,7 +5387,7 @@ ModelVolume* ObjectList::get_selected_model_volume()
     return (*m_objects)[obj_idx]->volumes[vol_idx];
 }
 
-// ORCA: kept as dead code (not called by any active path). Preserved in #if 0
+// MeshForge: kept as dead code (not called by any active path). Preserved in #if 0
 // form for traceability with upstream Bambu Studio -- removing outright would
 // produce merge conflicts on every BBL sync. The active "Change Type" UI goes
 // through the submenu in GUI_Factories.cpp -> ObjectList::set_volume_type().
@@ -5422,7 +5422,7 @@ void ObjectList::change_part_type()
       }
     }
 
-    // ORCA: Fix crash when changing type of svg / text modifier
+    // MeshForge: Fix crash when changing type of svg / text modifier
     wxArrayString names;
     names.Add(_L("Part"));
     names.Add(_L("Negative Part"));
@@ -6422,7 +6422,7 @@ void ObjectList::set_extruder_for_selected_items(const int extruder)
          * So, if Instance is selected, get its Object item and change it
          */
         ItemType sel_item_type = m_objects_model->GetItemType(sel_item);
-        // ORCA: Fix crash when setting filament for instance (item was used uninitialized)
+        // MeshForge: Fix crash when setting filament for instance (item was used uninitialized)
         wxDataViewItem item = (sel_item_type & itInstance) ? m_objects_model->GetObject(sel_item) : sel_item;
         ItemType type = m_objects_model->GetItemType(item);
         if (type & itVolume) {

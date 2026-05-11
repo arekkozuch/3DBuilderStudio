@@ -107,7 +107,7 @@ const std::string GCodeProcessor::Flush_End_Tag = " FLUSH_END";
 const std::string GCodeProcessor::VFlush_Start_Tag = " VFLUSH_START";
 const std::string GCodeProcessor::VFlush_End_Tag  = " VFLUSH_END";
 
-//Orca: External device purge tag
+// MeshForge: External device purge tag
 const std::string GCodeProcessor::External_Purge_Tag = " EXTERNAL_PURGE";
 
 const float GCodeProcessor::Wipe_Width = 0.05f;
@@ -460,7 +460,7 @@ void GCodeProcessor::TimeMachine::calculate_time(GCodeProcessorResult& result, P
                                                                 // interpolate ? lerp(prev_move.feedrate, curr_move.feedrate, t) : curr_move.feedrate;
                     const float width = interpolate ? lerp(prev_move.width, curr_move.width, t) : curr_move.width;
                     const float height = interpolate ? lerp(prev_move.height, curr_move.height, t) : curr_move.height;
-                    // ORCA: Fix issue with flow rate changes being visualized incorrectly
+                    // MeshForge: Fix issue with flow rate changes being visualized incorrectly
                     const float mm3_per_mm = curr_move.mm3_per_mm;
                     const float fan_speed = interpolate ? lerp(prev_move.fan_speed, curr_move.fan_speed, t) : curr_move.fan_speed;
                     const float temperature = interpolate ? lerp(prev_move.temperature, curr_move.temperature, t) : curr_move.temperature;
@@ -491,7 +491,7 @@ void GCodeProcessor::TimeMachine::calculate_time(GCodeProcessorResult& result, P
                                                                 // interpolate ? lerp(prev_move.feedrate, curr_move.feedrate, t) : curr_move.feedrate;
                     const float width = interpolate ? lerp(prev_move.width, curr_move.width, t) : curr_move.width;
                     const float height = interpolate ? lerp(prev_move.height, curr_move.height, t) : curr_move.height;
-                    // ORCA: Fix issue with flow rate changes being visualized incorrectly
+                    // MeshForge: Fix issue with flow rate changes being visualized incorrectly
                     const float mm3_per_mm = curr_move.mm3_per_mm;
                     const float fan_speed = interpolate ? lerp(prev_move.fan_speed, curr_move.fan_speed, t) : curr_move.fan_speed;
                     const float temperature = interpolate ? lerp(prev_move.temperature, curr_move.temperature, t) : curr_move.temperature;
@@ -766,7 +766,7 @@ public:
                       std::function<std::string(unsigned int, const std::vector<float>&)> line_inserter,
                       std::function<std::string(const std::string&)>                      line_replacer)
     {
-        // Orca: find start pos by seaching G28/G29/PRINT_START/START_PRINT commands
+        // MeshForge: find start pos by seaching G28/G29/PRINT_START/START_PRINT commands
         auto is_start_pos = [](const std::string& curr_cmd) {
             return boost::iequals(curr_cmd, "G28") || boost::iequals(curr_cmd, "G29") || boost::iequals(curr_cmd, "PRINT_START") ||
                    boost::iequals(curr_cmd, "START_PRINT");
@@ -1040,7 +1040,7 @@ void GCodeProcessor::run_post_process()
                     if (mode == PrintEstimatedStatistics::ETimeMode::Normal || machine.enabled) {
                         char buf[128];
                         if (!s_IsBBLPrinter)
-                            // Orca: compatibility with klipper_estimator
+                            // MeshForge: compatibility with klipper_estimator
                             sprintf(buf, "; estimated printing time (%s mode) = %s\n",
                                     (mode == PrintEstimatedStatistics::ETimeMode::Normal) ? "normal" : "silent",
                                     get_time_dhms(machine.time).c_str());
@@ -1064,7 +1064,7 @@ void GCodeProcessor::run_post_process()
                     }
                 }
             }
-            // Orca: write total layer number, this is used by Bambu printers only as of now
+            // MeshForge: write total layer number, this is used by Bambu printers only as of now
             else if (line == reserved_tag(ETags::Total_Layer_Number_Placeholder)) {
                 char buf[128];
                 sprintf(buf, "; total layer number: %u\n", m_layer_id);
@@ -1260,7 +1260,7 @@ void GCodeProcessor::run_post_process()
                     [tool_number, this](unsigned int id, const std::vector<float>& time_diffs) {
                         const int temperature = int(m_layer_id != 1 ? m_filament_nozzle_temp[tool_number] :
                                                                          m_filament_nozzle_temp_first_layer[tool_number]);
-                        // Orca: M104.1 for XL printers, I can't find the documentation for this so I copied the C++ comments from
+                        // MeshForge: M104.1 for XL printers, I can't find the documentation for this so I copied the C++ comments from
                         // Prusa-Firmware-Buddy here
                         /**
                         * M104.1: Early Set Hotend Temperature (preheat, and with stealth mode support)
@@ -1595,12 +1595,12 @@ void GCodeProcessorResult::reset() {
 }
 
 const std::vector<std::pair<GCodeProcessor::EProducer, std::string>> GCodeProcessor::Producers = {
-    //BBS: OrcaSlicer is also "bambu". Otherwise the time estimation didn't work.
+    //BBS: MeshForge is also "bambu". Otherwise the time estimation didn't work.
     //FIXME: Workaround and should be handled when do removing-bambu
-    { EProducer::OrcaSlicer, SLIC3R_APP_NAME },
-    { EProducer::OrcaSlicer, "generated by OrcaSlicer" },
-    { EProducer::OrcaSlicer, "generated by BambuStudio" },
-    { EProducer::OrcaSlicer, "BambuStudio" }
+    { EProducer::MeshForge, SLIC3R_APP_NAME },
+    { EProducer::MeshForge, "generated by MeshForge" },
+    { EProducer::MeshForge, "generated by BambuStudio" },
+    { EProducer::MeshForge, "BambuStudio" }
     //{ EProducer::Slic3rPE,    "generated by Slic3r Bambu Edition" },
     //{ EProducer::Slic3r,      "generated by Slic3r" },
     //{ EProducer::SuperSlicer, "generated by SuperSlicer" },
@@ -1734,7 +1734,7 @@ void GCodeProcessor::register_commands()
         {"M702", [this](const GCodeReader::GCodeLine& line) { process_M702(line); }}, // Unload the current filament into the MK3 MMU2 unit at the end of print.
         {"M1020", [this](const GCodeReader::GCodeLine& line) { process_M1020(line); }}, // Select Tool
 
-// ORCA: Add Pressure Advance visualization support
+// MeshForge: Add Pressure Advance visualization support
         {"M900", [this](const GCodeReader::GCodeLine& line) { process_M900(line); }}, // Marlin: Set pressure advance
         {"M572", [this](const GCodeReader::GCodeLine& line) { process_M572(line); }}, // RepRapFirmware/Duet: Set pressure advance
 
@@ -1939,7 +1939,7 @@ void GCodeProcessor::apply_config(const PrintConfig& config)
     size_t filament_count = config.filament_diameter.values.size();
     m_result.filaments_count = filament_count;
 
-    // Orca:
+    // MeshForge:
     m_is_XL_printer = is_XL_printer(config);
     m_preheat_time = config.preheat_time;
     m_preheat_steps = config.preheat_steps;
@@ -2521,12 +2521,12 @@ void GCodeProcessor::process_file(const std::string& filename, std::function<voi
         });
         m_parser.reset();
 
-        // if the gcode was produced by OrcaSlicer,
+        // if the gcode was produced by MeshForge,
         // extract the config from it
-        if (m_producer == EProducer::OrcaSlicer || m_producer == EProducer::Slic3rPE || m_producer == EProducer::Slic3r) {
+        if (m_producer == EProducer::MeshForge || m_producer == EProducer::Slic3rPE || m_producer == EProducer::Slic3r) {
             DynamicPrintConfig config;
             config.apply(FullPrintConfig::defaults());
-            // Silently substitute unknown values by new ones for loading configurations from OrcaSlicer's own G-code.
+            // Silently substitute unknown values by new ones for loading configurations from MeshForge's own G-code.
             // Showing substitution log or errors may make sense, but we are not really reading many values from the G-code config,
             // thus a probability of incorrect substitution is low and the G-code viewer is a consumer-only anyways.
             config.load_from_gcode_file(filename, ForwardCompatibilitySubstitutionRule::EnableSilent);
@@ -2799,7 +2799,7 @@ void GCodeProcessor::process_gcode_line(const GCodeReader::GCodeLine& line, bool
             process_SET_VELOCITY_LIMIT(line);
             return;
         }
-// ORCA: Add Pressure Advance visualization support
+// MeshForge: Add Pressure Advance visualization support
         if (boost::iequals(cmd, "SET_PRESSURE_ADVANCE"))
         {
             process_SET_PRESSURE_ADVANCE(line);
@@ -3092,7 +3092,7 @@ void GCodeProcessor::process_tags(const std::string_view comment, bool producers
         return;
     }
 
-    // Orca: Integrate filament consumption for purging performed to an external device and controlled via macros
+    // MeshForge: Integrate filament consumption for purging performed to an external device and controlled via macros
     // (eg. Happy Hare) in the filament consumption stats.
     if (boost::starts_with(comment, GCodeProcessor::External_Purge_Tag)) {
         std::regex numberRegex(R"(\d+\.\d+)");
@@ -3111,7 +3111,7 @@ void GCodeProcessor::process_tags(const std::string_view comment, bool producers
         return;
     }
 
-    if (!producers_enabled || m_producer == EProducer::OrcaSlicer) {
+    if (!producers_enabled || m_producer == EProducer::MeshForge) {
         // height tag
         if (boost::starts_with(comment, reserved_tag(ETags::Height))) {
             if (!parse_number(comment.substr(reserved_tag(ETags::Height).size()), m_forced_height))
@@ -3124,7 +3124,7 @@ void GCodeProcessor::process_tags(const std::string_view comment, bool producers
                 BOOST_LOG_TRIVIAL(error) << "GCodeProcessor encountered an invalid value for Width (" << comment << ").";
             return;
         }
-        // Orca: manual tool change tag
+        // MeshForge: manual tool change tag
         if (m_manual_filament_change && boost::starts_with(comment, reserved_tag(ETags::Manual_Tool_Change))) {
             std::string_view tool_change_cmd = comment.substr(reserved_tag(ETags::Manual_Tool_Change).length());
             if (boost::starts_with(tool_change_cmd, "T")) {
@@ -3237,7 +3237,7 @@ bool GCodeProcessor::process_producers_tags(const std::string_view comment)
     case EProducer::Slic3rPE:
     case EProducer::Slic3r:
     case EProducer::SuperSlicer:
-    case EProducer::OrcaSlicer: { return process_bambuslicer_tags(comment); }
+    case EProducer::MeshForge: { return process_bambuslicer_tags(comment); }
     case EProducer::Cura:        { return process_cura_tags(comment); }
     case EProducer::Simplify3D:  { return process_simplify3d_tags(comment); }
     case EProducer::CraftWare:   { return process_craftware_tags(comment); }
@@ -4931,7 +4931,7 @@ void GCodeProcessor::process_M106(const GCodeReader::GCodeLine& line)
     }
 }
 
-// ORCA: Add Pressure Advance visualization support
+// MeshForge: Add Pressure Advance visualization support
 void GCodeProcessor::process_M900(const GCodeReader::GCodeLine &line)
 {
     float pa_value = m_pressure_advance;
@@ -5535,11 +5535,11 @@ void GCodeProcessor::store_move_vertex(EMoveType type, EMovePathType path_type, 
         m_travel_dist,
         m_fan_speed,
         m_extruder_temps[filament_id],
-// ORCA: Add Pressure Advance visualization support
+// MeshForge: Add Pressure Advance visualization support
         m_pressure_advance,
-        // ORCA: Add Acceleration visualization support
+        // MeshForge: Add Acceleration visualization support
         move_acceleration,
-        // ORCA: Add Jerk visualization support
+        // MeshForge: Add Jerk visualization support
         move_jerk,
         { 0.0f, 0.0f }, // time
         static_cast<float>(m_layer_id), //layer_duration: set later
@@ -5588,7 +5588,7 @@ float GCodeProcessor::minimum_travel_feedrate(PrintEstimatedStatistics::ETimeMod
 }
 
 // Machine limit arrays hold 2 values: [0]=Normal, [1]=Stealth. Index by mode only.
-// BambuStudio used extruder_id*2+mode to support per-nozzle limits, but OrcaSlicer
+// BambuStudio used extruder_id*2+mode to support per-nozzle limits, but MeshForge
 // never ported that system (filament_map_2 / get_config_idx_for_filament), so the
 // extruder_id offset was always wrong: uninitialized extruder (255) or extruder > 0
 // would overshoot the array and fall back to values.back() (stealth limits).

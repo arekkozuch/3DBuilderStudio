@@ -40,8 +40,8 @@ using namespace nlohmann;
 
 namespace Slic3r {
 
-static const std::string VERSION_CHECK_URL = "https://check-version.orcaslicer.com/latest";
-static const std::string PROFILE_UPDATE_URL = "https://check-version.orcaslicer.com/profile";
+static const std::string VERSION_CHECK_URL = "https://check-version.meshforge.com/latest";
+static const std::string PROFILE_UPDATE_URL = "https://check-version.meshforge.com/profile";
 static const std::string MODELS_STR = "models";
 
 const std::string AppConfig::SECTION_FILAMENTS = "filaments";
@@ -314,7 +314,7 @@ void AppConfig::set_defaults()
         set("slicer_uuid", to_string(uuid));
     }
 
-    // Orca
+    // MeshForge
     if (get("stealth_mode").empty()) {
         set_bool("stealth_mode", false);
     }
@@ -338,7 +338,7 @@ void AppConfig::set_defaults()
         set_bool("check_stable_update_only", false);
     }
 
-    // Orca
+    // MeshForge
     if(get("show_splash_screen").empty()) {
         set_bool("show_splash_screen", true);
     }
@@ -819,9 +819,9 @@ std::string AppConfig::load()
             bool enable_bbl_cloud = get_bool("installed_networking");
             if (enable_bbl_cloud) {
                 // Legacy Bambu-only user: give them both providers
-                set(SETTING_CLOUD_PROVIDERS, "orca;bbl");
+                set(SETTING_CLOUD_PROVIDERS, "meshforge;bbl");
             } else {
-                set(SETTING_CLOUD_PROVIDERS, "orca");
+                set(SETTING_CLOUD_PROVIDERS, "meshforge");
             }
         }
     }
@@ -1599,7 +1599,7 @@ std::vector<std::string> AppConfig::get_cloud_providers() const
     std::vector<std::string> result;
     std::string providers = get(SETTING_CLOUD_PROVIDERS);
     if (providers.empty()) {
-        result.push_back("orca");
+        result.push_back("meshforge");
         return result;
     }
 
@@ -1609,9 +1609,9 @@ std::vector<std::string> AppConfig::get_cloud_providers() const
         if (!provider.empty())
             result.push_back(provider);
     }
-    // Ensure "orca" is always present
-    if (std::find(result.begin(), result.end(), "orca") == result.end()) {
-        result.insert(result.begin(), "orca");
+    // Ensure "meshforge" is always present
+    if (std::find(result.begin(), result.end(), "meshforge") == result.end()) {
+        result.insert(result.begin(), "meshforge");
     }
     return result;
 }
@@ -1643,7 +1643,7 @@ void AppConfig::add_cloud_provider(const std::string& provider)
 
 void AppConfig::remove_cloud_provider(const std::string& provider)
 {
-    if (provider == "orca")
+    if (provider == "meshforge")
         return; // Cannot remove orca
     auto providers = get_cloud_providers();
     providers.erase(std::remove(providers.begin(), providers.end(), provider), providers.end());

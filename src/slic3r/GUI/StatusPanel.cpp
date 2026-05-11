@@ -461,8 +461,8 @@ bool ExtruderSwithingStatus::has_content_shown() const
 
 void ExtruderSwithingStatus::msw_rescale()
 {
-    m_button_quit->Rescale(); // ORCA
-    m_button_retry->Rescale(); // ORCA
+    m_button_quit->Rescale(); // MeshForge
+    m_button_retry->Rescale(); // MeshForge
     Layout();
 }
 
@@ -604,7 +604,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
                           std::pair<wxColour, int>(wxColour(255, 255, 255), StateColor::Hovered), std::pair<wxColour, int>(wxColour(255, 255, 255), StateColor::Enabled),
                           std::pair<wxColour, int>(wxColour(255, 255, 255), StateColor::Normal));
 
-    m_button_partskip = new Button(progress_lr_panel, wxEmptyString, "print_control_partskip_disable", 0, 16, wxID_ANY); // ORCA match icon size
+    m_button_partskip = new Button(progress_lr_panel, wxEmptyString, "print_control_partskip_disable", 0, 16, wxID_ANY); // MeshForge match icon size
     m_button_partskip->Enable(false);
     m_button_partskip->Hide();
     m_button_partskip->SetBackgroundColor(white_bg);
@@ -786,7 +786,7 @@ void PrintingTaskPanel::create_panel(wxWindow* parent)
     printingstage_vertical_sizer->Add(m_printing_stage_underline, 0, wxEXPAND, 0);
     m_printing_stage_panel->SetSizer(printingstage_vertical_sizer);
 
-    // Orca: display the end time of the print
+    // MeshForge: display the end time of the print
     m_staticText_progress_end = new wxStaticText(penel_finish_time, wxID_ANY, L("N/A"), wxDefaultPosition, wxDefaultSize, 0);
     m_staticText_progress_end->Wrap(-1);
     m_staticText_progress_end->SetFont(
@@ -4831,7 +4831,7 @@ void StatusPanel::on_camera_enter(wxMouseEvent& event)
         m_camera_popup->Bind(EVT_VCAMERA_SWITCH, &StatusPanel::on_switch_vcamera, this);
         m_camera_popup->Bind(EVT_SDCARD_ABSENT_HINT, [this](wxCommandEvent &e) {
             if (sdcard_hint_dlg == nullptr) {
-                sdcard_hint_dlg = new SecondaryCheckDialog(this->GetParent(), wxID_ANY, _L("Warning"), SecondaryCheckDialog::VisibleButtons::ONLY_CONFIRM); // ORCA VisibleButtons instead ButtonStyle 
+                sdcard_hint_dlg = new SecondaryCheckDialog(this->GetParent(), wxID_ANY, _L("Warning"), SecondaryCheckDialog::VisibleButtons::ONLY_CONFIRM); // MeshForge VisibleButtons instead ButtonStyle 
                 sdcard_hint_dlg->update_text(_L("Can't start this without storage."));
             }
             sdcard_hint_dlg->on_show();

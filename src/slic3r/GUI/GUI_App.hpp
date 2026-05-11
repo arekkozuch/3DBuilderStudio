@@ -470,29 +470,29 @@ public:
     wxString        transition_tridid(int trid_id) const;
     void            ShowUserGuide();
     void            ShowDownNetPluginDlg();
-    void            ShowUserLogin(bool show = true, const std::string& provider = ORCA_CLOUD_PROVIDER);
+    void            ShowUserLogin(bool show = true, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     void            ShowOnlyFilament();
     // Orca auth
-    void            request_login(bool show_user_info = false, const std::string& provider = ORCA_CLOUD_PROVIDER);
-    bool            check_login(const std::string& provider = ORCA_CLOUD_PROVIDER);
-    void            get_login_info(const std::string& provider = ORCA_CLOUD_PROVIDER);
-    bool            is_user_login(const std::string& provider = ORCA_CLOUD_PROVIDER);
+    void            request_login(bool show_user_info = false, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
+    bool            check_login(const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
+    void            get_login_info(const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
+    bool            is_user_login(const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     const std::string& get_printer_cloud_provider() const;
 
-    void            request_user_login(int online_login = 0, const std::string& provider = ORCA_CLOUD_PROVIDER);
-    void            request_user_handle(int online_login = 0, const std::string& provider = ORCA_CLOUD_PROVIDER);
-    void            request_user_logout(const std::string& provider = ORCA_CLOUD_PROVIDER);
+    void            request_user_login(int online_login = 0, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
+    void            request_user_handle(int online_login = 0, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
+    void            request_user_logout(const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     void            post_logout_to_webview(const std::string& provider);
-    int             request_user_unbind(std::string dev_id, const std::string& provider = ORCA_CLOUD_PROVIDER);
+    int             request_user_unbind(std::string dev_id, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     std::string     handle_web_request(std::string cmd);
-    void            handle_script_message(std::string msg, const std::string& provider = ORCA_CLOUD_PROVIDER);
+    void            handle_script_message(std::string msg, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     void            request_model_download(wxString url);
     void            download_project(std::string project_id);
     void            request_project_download(std::string project_id);
     void            request_open_project(std::string project_id);
     void            request_remove_project(std::string project_id);
 
-    void            handle_http_error(unsigned int status, std::string body, const std::string& provider = ORCA_CLOUD_PROVIDER);
+    void            handle_http_error(unsigned int status, std::string body, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     void            on_http_error(wxCommandEvent &evt);
     void            on_update_machine_list(wxCommandEvent& evt);
     void            on_user_login(wxCommandEvent &evt);
@@ -540,16 +540,16 @@ public:
 
     PresetBundleDialog* m_preset_bundle_dlg{nullptr};
 
-    void            start_http_server(const std::string& provider = ORCA_CLOUD_PROVIDER);
-    void            start_http_server(int port, const std::string& provider = ORCA_CLOUD_PROVIDER);
+    void            start_http_server(const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
+    void            start_http_server(int port, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     void            stop_http_server();
     void            switch_staff_pick(bool on);
 
-    void            on_show_check_privacy_dlg(int online_login = 0, const std::string& provider = ORCA_CLOUD_PROVIDER);
+    void            on_show_check_privacy_dlg(int online_login = 0, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     void            show_check_privacy_dlg(wxCommandEvent& evt);
     void            on_check_privacy_update(wxCommandEvent &evt);
     bool            check_privacy_update();
-    void            check_privacy_version(int online_login = 0, const std::string& provider = ORCA_CLOUD_PROVIDER);
+    void            check_privacy_version(int online_login = 0, const std::string& provider = MESHFORGE_CLOUD_PROVIDER);
     void            check_track_enable();
 
     static bool     catch_error(std::function<void()> cb, const std::string& err);

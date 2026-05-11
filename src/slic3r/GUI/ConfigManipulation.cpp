@@ -696,7 +696,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
 
     bool have_skirt = config->opt_int("skirt_loops") > 0;
     toggle_field("skirt_height", have_skirt && config->opt_enum<DraftShield>("draft_shield") != dsEnabled);
-    toggle_line("single_loop_draft_shield", have_skirt); // ORCA: Display one wall if skirt enabled
+    toggle_line("single_loop_draft_shield", have_skirt); // MeshForge: Display one wall if skirt enabled
     for (auto el : {"skirt_type", "min_skirt_length", "skirt_distance", "skirt_start_angle", "skirt_speed", "draft_shield"})
         toggle_field(el, have_skirt);
 
@@ -743,7 +743,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
 
     bool support_is_tree = config->opt_bool("enable_support") && is_tree(support_type);
     bool support_is_normal_tree = support_is_tree && support_style != smsTreeOrganic &&
-    // Orca: use organic as default
+    // MeshForge: use organic as default
     support_style != smsDefault;
     bool support_is_organic = support_is_tree && !support_is_normal_tree;
     // settings shared by normal and organic trees
@@ -771,7 +771,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
     bool has_support_ironing = can_ironing_support && config->opt_bool("support_ironing");
     for (auto el : {"support_ironing_pattern", "support_ironing_flow", "support_ironing_spacing" })
         toggle_line(el, has_support_ironing);
-    // Orca: Force solid support interface when using support ironing
+    // MeshForge: Force solid support interface when using support ironing
     toggle_field("support_interface_spacing", have_support_material && have_support_interface && !has_support_ironing);
 
 //    see issue #10915
@@ -788,7 +788,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
 
     toggle_line("raft_contact_distance", have_raft && !have_support_soluble);
 
-    // Orca: Raft, grid, snug and organic supports use these two parameters to control the size & density of the "brim"/flange
+    // MeshForge: Raft, grid, snug and organic supports use these two parameters to control the size & density of the "brim"/flange
     for (auto el : { "raft_first_layer_expansion", "raft_first_layer_density"})
         toggle_field(el, have_support_material && !(support_is_normal_tree && !have_raft));
 
@@ -895,7 +895,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
         toggle_line(el, have_arachne);
     toggle_field("detect_thin_wall", !have_arachne);
 
-    // Orca
+    // MeshForge
     auto is_role_based_wipe_speed = config->opt_bool("role_based_wipe_speed");
     toggle_field("wipe_speed",!is_role_based_wipe_speed);
 
@@ -961,7 +961,7 @@ void ConfigManipulation::toggle_print_fff_options(DynamicPrintConfig *config, co
     // Adaptative Cubic and support cubic infill patterns do not support infill rotation.
     bool FillAdaptive = (pattern == InfillPattern::ipAdaptiveCubic || pattern == InfillPattern::ipSupportCubic);
 
-    //Orca: disable infill_direction/solid_infill_direction if sparse_infill_rotate_template/solid_infill_rotate_template is not empty value and adaptive cubic/support cubic infill pattern is not selected
+    // MeshForge: disable infill_direction/solid_infill_direction if sparse_infill_rotate_template/solid_infill_rotate_template is not empty value and adaptive cubic/support cubic infill pattern is not selected
     toggle_field("sparse_infill_rotate_template", !FillAdaptive);
     toggle_field("infill_direction", config->opt_string("sparse_infill_rotate_template") == "" && !FillAdaptive);
     toggle_field("solid_infill_direction", config->opt_string("solid_infill_rotate_template") == "");

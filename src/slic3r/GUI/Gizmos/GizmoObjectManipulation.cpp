@@ -648,7 +648,7 @@ bool GizmoObjectManipulation::reset_button(ImGuiWrapper *imgui_wrapper, float ca
         int dpi = get_dpi_for_window(wxGetApp().GetTopWindow());
         scale *= (float) dpi / (float) DPI_DEFAULT;
     #endif // WIN32
-    ImVec2 button_size = ImVec2(16 * scale, 16 * scale); // ORCA: Use exact resolution will prevent blur on icon
+    ImVec2 button_size = ImVec2(16 * scale, 16 * scale); // MeshForge: Use exact resolution will prevent blur on icon
 
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
@@ -669,7 +669,7 @@ bool GizmoObjectManipulation::reset_zero_button(ImGuiWrapper *imgui_wrapper, flo
         int dpi = get_dpi_for_window(wxGetApp().GetTopWindow());
         scale *= (float) dpi / (float) DPI_DEFAULT;
     #endif // WIN32
-    ImVec2 button_size = ImVec2(16 * scale, 16 * scale); // ORCA: Use exact resolution will prevent blur on icon
+    ImVec2 button_size = ImVec2(16 * scale, 16 * scale); // MeshForge: Use exact resolution will prevent blur on icon
 
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 0.0f);
 
@@ -801,7 +801,7 @@ void GizmoObjectManipulation::do_render_move_window(ImGuiWrapper *imgui_wrapper,
     }
     ImGuiWrapper::pop_combo_style();
     caption_max = combox_content_size - 4 * space_size;
-    // ORCA use TextColored to match axes color
+    // MeshForge use TextColored to match axes color
     float offset_to_center = (unit_size - ImGui::CalcTextSize("O").x) / 2;
     ImGui::SameLine(caption_max + index * space_size + offset_to_center);
     ImGui::TextColored(ImGuiWrapper::to_ImVec4(ColorRGBA::X()),"X");
@@ -930,7 +930,7 @@ void GizmoObjectManipulation::do_render_rotate_window(ImGuiWrapper *imgui_wrappe
     unsigned int current_active_id = ImGui::GetActiveID();
     ImGui::PushItemWidth(caption_max);
     imgui_wrapper->text(_L("World coordinates"));
-    // ORCA use TextColored to match axes color
+    // MeshForge use TextColored to match axes color
     float offset_to_center = (unit_size - ImGui::CalcTextSize("O").x) / 2;
     ImGui::SameLine(caption_max + index * space_size + offset_to_center);
     ImGui::TextColored(ImGuiWrapper::to_ImVec4(ColorRGBA::X()),"X");
@@ -1144,7 +1144,7 @@ void GizmoObjectManipulation::do_render_scale_input_window(ImGuiWrapper* imgui_w
     ImGuiWrapper::pop_combo_style();
     caption_max = combox_content_size - 4 * space_size;
     //ImGui::Dummy(ImVec2(caption_max, -1));
-    // ORCA use TextColored to match axes color
+    // MeshForge use TextColored to match axes color
     float offset_to_center = (unit_size - ImGui::CalcTextSize("O").x) / 2;
     ImGui::SameLine(caption_max + space_size + offset_to_center);
     ImGui::TextColored(ImGuiWrapper::to_ImVec4(ColorRGBA::X()),"X");

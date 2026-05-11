@@ -63,7 +63,7 @@ void GCodeWriter::set_extruders(std::vector<unsigned int> extruder_ids)
 {
     std::sort(extruder_ids.begin(), extruder_ids.end());
     m_filament_extruders.clear();
-    //ORCA: Reset current extruder ID and clear pointers to prevent dangling pointers when extruders are recreated.
+    // MeshForge: Reset current extruder ID and clear pointers to prevent dangling pointers when extruders are recreated.
     m_curr_extruder_id = -1;
     std::fill(m_curr_filament_extruder.begin(), m_curr_filament_extruder.end(), nullptr);
     m_filament_extruders.reserve(extruder_ids.size());
@@ -73,7 +73,7 @@ void GCodeWriter::set_extruders(std::vector<unsigned int> extruder_ids)
     /*  we enable support for multiple extruder if any extruder greater than 0 is used
         (even if prints only uses that one) since we need to output Tx commands
         first extruder has index 0 */
-    //ORCA: Fix undefined behavior by checking if the vector is empty before taking max_element.
+    // MeshForge: Fix undefined behavior by checking if the vector is empty before taking max_element.
     this->multiple_extruders = !extruder_ids.empty() && (*std::max_element(extruder_ids.begin(), extruder_ids.end())) > 0;
 }
 
@@ -195,7 +195,7 @@ std::string GCodeWriter::set_chamber_temperature(int temperature, bool wait)
 
     if (wait)
     {
-        // Orca: should we let the M191 command to turn on the auxiliary fan?
+        // MeshForge: should we let the M191 command to turn on the auxiliary fan?
         if (config.auxiliary_fan)
             gcode << "M106 P2 S255 \n";
         gcode << "M191 S" << std::to_string(temperature) << " ;"
@@ -372,7 +372,7 @@ std::string GCodeWriter::set_pressure_advance(double pa) const
     if (pa < 0)
         return gcode.str();
     if(m_is_bbl_printers){
-        //SoftFever: set L1000 to use linear model
+        //MeshForge: set L1000 to use linear model
         gcode << "M900 K" <<std::setprecision(4)<< pa << " L1000 M10 ; Override pressure advance value\n";
     }
     else{
@@ -390,7 +390,7 @@ std::string GCodeWriter::set_pressure_advance(double pa) const
     return gcode.str();
 }
 
-// Orca: input shaping support
+// MeshForge: input shaping support
 std::string GCodeWriter::set_input_shaping(char axis, float damp, float freq, std::string type) const
 {
     bool disable = type == "Disable";
@@ -573,7 +573,7 @@ std::string GCodeWriter::toolchange(unsigned int filament_id)
     // if we are running a single-extruder setup, just set the extruder and return nothing
     std::ostringstream gcode;
     if (this->multiple_extruders || (this->config.filament_diameter.values.size() > 1 && !is_bbl_printers())) {
-        // Orca: call toolchange_prefix() to get the correct command prefix based on the configuration and flavor.
+        // MeshForge: call toolchange_prefix() to get the correct command prefix based on the configuration and flavor.
         gcode << this->toolchange_prefix() << filament_id;
         if (GCodeWriter::full_gcode_comment)
             gcode << " ; change extruder";
@@ -855,7 +855,7 @@ std::string GCodeWriter::_spiral_travel_to_z(double z, const Vec2d &ij_offset, c
                                  : this->config.travel_speed.value;
     }
 
-    if (!this->config.enable_arc_fitting) { // Orca: if arc fitting is disabled, approximate the arc with small linear segments
+    if (!this->config.enable_arc_fitting) { // MeshForge: if arc fitting is disabled, approximate the arc with small linear segments
         std::ostringstream oss;
         const double z_start = m_pos(2); // starting Z height
 
@@ -895,7 +895,7 @@ std::string GCodeWriter::_spiral_travel_to_z(double z, const Vec2d &ij_offset, c
 
         oss << "G1 X" << px << " Y" << py << " Z" << z << "\n";  // final point to ensure exactness
         output = oss.str();
-    } else { // Orca: if arc fitting is enabled emit a G2/G3 command for the spiral lift
+    } else { // MeshForge: if arc fitting is enabled emit a G2/G3 command for the spiral lift
         output = std::string("G17") + (full_gcode_comment ? " ; XY plane for arc\n" : "\n");
 
         GCodeG2G3Formatter w(true);
@@ -1171,8 +1171,8 @@ void GCodeWriter::add_object_end_labels(std::string& gcode)
         gcode += m_gcode_label_objects_end;
         m_gcode_label_objects_end = "";
 
-        // Orca: reset E so that e value remain correct after skipping the object
-        // ref to: https://github.com/OrcaSlicer/OrcaSlicer/pull/205/commits/7f1fe0bd544077626080aa1a9a0576aa735da1a4#r1083470162
+        // MeshForge: reset E so that e value remain correct after skipping the object
+        // ref to: https://github.com/MeshForge/MeshForge/pull/205/commits/7f1fe0bd544077626080aa1a9a0576aa735da1a4#r1083470162
         if (!this->config.use_relative_e_distances)
             gcode += reset_e(true);
     }

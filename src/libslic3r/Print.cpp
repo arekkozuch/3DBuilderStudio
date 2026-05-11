@@ -55,7 +55,7 @@ PrintRegion::PrintRegion(const PrintRegionConfig &config) : PrintRegion(config, 
 PrintRegion::PrintRegion(PrintRegionConfig &&config) : PrintRegion(std::move(config), config.hash()) {}
 
 //BBS
-// ORCA: Now this is a parameter
+// MeshForge: Now this is a parameter
 //float Print::min_skirt_length = 0;
 
 struct FilamentType {
@@ -200,7 +200,7 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
         "required_nozzle_HRC",
         "upward_compatible_machine",
         "is_infill_first",
-        // Orca
+        // MeshForge
         "chamber_temperature",
         "thumbnails",
         "thumbnails_format",
@@ -215,7 +215,7 @@ bool Print::invalidate_state_by_config_options(const ConfigOptionResolver & /* n
         "gcode_label_objects", 
         "exclude_object",
         "support_material_interface_fan_speed",
-        "internal_bridge_fan_speed", // ORCA: Add support for separate internal bridge fan speed control
+        "internal_bridge_fan_speed", // MeshForge: Add support for separate internal bridge fan speed control
         "ironing_fan_speed",
         "single_extruder_multi_material_priming",
         "activate_air_filtration",
@@ -448,7 +448,7 @@ std::vector<unsigned int> Print::object_extruders() const
     std::vector<unsigned int> extruders;
     extruders.reserve(m_print_regions.size() * m_objects.size() * 3);
 
-    //Orca: Collect extruders from all regions.
+    // MeshForge: Collect extruders from all regions.
     for (const PrintObject *object : m_objects)
 		for (const PrintRegion &region : object->all_regions())
         	region.collect_object_printing_extruders(*this, extruders);
@@ -569,7 +569,7 @@ std::vector<ObjectID> Print::print_object_ids() const
 
 bool Print::has_infinite_skirt() const
 {
-    // Orca: unclear why (m_config.ooze_prevention && this->extruders().size() > 1) logic is here, removed.
+    // MeshForge: unclear why (m_config.ooze_prevention && this->extruders().size() > 1) logic is here, removed.
     // return (m_config.draft_shield == dsEnabled && m_config.skirt_loops > 0) || (m_config.ooze_prevention && this->extruders().size() > 1);
 
     return (m_config.draft_shield == dsEnabled && m_config.skirt_loops > 0);
@@ -649,7 +649,7 @@ StringObjectException Print::sequential_print_clearance_valid(const Print &print
             assert(! print_object->model_object()->instances.empty());
             assert(! print_object->instances().empty());
             
-            // Orca: check convex hull intersection for each instance individually to handle rotation/offset differences correctly
+            // MeshForge: check convex hull intersection for each instance individually to handle rotation/offset differences correctly
             // Now we check that no instance of convex_hull intersects any of the previously checked object instances.
             for (const PrintInstance &instance : print_object->instances()) {
                 Polygon convex_hull0 = print_object->model_object()->convex_hull_2d(Geometry::assemble_transform(
@@ -669,7 +669,7 @@ StringObjectException Print::sequential_print_clearance_valid(const Print &print
                     if (single_object_exception.string.empty()) {
                         single_object_exception.string = (boost::format(L("%1% is too close to exclusion area, there may be collisions when printing.")) %instance.model_instance->get_object()->name).str();
                         // single_object_exception.object = instance.model_instance->get_object();
-                        //ORCA: Pass ModelInstance instead of ModelObject
+                        // MeshForge: Pass ModelInstance instead of ModelObject
                         single_object_exception.object = instance.model_instance;
                     }
                     else {
@@ -688,14 +688,14 @@ StringObjectException Print::sequential_print_clearance_valid(const Print &print
                         if (single_object_exception.string.empty()) {
                             single_object_exception.string = (boost::format(L("%1% is too close to others, and collisions may be caused.")) %instance.model_instance->get_object()->name).str();
                             // single_object_exception.object = instance.model_instance->get_object();
-                            //ORCA: Pass ModelInstance instead of ModelObject for better selection
+                            // MeshForge: Pass ModelInstance instead of ModelObject for better selection
                             single_object_exception.object = instance.model_instance;
                             has_exception                  = true;
                         }
                         else {
                             single_object_exception.string += "\n"+(boost::format(L("%1% is too close to others, and collisions may be caused.")) %instance.model_instance->get_object()->name).str();
                             // single_object_exception.object = nullptr; 
-                            // ORCA: Keep the first object so jump works
+                            // MeshForge: Keep the first object so jump works
                             // has_exception                  = true;
                             has_exception                  = true;
                         }
@@ -944,7 +944,7 @@ static StringObjectException layered_print_cleareance_valid(const Print &print, 
     }
 
     Polygons convex_hulls_other;
-    // Orca: check convex hull intersection for each instance individually
+    // MeshForge: check convex hull intersection for each instance individually
     for (auto& inst : print_instances_ordered) {
         Polygons current_instance_hulls;
         for (const ModelVolume *v : inst->print_object->model_object()->volumes) {
@@ -957,7 +957,7 @@ static StringObjectException layered_print_cleareance_valid(const Print &print, 
             if (!intersection(exclude_polys, volume_hull).empty()) {
                 // return {inst->model_instance->get_object()->name + L(" is too close to exclusion area, there may be collisions when printing.") + "\n",
                 //        inst->model_instance->get_object()};
-                //ORCA: Pass ModelInstance instead of ModelObject
+                // MeshForge: Pass ModelInstance instead of ModelObject
                 return {inst->model_instance->get_object()->name + L(" is too close to exclusion area, there may be collisions when printing.") + "\n",
                         inst->model_instance};
             }
@@ -965,7 +965,7 @@ static StringObjectException layered_print_cleareance_valid(const Print &print, 
             if (print_config.enable_wrapping_detection.value && !intersection(wrapping_poly, volume_hull).empty()) {
                 // return {inst->model_instance->get_object()->name + L(" is too close to clumping detection area, there may be collisions when printing.") + "\n",
                 //        inst->model_instance->get_object()};
-                //ORCA: Pass ModelInstance instead of ModelObject
+                // MeshForge: Pass ModelInstance instead of ModelObject
                 return {inst->model_instance->get_object()->name + L(" is too close to clumping detection area, there may be collisions when printing.") + "\n",
                         inst->model_instance};
             }
@@ -977,11 +977,11 @@ static StringObjectException layered_print_cleareance_valid(const Print &print, 
                 if (warning->string.empty()) {
                     warning->string = (boost::format(L("%1% is too close to others, and collisions may be caused.")) % inst->model_instance->get_object()->name).str();
                     // warning->object = inst->model_instance->get_object();
-                    //ORCA: Pass ModelInstance instead of ModelObject for better selection
+                    // MeshForge: Pass ModelInstance instead of ModelObject for better selection
                     warning->object = inst->model_instance;
                 } else {
                     warning->string += "\n" + (boost::format(L("%1% is too close to others, and collisions may be caused.")) % inst->model_instance->get_object()->name).str();
-                    // ORCA: Keep the first object so jump works
+                    // MeshForge: Keep the first object so jump works
                     if (!warning->object) warning->object = inst->model_instance;
                 }
                 warning->is_warning = true;
@@ -1252,7 +1252,7 @@ StringObjectException Print::check_multi_filament_valid(const Print& print)
     return ret;
 }
 
-// Orca: this g92e0 regex is used copied from PrusaSlicer
+// MeshForge: this g92e0 regex is used copied from PrusaSlicer
 // Matches "G92 E0" with various forms of writing the zero and with an optional comment.
 boost::regex regex_g92e0 { "^[ \\t]*[gG]92[ \\t]*[eE](0(\\.0*)?|\\.0+)[ \\t]*(;.*)?$" };
 
@@ -1340,7 +1340,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
         assert(m_objects.size() == 1);
         const auto all_regions = m_objects.front()->all_regions();
         if (all_regions.size() > 1) {
-            // Orca: make sure regions are not compatible
+            // MeshForge: make sure regions are not compatible
             if (std::any_of(all_regions.begin() + 1, all_regions.end(), [ra = all_regions.front()](const auto rb) {
                 return !Layer::is_perimeter_compatible(ra, rb);
             })) {
@@ -1404,7 +1404,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
     for (size_t print_object_idx = 0; print_object_idx < m_objects.size(); ++ print_object_idx)
         if (const PrintObject &print_object = *m_objects[print_object_idx];
             print_object.has_support_material() && is_tree(print_object.config().support_type.value) && (print_object.config().support_style.value == smsTreeOrganic || 
-                // Orca: use organic as default
+                // MeshForge: use organic as default
                 print_object.config().support_style.value == smsDefault) &&
             print_object.model_object()->has_custom_layering()) {
             if (const std::vector<coordf_t> &layers = layer_height_profile(print_object_idx); ! layers.empty())
@@ -1578,11 +1578,11 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                 // https://github.com/prusa3d/PrusaSlicer/commit/96b3ae85013ac363cd1c3e98ec6b7938aeacf46d
                 if (is_tree(object->config().support_type.value)) {
                     if (object->config().support_style == smsTreeOrganic ||
-                        // Orca: use organic as default
+                        // MeshForge: use organic as default
                         object->config().support_style == smsDefault) {
 
                         if (warning) {
-                            // Orca: check the support wall count and the base pattern
+                            // MeshForge: check the support wall count and the base pattern
                             if (object->config().tree_support_wall_count > 1 &&
                                 object->config().support_base_pattern != SupportMaterialPattern::smpNone &&
                                 object->config().support_base_pattern != SupportMaterialPattern::smpDefault) {
@@ -1590,7 +1590,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                                 warning->opt_key = "support_base_pattern";
                             }
 
-                            // Orca: check if the Lightning base pattern selected
+                            // MeshForge: check if the Lightning base pattern selected
                             if (object->config().support_base_pattern == SupportMaterialPattern::smpLightning) {
                                 warning->string = L(
                                     "The Lightning base pattern is not supported by this support type; Rectilinear will be used instead.");
@@ -1609,11 +1609,11 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                             return { L("Organic support branch diameter must not be smaller than support tree tip diameter."), object, "tree_support_branch_diameter_organic" };
                     }
                 } else if (object->config().support_base_pattern == SupportMaterialPattern::smpLightning && warning) {
-                    // Orca: check if the Lightning base pattern selected
+                    // MeshForge: check if the Lightning base pattern selected
                     warning->string  = L("The Lightning base pattern is not supported by this support type; Rectilinear will be used instead.");
                     warning->opt_key = "support_base_pattern";
                 } else if (object->config().support_base_pattern == SupportMaterialPattern::smpNone && warning) {
-                    // Orca: check if the Hollow base pattern selected
+                    // MeshForge: check if the Hollow base pattern selected
                     warning->string  = L("The Hollow base pattern is not supported by this support type; Rectilinear will be used instead.");
                     warning->opt_key = "support_base_pattern";
                 }
@@ -1672,7 +1672,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
         }
     }
 
-    // Orca: G92 E0 is not supported when using absolute extruder addressing
+    // MeshForge: G92 E0 is not supported when using absolute extruder addressing
     // This check is copied from PrusaSlicer, the original author is Vojtech Bubnik
     if(!is_BBL_printer()) {
         bool before_layer_gcode_resets_extruder =
@@ -1697,7 +1697,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
     const ConfigOptionDef* bed_type_def = print_config_def.get("curr_bed_type");
     assert(bed_type_def != nullptr);
 
-    // ORCA: check if bed type is compatible with all selected filaments
+    // MeshForge: check if bed type is compatible with all selected filaments
     if (is_BBL_printer() || m_config.support_multi_bed_types.value) {
 	    const t_config_enum_values* bed_type_keys_map = bed_type_def->enum_keys_map;
 	    for (unsigned int extruder_id : extruders) {
@@ -1775,7 +1775,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                     warning_key = check_motion_ability_object_setting(jerk_to_check, max_jerk);
                if (!warning_key.empty()) {
                     warning->string = L(
-                        "The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/machine_max_jerk_y).\nOrca will "
+                        "The jerk setting exceeds the printer's maximum jerk (machine_max_jerk_x/machine_max_jerk_y).\nMeshForge will "
                         "automatically cap the jerk speed to ensure it doesn't surpass the printer's capabilities.\nYou can adjust the "
                         "maximum jerk setting in your printer's configuration to get higher speeds.");
                     warning->opt_key = warning_key;
@@ -1784,11 +1784,11 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
 
             // Check junction deviation
             const auto max_junction_deviation = m_config.machine_max_junction_deviation.values[0];
-            // Orca: Only marlin FW supports max junction deviation. Dont display warning if firmware is not supporting it.
+            // MeshForge: Only marlin FW supports max junction deviation. Dont display warning if firmware is not supporting it.
             const bool support_max_junction_deviation = ( m_config.gcode_flavor == gcfMarlinFirmware);
             if (warning_key.empty() && m_default_object_config.default_junction_deviation.value > max_junction_deviation && support_max_junction_deviation) {
                 warning->string  = L( "Junction deviation setting exceeds the printer's maximum value "
-                                      "(machine_max_junction_deviation).\nOrca will "
+                                      "(machine_max_junction_deviation).\nMeshForge will "
                                       "automatically cap the junction deviation to ensure it doesn't surpass the printer's "
                                       "capabilities.\nYou can adjust the "
                                       "machine_max_junction_deviation value in your printer's configuration to get higher limits.");
@@ -1828,7 +1828,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                warning_key = check_motion_ability_object_setting(accel_to_check, max_accel);
                if (!warning_key.empty()) {
                     warning->string  = L("The acceleration setting exceeds the printer's maximum acceleration "
-                                          "(machine_max_acceleration_extruding).\nOrca will "
+                                          "(machine_max_acceleration_extruding).\nMeshForge will "
                                           "automatically cap the acceleration speed to ensure it doesn't surpass the printer's "
                                           "capabilities.\nYou can adjust the "
                                           "machine_max_acceleration_extruding value in your printer's configuration to get higher speeds.");
@@ -1844,7 +1844,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                         if (!warning_key.empty()) {
                             warning->string = L(
                                 "The travel acceleration setting exceeds the printer's maximum travel acceleration "
-                                "(machine_max_acceleration_travel).\nOrca will "
+                                "(machine_max_acceleration_travel).\nMeshForge will "
                                 "automatically cap the travel acceleration speed to ensure it doesn't surpass the printer's "
                                 "capabilities.\nYou can adjust the "
                                 "machine_max_acceleration_travel value in your printer's configuration to get higher speeds.");
@@ -1855,7 +1855,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
             }
 
             // check speed
-            // Orca: disable the speed check for now as we don't cap the speed
+            // MeshForge: disable the speed check for now as we don't cap the speed
             // if (warning_key.empty()) {
             //    auto       speed_to_check = {"inner_wall_speed",  "outer_wall_speed", "sparse_infill_speed",   "internal_solid_infill_speed",
             //                                 "top_surface_speed", "bridge_speed",     "internal_bridge_speed", "gap_infill_speed"};
@@ -1866,7 +1866,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
             //         warning_key = "travel_speed";
             //    if (!warning_key.empty()) {
             //         warning->string = L(
-            //             "The speed setting exceeds the printer's maximum speed (machine_max_speed_x/machine_max_speed_y).\nOrca will "
+            //             "The speed setting exceeds the printer's maximum speed (machine_max_speed_x/machine_max_speed_y).\nMeshForge will "
             //             "automatically cap the print speed to ensure it doesn't surpass the printer's capabilities.\nYou can adjust the "
             //             "maximum speed setting in your printer's configuration to get higher speeds.");
             //         warning->opt_key = warning_key;
@@ -1880,7 +1880,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
             }
 
         } catch (std::exception& e) {
-            BOOST_LOG_TRIVIAL(warning) << "Orca: validate motion ability failed: " << e.what() << std::endl;
+            BOOST_LOG_TRIVIAL(warning) << "MeshForge: validate motion ability failed: " << e.what() << std::endl;
         }
     }
     if (!this->has_same_shrinkage_compensations()){
@@ -2839,7 +2839,7 @@ Points Print::first_layer_wipe_tower_corners(bool check_wipe_tower_existance) co
 
         for (Vec2d& pt : pts) {
             pt = Eigen::Rotation2Dd(Geometry::deg2rad(m_config.wipe_tower_rotation_angle.value)) * pt;
-            //Orca: offset the wipe tower to the plate origin
+            // MeshForge: offset the wipe tower to the plate origin
             pt += Vec2d(m_config.wipe_tower_x.get_at(m_plate_index) + m_origin(0), m_config.wipe_tower_y.get_at(m_plate_index) + m_origin(1));
             corners.emplace_back(Point(scale_(pt.x()), scale_(pt.y())));
         }
@@ -2847,7 +2847,7 @@ Points Print::first_layer_wipe_tower_corners(bool check_wipe_tower_existance) co
     return corners;
 }
 
-//SoftFever
+//MeshForge
 Vec2d Print::translate_to_print_space(const Vec2d &point) const {
     //const BoundingBoxf bed_bbox(config().printable_area.values);
     return Vec2d(point(0) - m_origin(0), point(1) - m_origin(1));
@@ -3160,7 +3160,7 @@ const WipeTowerData &Print::wipe_tower_data(size_t filaments_cnt) const
             float maximum = std::accumulate(max_wipe_volumes.begin(), max_wipe_volumes.end(), 0.f);
             maximum       = maximum * filaments_cnt / max_wipe_volumes.size();
             
-            // Orca: it's overshooting a bit, so let's reduce it a bit
+            // MeshForge: it's overshooting a bit, so let's reduce it a bit
             maximum *= 0.6; 
             const_cast<Print *>(this)->m_wipe_tower_data.depth = maximum / (layer_height * width);
         } else {
@@ -3373,7 +3373,7 @@ void Print::_make_wipe_tower()
         for (unsigned int i = 0; i<number_of_extruders; ++i)
             wipe_volumes.push_back(std::vector<float>(flush_matrix.begin()+i*number_of_extruders, flush_matrix.begin()+(i+1)*number_of_extruders));
 
-        // Orca: itertate over wipe_volumes and change the non-zero values to the prime_volume
+        // MeshForge: itertate over wipe_volumes and change the non-zero values to the prime_volume
         if ((!m_config.purge_in_prime_tower || !m_config.single_extruder_multi_material) && is_wipe_tower_type2) {
             for (unsigned int i = 0; i < number_of_extruders; ++i) {
                 for (unsigned int j = 0; j < number_of_extruders; ++j) {
@@ -3621,7 +3621,7 @@ std::string PrintStatistics::finalize_output_path(const std::string &path_in) co
     return final_path;
 }
 
-// Orca: Implement prusa's filament shrink compensation approach
+// MeshForge: Implement prusa's filament shrink compensation approach
 // Returns if all used filaments have same shrinkage compensations.
  bool Print::has_same_shrinkage_compensations() const {
      const std::vector<unsigned int> extruders = this->extruders();
@@ -3641,7 +3641,7 @@ std::string PrintStatistics::finalize_output_path(const std::string &path_in) co
      return true;
  }
 
-// Orca: Implement prusa's filament shrink compensation approach, but amended so 100% from the user is the equivalent to 0 in orca.
+// MeshForge: Implement prusa's filament shrink compensation approach, but amended so 100% from the user is the equivalent to 0 in orca.
  // Returns scaling for each axis representing shrinkage compensations in each axis.
 Vec3d Print::shrinkage_compensation() const
 {
@@ -4948,7 +4948,7 @@ ExtrusionLayers FakeWipeTower::getTrueExtrusionLayersFromWipeTower() const
     ExtrusionLayers wtels;
     wtels.type = ExtrusionLayersType::WIPE_TOWER;
 
-    //ORCA: Fallback for WipeTower2 if outer_wall is empty
+    // MeshForge: Fallback for WipeTower2 if outer_wall is empty
     if (outer_wall.empty()) {
         auto fake_paths = getFakeExtrusionPathsFromWipeTower2();
         float current_z = 0.f;

@@ -57,7 +57,7 @@ struct ArchiveData {
 };
 
 static const constexpr char *CONFIG_FNAME  = "config.ini";
-static const constexpr char *PROFILE_FNAME = "prusaslicer.ini";
+static const constexpr char *PROFILE_FNAME = "prusaslicer.ini"; // based on SL1 format spec — actual filename inside archive
 
 boost::property_tree::ptree read_ini(const mz_zip_archive_file_stat &entry,
                                      MZ_Archive &                    zip)
@@ -497,7 +497,7 @@ void SL1Archive::export_print(Zipper& zipper,
     try {
         zipper.add_entry("config.ini");
         zipper << to_ini(iniconf);
-        zipper.add_entry("prusaslicer.ini");
+        zipper.add_entry("prusaslicer.ini"); // based on SL1 format spec
         zipper << to_ini(slicerconf);
         
         size_t i = 0;

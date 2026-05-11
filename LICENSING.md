@@ -36,7 +36,7 @@ This project is a fork. The AGPL requires preserving the full attribution chain:
 | Project | License | Repository |
 |---|---|---|
 | MeshForge (this project) | AGPL-3.0 | [this repo] |
-| OrcaSlicer | AGPL-3.0 | https://github.com/OrcaSlicer/OrcaSlicer |
+| OrcaSlicer | AGPL-3.0 | https://github.com/SoftFever/OrcaSlicer |
 | BambuStudio | AGPL-3.0 | https://github.com/bambulab/BambuStudio |
 | PrusaSlicer | AGPL-3.0 | https://github.com/prusa3d/PrusaSlicer |
 | Slic3r | AGPL-3.0 | https://github.com/slic3r/Slic3r |
@@ -78,7 +78,7 @@ Every binary asset (icon, image, font, sound) must be documented here with its s
 
 | Asset | Source | License | Notes |
 |---|---|---|---|
-| *(none yet — all upstream assets replaced in Phase 1.2)* | | | |
+| `resources/images/MeshForge*` (icons, splash, about images) | Renamed from OrcaSlicer icons (PR 0.2 brand scrub). Original artwork by OrcaSlicer/SoftFever contributors. | AGPL-3.0 | Temporary placeholder — content unchanged from upstream, filename only. Replace with original MeshForge artwork before public release. |
 
 New assets must be one of: original work (AGPL), CC0, MIT, or public domain.  
 Record each addition in this table in the same PR that adds the asset.

@@ -1,0 +1,14 @@
+[Desktop Entry]
+Name=MeshForge
+GenericName=3D Mesh Editing
+Icon=MeshForge
+Exec=meshforge %U
+Terminal=false
+Type=Application
+PrefersNonDefaultGPU=true
+X-KDE-RunOnDiscreteGpu=true
+MimeType=model/stl;model/3mf;application/vnd.ms-3mfdocument;application/prs.wavefront-obj;application/x-amf;x-scheme-handler/meshforge;model/step;
+Categories=Graphics;3DGraphics;Engineering;
+Keywords=3D;Mesh;Edit;STL;OBJ;3MF;convert;stl;obj;amf
+StartupNotify=false
+StartupWMClass=meshforge

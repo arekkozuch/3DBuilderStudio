@@ -523,7 +523,7 @@ ModelVolumeType type_from_string(const std::string &s)
         bool m_check_version;
 
         // Semantic version of PrusaSlicer, that generated this 3MF.
-        boost::optional<Semver> m_prusaslicer_generator_version;
+        boost::optional<Semver> m_prusa_generator_version;
         unsigned int m_fdm_supports_painting_version = 0;
         unsigned int m_seam_painting_version         = 0;
         unsigned int m_mm_painting_version           = 0;
@@ -1856,7 +1856,7 @@ ModelVolumeType type_from_string(const std::string &s)
             // Generator application of the 3MF.
             // SLIC3R_APP_KEY - SLIC3R_VERSION
             if (boost::starts_with(m_curr_characters, "PrusaSlicer-"))
-                m_prusaslicer_generator_version = Semver::parse(m_curr_characters.substr(12));
+                m_prusa_generator_version = Semver::parse(m_curr_characters.substr(12));
         } else if (m_curr_metadata_name == SLIC3RPE_FDM_SUPPORTS_PAINTING_VERSION) {
             m_fdm_supports_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_fdm_supports_painting_version, FDM_SUPPORTS_PAINTING_VERSION,
@@ -2129,9 +2129,9 @@ ModelVolumeType type_from_string(const std::string &s)
                         tri_id -= min_id;
             }
 
-            if (m_prusaslicer_generator_version &&
-                *m_prusaslicer_generator_version >= *Semver::parse("2.4.0-alpha1") &&
-                *m_prusaslicer_generator_version < *Semver::parse("2.4.0-alpha3"))
+            if (m_prusa_generator_version &&
+                *m_prusa_generator_version >= *Semver::parse("2.4.0-alpha1") &&
+                *m_prusa_generator_version < *Semver::parse("2.4.0-alpha3"))
                 // PrusaSlicer 2.4.0-alpha2 contained a bug, where all vertices of a single object were saved for each volume the object contained.
                 // Remove the vertices, that are not referenced by any face.
                 its_compactify_vertices(its, true);
@@ -2558,7 +2558,7 @@ ModelVolumeType type_from_string(const std::string &s)
             stream << " <" << METADATA_TAG << " name=\"Copyright\">" << "</" << METADATA_TAG << ">\n";
             stream << " <" << METADATA_TAG << " name=\"LicenseTerms\">" << "</" << METADATA_TAG << ">\n";
             stream << " <" << METADATA_TAG << " name=\"Rating\">" << "</" << METADATA_TAG << ">\n";
-            // Orca: PRIVACY: do not store creation & modification date in 3mf
+            // MeshForge: PRIVACY: do not store creation & modification date in 3mf
             stream << " <" << METADATA_TAG << " name=\"CreationDate\">" << "</" << METADATA_TAG << ">\n";
             stream << " <" << METADATA_TAG << " name=\"ModificationDate\">" << "</" << METADATA_TAG << ">\n";
             stream << " <" << METADATA_TAG << " name=\"Application\">" << SLIC3R_APP_KEY << "-" << SLIC3R_VERSION << "</" << METADATA_TAG << ">\n";
