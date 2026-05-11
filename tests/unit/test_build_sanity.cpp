@@ -1,6 +1,6 @@
 // Copyright (c) 2026 MeshForge Project
 // SPDX-License-Identifier: AGPL-3.0-or-later
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include "libslic3r/libslic3r.h"
 
 TEST_CASE("libslic3r version string is present", "[sanity]") {

@@ -1,6 +1,6 @@
 // Copyright (c) 2026 MeshForge Project
 // SPDX-License-Identifier: AGPL-3.0-or-later
-#include <catch2/catch.hpp>
+#include <catch2/catch_all.hpp>
 #include "slic3r/Utils/NetworkAgent.hpp"
 
 TEST_CASE("NetworkAgent::is_enabled returns false when SLIC3R_NETWORK=OFF", "[network][stub]") {
