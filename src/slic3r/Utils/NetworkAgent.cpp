@@ -58,7 +58,11 @@ std::vector<std::string> NetworkAgent::scan_plugin_versions() { return BBLNetwor
 
 int NetworkAgent::initialize_network_module(bool using_backup, const std::string& version)
 {
+#ifdef SLIC3R_NETWORK_ENABLED
     return BBLNetworkPlugin::instance().initialize(using_backup, version);
+#else
+    return -1;
+#endif
 }
 
 int NetworkAgent::unload_network_module() { return BBLNetworkPlugin::instance().unload(); }

@@ -29,6 +29,14 @@ public:
     static int initialize_network_module(bool using_backup = false, const std::string& version = "");
     static int unload_network_module();
     static bool is_network_module_loaded();
+    // Returns true only when SLIC3R_NETWORK=ON and the networking plugin is loaded.
+    static bool is_enabled() {
+#ifdef SLIC3R_NETWORK_ENABLED
+        return is_network_module_loaded();
+#else
+        return false;
+#endif
+    }
 #if defined(_MSC_VER) || defined(_WIN32)
     static HMODULE get_bambu_source_entry();
 #else
