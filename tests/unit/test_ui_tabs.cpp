@@ -7,10 +7,11 @@
 #include <catch2/catch_all.hpp>
 #include "libslic3r/Model.hpp"
 #include "libslic3r/Format/STL.hpp"
+#include "slic3r/Utils/UndoRedo.hpp"
 
 TEST_CASE("Model loads correctly after Device tab removal", "[ui][tabs]") {
     Slic3r::Model model;
-    bool loaded = Slic3r::load_stl(TEST_DATA_DIR "/cube_10mm.stl", &model);
+    bool loaded = Slic3r::load_stl(TEST_DATA_DIR "/test_stl/ASCII/20mmbox-LF.stl", &model);
     REQUIRE(loaded);
     REQUIRE(model.objects.size() == 1);
     REQUIRE_FALSE(model.objects[0]->volumes.empty());
