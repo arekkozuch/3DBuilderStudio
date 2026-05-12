@@ -5,6 +5,7 @@ add_executable(${_TEST_NAME}_tests
     test_build_sanity.cpp
     test_undo_redo_baseline.cpp
     test_ui_tabs.cpp
+    test_calibration_removed.cpp
 )
 
 target_link_libraries(${_TEST_NAME}_tests test_common libslic3r_gui libslic3r Catch2::Catch2WithMain)

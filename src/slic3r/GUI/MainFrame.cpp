@@ -1321,14 +1321,13 @@ void MainFrame::init_tabpanel() {
     create_preset_tabs();
 
     // Device / Multi-device tabs removed in PR 2.2 (MeshForge has no printer networking)
+    // Calibration tab removed in PR 2.3
 
     m_project = new ProjectPanel(m_tabpanel, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     m_project->SetBackgroundColour(*wxWHITE);
     m_tabpanel->AddPage(m_project, _L("Project"), std::string("tab_auxiliary_active"), std::string("tab_auxiliary_active"), false);
 
-    m_calibration = new CalibrationPanel(m_tabpanel, wxID_ANY, wxDefaultPosition, wxDefaultSize);
-    m_calibration->SetBackgroundColour(*wxWHITE);
-    m_tabpanel->AddPage(m_calibration, _L("Calibration"), std::string("tab_calibration_active"), std::string("tab_calibration_active"), false);
+    // Calibration tab removed in PR 2.3
 
     if (m_plater) {
         // load initial config
@@ -3160,99 +3159,7 @@ void MainFrame::init_menubar_as_editor()
     //m_topbar->AddDropDownMenuItem(language_item);
     //m_topbar->AddDropDownMenuItem(config_item);
     m_topbar->AddDropDownSubMenu(helpMenu, _L("Help"));
-
-    // MeshForge calibrations
-
-    // Temperature
-    append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Temperature"), _L("Temperature Calibration"),
-        [this](wxCommandEvent&) {
-            if (!m_temp_calib_dlg)
-                m_temp_calib_dlg = new Temp_Calibration_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_temp_calib_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Max Volumetric Speed
-    append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Max flowrate"), _L("Max flowrate"),
-        [this](wxCommandEvent&) {
-            if (!m_vol_test_dlg)
-                m_vol_test_dlg = new MaxVolumetricSpeed_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_vol_test_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Pressure Advance
-    append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Pressure advance"), _L("Pressure advance"),
-        [this](wxCommandEvent&) {
-            if (!m_pa_calib_dlg)
-                m_pa_calib_dlg = new PA_Calibration_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_pa_calib_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Flow rate (Wizard Dialog)
-    append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Flow ratio"), _L("Flow Rate Calibration"),
-        [this](wxCommandEvent&) {
-            if (!m_plater) return;
-            if (!m_flow_rate_calib_dlg)
-                m_flow_rate_calib_dlg = new FlowRateCalibrationDialog((wxWindow*)this, wxID_ANY, m_plater);
-            m_flow_rate_calib_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Retraction
-    append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Retraction"), _L("Retraction"),
-        [this](wxCommandEvent&) {
-            if (!m_retraction_calib_dlg)
-                m_retraction_calib_dlg = new Retraction_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_retraction_calib_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Cornering
-    append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Cornering"), _L("Cornering calibration"),
-        [this](wxCommandEvent&) {
-            auto dlg = new Cornering_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            dlg->ShowModal();
-            dlg->Destroy();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Input Shaping (with submenu)
-    auto input_shaping_menu = new wxMenu();
-    append_menu_item(
-        input_shaping_menu, wxID_ANY, _L("Input Shaping Frequency"), _L("Input Shaping Frequency"),
-        [this](wxCommandEvent&) {
-            auto dlg = new Input_Shaping_Freq_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            dlg->ShowModal();
-            dlg->Destroy();
-        },
-        "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-    append_menu_item(
-        input_shaping_menu, wxID_ANY, _L("Input Shaping Damping/zeta factor"), _L("Input Shaping Damping/zeta factor"),
-        [this](wxCommandEvent&) {
-            auto dlg = new Input_Shaping_Damp_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            dlg->ShowModal();
-            dlg->Destroy();
-        },
-        "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-    m_topbar->GetCalibMenu()->AppendSubMenu(input_shaping_menu, _L("Input Shaping"));
-
-    // VFA
-    append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("VFA"), _L("VFA"),
-        [this](wxCommandEvent&) {
-            if (!m_vfa_test_dlg)
-                m_vfa_test_dlg = new VFA_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_vfa_test_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // help
-    append_menu_item(m_topbar->GetCalibMenu(), wxID_ANY, _L("Calibration Guide"), _L("Calibration Guide"), [this](wxCommandEvent &)
-                     { wxLaunchDefaultBrowser("https://www.meshforge.com/wiki/calibration_guide", wxBROWSER_NEW_WINDOW); }, "", nullptr, [this]()
-                     {return m_plater->is_view3D_shown();; }, this);
+    // PR 2.3: Calibration menu removed from topbar.
 
 #else
     // On Mac, the Apple menu ignores non-standard custom items, so add Preset Bundle to the File menu
@@ -3272,101 +3179,7 @@ void MainFrame::init_menubar_as_editor()
     /*if (publishMenu)
         m_menubar->Append(publishMenu, wxString::Format("&%s", _L("3D Models")));*/
 
-    // MeshForge calibrations
-    auto calib_menu = new wxMenu();
-
-    // Temperature
-    append_menu_item(calib_menu, wxID_ANY, _L("Temperature"), _L("Temperature"),
-        [this](wxCommandEvent&) {
-            if (!m_temp_calib_dlg)
-                m_temp_calib_dlg = new Temp_Calibration_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_temp_calib_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Max Volumetric Speed
-    append_menu_item(calib_menu, wxID_ANY, _L("Max flowrate"), _L("Max flowrate"),
-        [this](wxCommandEvent&) {
-            if (!m_vol_test_dlg)
-                m_vol_test_dlg = new MaxVolumetricSpeed_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_vol_test_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Pressure Advance
-    append_menu_item(calib_menu, wxID_ANY, _L("Pressure advance"), _L("Pressure advance"),
-        [this](wxCommandEvent&) {
-            if (!m_pa_calib_dlg)
-                m_pa_calib_dlg = new PA_Calibration_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_pa_calib_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Flowrate (with submenu)
-    // MeshForge: Flow rate (Wizard Dialog)
-    append_menu_item(calib_menu, wxID_ANY, _L("Flow ratio"), _L("Flow Rate Calibration"),
-        [this](wxCommandEvent&) {
-            if (!m_plater) return;
-            if (!m_flow_rate_calib_dlg)
-                m_flow_rate_calib_dlg = new FlowRateCalibrationDialog((wxWindow*)this, wxID_ANY, m_plater);
-            m_flow_rate_calib_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Retraction
-    append_menu_item(calib_menu, wxID_ANY, _L("Retraction"), _L("Retraction"),
-        [this](wxCommandEvent&) {
-            if (!m_retraction_calib_dlg)
-                m_retraction_calib_dlg = new Retraction_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_retraction_calib_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Cornering
-    append_menu_item(calib_menu, wxID_ANY, _L("Cornering"), _L("Cornering calibration"),
-        [this](wxCommandEvent&) {
-            auto dlg = new Cornering_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            dlg->ShowModal();
-            dlg->Destroy();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    // Input Shaping (with submenu)
-    auto input_shaping_menu = new wxMenu();
-    append_menu_item(
-        input_shaping_menu, wxID_ANY, _L("Input Shaping Frequency"), _L("Input Shaping Frequency"),
-        [this](wxCommandEvent&) {
-            auto dlg = new Input_Shaping_Freq_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            dlg->ShowModal();
-            dlg->Destroy();
-        },
-        "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-    append_menu_item(
-        input_shaping_menu, wxID_ANY, _L("Input Shaping Damping/zeta factor"), _L("Input Shaping Damping/zeta factor"),
-        [this](wxCommandEvent&) {
-            auto dlg = new Input_Shaping_Damp_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            dlg->ShowModal();
-            dlg->Destroy();
-        },
-        "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-    calib_menu->AppendSubMenu(input_shaping_menu, _L("Input Shaping"));
-
-    // VFA
-    append_menu_item(calib_menu, wxID_ANY, _L("VFA"), _L("VFA"),
-        [this](wxCommandEvent&) {
-            if (!m_vfa_test_dlg)
-                m_vfa_test_dlg = new VFA_Test_Dlg((wxWindow*)this, wxID_ANY, m_plater);
-            m_vfa_test_dlg->ShowModal();
-        }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-    // help
-    append_menu_item(calib_menu, wxID_ANY, _L("Calibration Guide"), _L("Calibration Guide"),
-        [this](wxCommandEvent&) { wxLaunchDefaultBrowser("https://www.meshforge.com/wiki/calibration_guide", wxBROWSER_NEW_WINDOW); }, "", nullptr,
-        [this]() {return m_plater->is_view3D_shown();; }, this);
-
-    m_menubar->Append(calib_menu,wxString::Format("&%s", _L("Calibration")));
+    // PR 2.3: Calibration menu removed from menubar.
     if (helpMenu)
         m_menubar->Append(helpMenu, wxString::Format("&%s", _L("Help")));
     SetMenuBar(m_menubar);
@@ -3791,11 +3604,8 @@ void MainFrame::request_select_tab(TabPosition pos)
     wxQueueEvent(this, evt);
 }
 
-int MainFrame::get_calibration_curr_tab() {
-    if (m_calibration)
-        return m_calibration->get_tabpanel()->GetSelection();
-    return -1;
-}
+// PR 2.3: Calibration tab removed.
+int MainFrame::get_calibration_curr_tab() { return -1; }
 
 // Set a camera direction, zoom to all objects.
 void MainFrame::select_view(const std::string& direction)
