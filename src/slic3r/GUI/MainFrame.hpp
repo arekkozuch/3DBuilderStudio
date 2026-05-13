@@ -23,6 +23,7 @@
 #include "Project.hpp"
 #include "CalibrationPanel.hpp"
 #include "UnsavedChangesDialog.hpp"
+#include "Widgets/BuilderToolbar.hpp"
 #include "Widgets/SideButton.hpp"
 #include "Widgets/SideMenuPopup.hpp"
 #include "FilamentGroupPopup.hpp"
@@ -375,6 +376,7 @@ public:
     BBLTopbar*            m_topbar{ nullptr };
     PrintHostQueueDialog* printhost_queue_dlg() { return m_printhost_queue_dlg; }
     Plater*               m_plater { nullptr };
+    BuilderToolbar*       m_builder_toolbar{ nullptr };
     //BBS: GUI refactor
     MonitorPanel*         m_monitor{ nullptr };
 

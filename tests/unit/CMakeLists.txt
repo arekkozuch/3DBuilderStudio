@@ -10,6 +10,7 @@ add_executable(${_TEST_NAME}_tests
     test_sidebar_objectlist.cpp
     test_no_profiles.cpp
     test_transform_free_z.cpp
+    test_primitive_cube.cpp
 )
 
 target_link_libraries(${_TEST_NAME}_tests test_common libslic3r_gui libslic3r Catch2::Catch2WithMain)

@@ -6,6 +6,8 @@ include(PrecompiledHeader)
 set(SLIC3R_GUI_SOURCES
     GUI/Widgets/AnimaController.hpp
     GUI/Widgets/AnimaController.cpp
+    GUI/Widgets/BuilderToolbar.hpp
+    GUI/Widgets/BuilderToolbar.cpp
     Config/Snapshot.cpp
     Config/Snapshot.hpp
     Config/Version.cpp
