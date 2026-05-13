@@ -318,6 +318,9 @@ void AppConfig::set_defaults()
     if (get("stealth_mode").empty()) {
         set_bool("stealth_mode", false);
     }
+    if (get("send_to_slicer_path").empty()) {
+        set("send_to_slicer_path", "");
+    }
     if (get("allow_abnormal_storage").empty()) {
         set_bool("allow_abnormal_storage", false);
     }

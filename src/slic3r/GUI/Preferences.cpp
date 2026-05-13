@@ -1445,11 +1445,19 @@ void PreferencesDialog::create_items()
            "Lower values produce smaller files but lose more geometric detail; higher values preserve more detail at the cost of larger files."));
     g_sizer->Add(item_draco_bits);
 
+    //// GENERAL > Send to Slicer
+    g_sizer->Add(create_item_title(_L("Send to Slicer")), 1, wxEXPAND);
+
+    auto item_slicer_path = create_item_input(
+        _L("Slicer path"), "", _L("Full path to the slicer application used by the \"Send to Slicer\" button (e.g. /Applications/PrusaSlicer.app/Contents/MacOS/PrusaSlicer)"),
+        "send_to_slicer_path", [](wxString) {});
+    g_sizer->Add(item_slicer_path);
+
     g_sizer->AddSpacer(FromDIP(10));
     sizer_page->Add(g_sizer, 0, wxEXPAND);
 
     //////////////////////////
-    //// CONTROL TAB 
+    //// CONTROL TAB
     /////////////////////////////////////
     m_pref_tabs->AppendItem(_L("Control"));
     f_sizers.push_back(new wxFlexGridSizer(1, 1, v_gap, 0));

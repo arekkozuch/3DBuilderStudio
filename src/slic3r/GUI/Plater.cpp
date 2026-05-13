@@ -137,6 +137,7 @@
 #include "Widgets/CheckBox.hpp"
 #include "Widgets/Button.hpp"
 #include "Widgets/StaticGroup.hpp"
+#include "Widgets/BuilderToolbar.hpp"
 
 #include "GUI_ObjectTable.hpp"
 #include "libslic3r/Thread.hpp"
@@ -2296,6 +2297,9 @@ Sidebar::Sidebar(Plater *parent)
         this->p->m_search_item->GetTextCtrl()->SetValue(""); // reset value when close
     });
 
+    // Primitive insertion buttons sit at the top of the left panel.
+    auto* builder_toolbar = new BuilderToolbar(p->scrolled);
+    p->sizer_params->Add(builder_toolbar, 0, wxEXPAND | wxBOTTOM, FromDIP(2));
     p->sizer_params->Add(p->m_search_bar, 0, wxALL | wxEXPAND, 0);
     p->sizer_params->Add(p->m_object_list, 1, wxEXPAND | wxTOP, 0);
     scrolled_sizer->Add(p->sizer_params, 2, wxEXPAND | wxLEFT, 0);
