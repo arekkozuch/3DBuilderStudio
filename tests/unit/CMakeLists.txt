@@ -20,6 +20,7 @@ add_executable(${_TEST_NAME}_tests
     test_boolean_union.cpp
     test_boolean_intersect.cpp
     test_plane_cut.cpp
+    test_settle.cpp
 )
 
 target_link_libraries(${_TEST_NAME}_tests test_common libslic3r_gui libslic3r Catch2::Catch2WithMain)
