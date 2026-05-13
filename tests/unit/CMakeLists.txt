@@ -22,6 +22,8 @@ add_executable(${_TEST_NAME}_tests
     test_plane_cut.cpp
     test_settle.cpp
     test_fileio_robustness.cpp
+    test_obj_robustness.cpp
+    test_memory_stress.cpp
 )
 
 target_link_libraries(${_TEST_NAME}_tests test_common libslic3r_gui libslic3r Catch2::Catch2WithMain)

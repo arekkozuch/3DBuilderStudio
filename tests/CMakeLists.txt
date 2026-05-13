@@ -53,5 +53,4 @@ add_subdirectory(slic3rutils)
 add_subdirectory(fff_print)
 add_subdirectory(sla_print)
 add_subdirectory(unit)
-
-
+add_subdirectory(fuzz)
