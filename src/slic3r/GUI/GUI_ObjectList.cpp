@@ -47,6 +47,7 @@
 #include "Gizmos/GLGizmoScale.hpp"
 
 #include "libslic3r/TriangleMeshDeal.hpp"
+#include "libslic3r/MeshBoolean.hpp"
 namespace Slic3r
 {
 namespace GUI
@@ -3253,6 +3254,91 @@ void ObjectList::boolean()
     add_object_to_list(m_objects->size() - 1);
     select_item(m_objects_model->GetItemById(m_objects->size() - 1));
     update_selections_on_canvas();
+}
+
+// Helper: extract a combined TriangleMesh from a ModelObject in world space.
+static TriangleMesh object_combined_mesh(ModelObject* obj)
+{
+    return Plater::combine_mesh_fff(*obj, -1, [](const std::string&) {});
+}
+
+// Helper: replace two ModelObjects with a single result mesh, push to undo stack.
+static void replace_two_with_result(ObjectList* list,
+    std::vector<ModelObject*>& objects, int idx_a, int idx_b,
+    TriangleMesh result, const std::string& snap_name)
+{
+    if (result.empty()) {
+        wxMessageBox(_L("Boolean operation failed or produced an empty result."),
+            _L("Boolean"), wxOK | wxICON_WARNING, wxGetApp().mainframe);
+        return;
+    }
+    Plater::TakeSnapshot snapshot(wxGetApp().plater(), snap_name);
+    Model* model = objects[idx_a]->get_model();
+    ModelObject* new_obj = model->add_object();
+    new_obj->name = objects[idx_a]->name + "_boolean";
+    if (new_obj->instances.empty())
+        new_obj->add_instance();
+    new_obj->add_volume(std::move(result));
+    new_obj->ensure_on_bed();
+    new_obj->center_around_origin();
+    new_obj->translate_instances(-new_obj->origin_translation);
+    new_obj->origin_translation = Vec3d::Zero();
+
+    // Remove the two source objects (higher index first to keep indices valid).
+    int hi = std::max(idx_a, idx_b), lo = std::min(idx_a, idx_b);
+    list->notify_instance_updated(model->objects.size() - 1);
+    model->delete_object(hi);
+    model->delete_object(lo);
+
+    list->add_object_to_list(model->objects.size() - 1);
+    list->select_item(list->GetModel()->GetItemById(model->objects.size() - 1));
+    list->update_selections_on_canvas();
+}
+
+bool ObjectList::can_boolean_two_objects() const
+{
+    std::vector<int> obj_idxs, vol_idxs;
+    const_cast<ObjectList*>(this)->get_selection_indexes(obj_idxs, vol_idxs);
+    return obj_idxs.size() == 2;
+}
+
+void ObjectList::boolean_subtract()
+{
+    std::vector<int> obj_idxs, vol_idxs;
+    get_selection_indexes(obj_idxs, vol_idxs);
+    if (obj_idxs.size() != 2) return;
+
+    auto target_mesh = object_combined_mesh((*m_objects)[obj_idxs[0]]);
+    auto tool_mesh   = object_combined_mesh((*m_objects)[obj_idxs[1]]);
+    auto result      = Slic3r::mesh_subtract(target_mesh, tool_mesh);
+    replace_two_with_result(this, *m_objects, obj_idxs[0], obj_idxs[1],
+        std::move(result), "Boolean Subtract");
+}
+
+void ObjectList::boolean_union_objects()
+{
+    std::vector<int> obj_idxs, vol_idxs;
+    get_selection_indexes(obj_idxs, vol_idxs);
+    if (obj_idxs.size() != 2) return;
+
+    auto mesh_a = object_combined_mesh((*m_objects)[obj_idxs[0]]);
+    auto mesh_b = object_combined_mesh((*m_objects)[obj_idxs[1]]);
+    auto result = Slic3r::mesh_union(mesh_a, mesh_b);
+    replace_two_with_result(this, *m_objects, obj_idxs[0], obj_idxs[1],
+        std::move(result), "Boolean Union");
+}
+
+void ObjectList::boolean_intersect()
+{
+    std::vector<int> obj_idxs, vol_idxs;
+    get_selection_indexes(obj_idxs, vol_idxs);
+    if (obj_idxs.size() != 2) return;
+
+    auto mesh_a = object_combined_mesh((*m_objects)[obj_idxs[0]]);
+    auto mesh_b = object_combined_mesh((*m_objects)[obj_idxs[1]]);
+    auto result = Slic3r::mesh_intersect(mesh_a, mesh_b);
+    replace_two_with_result(this, *m_objects, obj_idxs[0], obj_idxs[1],
+        std::move(result), "Boolean Intersect");
 }
 
 wxDataViewItem ObjectList::add_layer_root_item(const wxDataViewItem obj_item)

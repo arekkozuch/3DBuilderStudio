@@ -446,6 +446,32 @@ TriangleMesh mesh_subtract(TriangleMesh target, const TriangleMesh &tool)
     return target;
 }
 
+TriangleMesh mesh_union(TriangleMesh a, const TriangleMesh &b)
+{
+    if (b.empty())
+        return a;
+    if (a.empty())
+        return b;
+    try {
+        MeshBoolean::cgal::plus(a, b);
+    } catch (...) {
+        return TriangleMesh{};
+    }
+    return a;
+}
+
+TriangleMesh mesh_intersect(TriangleMesh a, const TriangleMesh &b)
+{
+    if (a.empty() || b.empty())
+        return TriangleMesh{};
+    try {
+        MeshBoolean::cgal::intersect(a, b);
+    } catch (...) {
+        return TriangleMesh{};
+    }
+    return a;
+}
+
 namespace MeshBoolean {
 namespace cgal {
 

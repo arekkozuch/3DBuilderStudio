@@ -307,6 +307,10 @@ public:
     void                layers_editing();
 
     void                boolean();    // BBS: Boolean Operation of parts
+    void                boolean_subtract();
+    void                boolean_union_objects();
+    void                boolean_intersect();
+    bool                can_boolean_two_objects() const;
     wxDataViewItem      add_layer_root_item(const wxDataViewItem obj_item);
     wxDataViewItem      add_settings_item(wxDataViewItem parent_item, const DynamicPrintConfig* config);
 

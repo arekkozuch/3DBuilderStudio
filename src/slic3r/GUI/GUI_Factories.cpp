@@ -1249,9 +1249,22 @@ void MenuFactory::append_menu_item_merge_to_single_object(wxMenu* menu)
 void MenuFactory::append_menu_item_merge_parts_to_single_part(wxMenu* menu)
 {
     menu->AppendSeparator();
-    append_menu_item(menu, wxID_ANY, _L("Mesh boolean"), _L("Mesh boolean operations including union and subtraction"),
-        [](wxCommandEvent&) { obj_list()->boolean/*merge_volumes*/(); }, "", menu,
-        []() { return obj_list()->can_mesh_boolean(); }, m_parent);
+    wxMenu* bool_menu = new wxMenu();
+    append_menu_item(bool_menu, wxID_ANY, _L("Subtract"),
+        _L("Subtract the second selected object from the first"),
+        [](wxCommandEvent&) { obj_list()->boolean_subtract(); }, "", bool_menu,
+        []() { return obj_list()->can_boolean_two_objects(); }, m_parent);
+    append_menu_item(bool_menu, wxID_ANY, _L("Union"),
+        _L("Merge two selected objects into one"),
+        [](wxCommandEvent&) { obj_list()->boolean_union_objects(); }, "", bool_menu,
+        []() { return obj_list()->can_boolean_two_objects(); }, m_parent);
+    append_menu_item(bool_menu, wxID_ANY, _L("Intersect"),
+        _L("Keep only the overlapping region of two selected objects"),
+        [](wxCommandEvent&) { obj_list()->boolean_intersect(); }, "", bool_menu,
+        []() { return obj_list()->can_boolean_two_objects(); }, m_parent);
+    append_submenu(menu, bool_menu, wxID_ANY, _L("Boolean"),
+        _L("Boolean operations on two selected objects"), "",
+        []() { return obj_list()->can_boolean_two_objects(); }, m_parent);
 }
 
 void MenuFactory::append_menu_items_mirror(wxMenu* menu)

@@ -9,8 +9,10 @@
 
 namespace Slic3r {
 
-// PR 4.1: Value-returning boolean wrappers. Return empty mesh on failure.
+// PR 4.1–4.4: Value-returning boolean wrappers. Return empty mesh on failure.
 TriangleMesh mesh_subtract(TriangleMesh target, const TriangleMesh &tool);
+TriangleMesh mesh_union(TriangleMesh a, const TriangleMesh &b);
+TriangleMesh mesh_intersect(TriangleMesh a, const TriangleMesh &b);
 
 namespace MeshBoolean {
 
