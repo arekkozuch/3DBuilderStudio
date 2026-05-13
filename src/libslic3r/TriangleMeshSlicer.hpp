@@ -2,9 +2,11 @@
 #define slic3r_TriangleMeshSlicer_hpp_
 
 #include <functional>
+#include <utility>
 #include <vector>
 #include "Polygon.hpp"
 #include "ExPolygon.hpp"
+#include "TriangleMesh.hpp"
 
 namespace Slic3r {
 
@@ -129,6 +131,12 @@ void cut_mesh(
     float                            z,
     indexed_triangle_set            *upper,
     indexed_triangle_set            *lower,
+    bool                             triangulate_caps = true);
+
+// Convenience overload: returns {upper, lower} pair from a TriangleMesh.
+std::pair<TriangleMesh, TriangleMesh> cut_mesh(
+    const TriangleMesh              &mesh,
+    float                            z,
     bool                             triangulate_caps = true);
 
 } // namespace Slic3r

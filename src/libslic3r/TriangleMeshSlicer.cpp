@@ -2556,4 +2556,11 @@ void cut_mesh(const indexed_triangle_set& mesh, float z, indexed_triangle_set* u
     }
 }
 
+std::pair<TriangleMesh, TriangleMesh> cut_mesh(const TriangleMesh &mesh, float z, bool triangulate_caps)
+{
+    indexed_triangle_set upper_its, lower_its;
+    cut_mesh(mesh.its, z, &upper_its, &lower_its, triangulate_caps);
+    return { TriangleMesh(std::move(upper_its)), TriangleMesh(std::move(lower_its)) };
+}
+
 } // namespace Slic3r
