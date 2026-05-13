@@ -7,6 +7,7 @@ add_executable(${_TEST_NAME}_tests
     test_ui_tabs.cpp
     test_calibration_removed.cpp
     test_slicing_disabled.cpp
+    test_sidebar_objectlist.cpp
 )
 
 target_link_libraries(${_TEST_NAME}_tests test_common libslic3r_gui libslic3r Catch2::Catch2WithMain)

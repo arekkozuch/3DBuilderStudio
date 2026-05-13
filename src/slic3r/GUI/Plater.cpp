@@ -546,6 +546,14 @@ struct Sidebar::priv
     wxStaticText *  m_text_printer_settings = nullptr;
     wxPanel* m_panel_printer_content = nullptr;
 
+    // PR 2.5: separators saved so they can be hidden alongside their sections.
+    wxWindow *m_printer_content_sep  = nullptr;
+    wxWindow *m_filament_sep_a       = nullptr;
+    wxWindow *m_filament_sep_b       = nullptr;
+    wxWindow *m_process_sep_a        = nullptr;
+    wxWindow *m_process_sep_b        = nullptr;
+    wxWindow *m_params_panel_ref     = nullptr;
+
     ObjectList          *m_object_list{ nullptr };
     ObjectSettings      *object_settings{ nullptr };
     ObjectLayers        *object_layers{ nullptr };
@@ -1755,6 +1763,7 @@ Sidebar::Sidebar(Plater *parent)
         auto spliter_2 = new ::StaticLine(p->scrolled);
         spliter_2->SetLineColour("#CECECE");
         scrolled_sizer->Add(spliter_2, 0, wxEXPAND);
+        p->m_printer_content_sep = spliter_2; // PR 2.5
 
 
         /*************************** 2. add printer content ************************/
@@ -2115,10 +2124,12 @@ Sidebar::Sidebar(Plater *parent)
     auto spliter_1 = new ::StaticLine(p->scrolled);
     spliter_1->SetLineColour("#A6A9AA");
     scrolled_sizer->Add(spliter_1, 0, wxEXPAND);
+    p->m_filament_sep_a = spliter_1; // PR 2.5
     scrolled_sizer->Add(p->m_panel_filament_title, 0, wxEXPAND | wxALL, 0);
     auto spliter_2 = new ::StaticLine(p->scrolled);
     spliter_2->SetLineColour("#CECECE");
     scrolled_sizer->Add(spliter_2, 0, wxEXPAND);
+    p->m_filament_sep_b = spliter_2; // PR 2.5
 
     bSizer39->AddStretchSpacer(1);
 
@@ -2227,10 +2238,12 @@ Sidebar::Sidebar(Plater *parent)
         auto spliter_1 = new ::StaticLine(p->scrolled);
         spliter_1->SetLineColour("#A6A9AA");
         scrolled_sizer->Add(spliter_1, 0, wxEXPAND);
+        p->m_process_sep_a = spliter_1; // PR 2.5
         scrolled_sizer->Add(params_panel->get_top_panel(), 0, wxEXPAND);
         auto spliter_2 = new ::StaticLine(p->scrolled);
         spliter_2->SetLineColour("#CECECE");
         scrolled_sizer->Add(spliter_2, 0, wxEXPAND);
+        p->m_process_sep_b = spliter_2; // PR 2.5
     }
 
     //add project content
@@ -2286,8 +2299,6 @@ Sidebar::Sidebar(Plater *parent)
     p->sizer_params->Add(p->m_search_bar, 0, wxALL | wxEXPAND, 0);
     p->sizer_params->Add(p->m_object_list, 1, wxEXPAND | wxTOP, 0);
     scrolled_sizer->Add(p->sizer_params, 2, wxEXPAND | wxLEFT, 0);
-    p->m_object_list->Hide();
-    p->m_search_bar->Hide();
     // Frequently Object Settings
     p->object_settings = new ObjectSettings(p->scrolled);
 
@@ -2299,6 +2310,7 @@ Sidebar::Sidebar(Plater *parent)
     if (params_panel) {
         params_panel->Reparent(p->scrolled);
         scrolled_sizer->Add(params_panel, 3, wxEXPAND);
+        p->m_params_panel_ref = params_panel; // PR 2.5
     }
 #endif
     }
@@ -2310,6 +2322,20 @@ Sidebar::Sidebar(Plater *parent)
     auto *sizer = new wxBoxSizer(wxVERTICAL);
     sizer->Add(p->scrolled, 1, wxEXPAND);
     SetSizer(sizer);
+
+    // PR 2.5: MeshForge is a 3D editor, not a slicer — sidebar shows ObjectList only.
+    p->m_panel_printer_title->Hide();
+    if (p->m_printer_content_sep)  p->m_printer_content_sep->Hide();
+    p->m_panel_printer_content->Hide();
+    if (p->m_filament_sep_a)       p->m_filament_sep_a->Hide();
+    p->m_panel_filament_title->Hide();
+    if (p->m_filament_sep_b)       p->m_filament_sep_b->Hide();
+    p->m_panel_filament_content->Hide();
+    if (p->m_process_sep_a)        p->m_process_sep_a->Hide();
+    if (p->m_process_sep_b)        p->m_process_sep_b->Hide();
+    if (p->m_params_panel_ref)     p->m_params_panel_ref->Hide();
+    p->m_search_bar->Show();
+    p->m_object_list->Show();
 }
 
 Sidebar::~Sidebar() {}
