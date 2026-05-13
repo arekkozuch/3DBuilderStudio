@@ -31,6 +31,37 @@ BuilderToolbar::BuilderToolbar(wxWindow* parent)
     });
 
     sizer->Add(btn_cube, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(3));
+
+    // PR 3.3: Sphere button
+    auto* btn_sphere = new wxButton(this, wxID_ANY, _L("+ Sphere"),
+                                    wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    btn_sphere->SetToolTip(_L("Insert a sphere with radius 5 mm into the scene"));
+    btn_sphere->Bind(wxEVT_BUTTON, [](wxCommandEvent&) {
+        const TriangleMesh mesh = make_sphere(5.0, 2.0 * M_PI / 60.0);
+        wxGetApp().obj_list()->load_mesh_object(mesh, _L("Sphere"));
+    });
+    sizer->Add(btn_sphere, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(3));
+
+    // PR 3.4: Cylinder button
+    auto* btn_cyl = new wxButton(this, wxID_ANY, _L("+ Cylinder"),
+                                 wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    btn_cyl->SetToolTip(_L("Insert a cylinder r=5mm h=10mm into the scene"));
+    btn_cyl->Bind(wxEVT_BUTTON, [](wxCommandEvent&) {
+        const TriangleMesh mesh = make_cylinder(5.0, 10.0);
+        wxGetApp().obj_list()->load_mesh_object(mesh, _L("Cylinder"));
+    });
+    sizer->Add(btn_cyl, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(3));
+
+    // PR 3.5: Cone button
+    auto* btn_cone = new wxButton(this, wxID_ANY, _L("+ Cone"),
+                                  wxDefaultPosition, wxDefaultSize, wxBU_EXACTFIT);
+    btn_cone->SetToolTip(_L("Insert a cone r=5mm h=10mm into the scene"));
+    btn_cone->Bind(wxEVT_BUTTON, [](wxCommandEvent&) {
+        const TriangleMesh mesh = make_cone(5.0, 10.0);
+        wxGetApp().obj_list()->load_mesh_object(mesh, _L("Cone"));
+    });
+    sizer->Add(btn_cone, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(3));
+
     sizer->AddStretchSpacer();
 
     SetSizer(sizer);
