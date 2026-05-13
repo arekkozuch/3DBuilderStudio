@@ -1316,9 +1316,7 @@ void Selection::translate(const Vec3d &displacement, TransformationType transfor
     else if (m_mode == Volume)
         synchronize_unselected_volumes();
 #endif // !DISABLE_INSTANCES_SYNCH
-    if (wxGetApp().plater()->canvas3D()->get_canvas_type() != GLCanvas3D::ECanvasType::CanvasAssembleView) {
-        ensure_not_below_bed();
-    }
+    // PR 3.1: MeshForge allows free Z placement — automatic bed-snap removed.
     set_bounding_boxes_dirty();
     if (wxGetApp().plater()->canvas3D()->get_canvas_type() != GLCanvas3D::ECanvasType::CanvasAssembleView) {
         wxGetApp().plater()->canvas3D()->requires_check_outside_state();
