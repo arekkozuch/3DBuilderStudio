@@ -2676,11 +2676,7 @@ void MainFrame::init_menubar_as_editor()
             [this](wxCommandEvent&) { if (m_plater != nullptr) m_plater->export_toolpaths_to_obj(); }, "menu_export_toolpaths", nullptr,
             [this]() {return can_export_toolpaths(); }, this);
 
-        append_menu_item(
-            export_menu, wxID_ANY, _L("Export Preset Bundle") + dots /* + "\t" + ctrl + "E"*/, _L("Export current configuration to files"),
-            [this](wxCommandEvent &) { export_config(); },
-            "menu_export_config", nullptr,
-            []() { return true; }, this);
+        // PR 2.6: Export Preset Bundle removed — MeshForge has no profile system.
 
         append_submenu(fileMenu, export_menu, wxID_ANY, _L("Export"), "");
 
@@ -3150,31 +3146,11 @@ void MainFrame::init_menubar_as_editor()
         },
         "", nullptr, []() { return true; }, this);
 
-        append_menu_item(
-        m_topbar->GetTopMenu(), wxID_ANY, _L("Preset Bundle") + "\t", "",
-        [this](wxCommandEvent &) {
-            // MeshForge: Use GUI_App::open_preferences instead of direct call so windows associations are updated on exit
-            wxGetApp().open_presetbundledialog();
-            plater()->get_current_canvas3D()->force_set_focus();
-        },
-        "", nullptr, []() { return true; }, this);
-    //m_topbar->AddDropDownMenuItem(preference_item);
-    //m_topbar->AddDropDownMenuItem(printer_item);
-    //m_topbar->AddDropDownMenuItem(language_item);
-    //m_topbar->AddDropDownMenuItem(config_item);
+    // PR 2.6: Preset Bundle menu removed — MeshForge has no printer profile management.
     m_topbar->AddDropDownSubMenu(helpMenu, _L("Help"));
-    // PR 2.3: Calibration menu removed from topbar.
 
 #else
-    // On Mac, the Apple menu ignores non-standard custom items, so add Preset Bundle to the File menu
-    fileMenu->AppendSeparator();
-    append_menu_item(
-        fileMenu, wxID_ANY, _L("Preset Bundle"), "",
-        [this](wxCommandEvent &) {
-            wxGetApp().open_presetbundledialog();
-            plater()->get_current_canvas3D()->force_set_focus();
-        },
-        "", nullptr, []() { return true; }, this);
+    // PR 2.6: Preset Bundle removed from Mac File menu.
     m_menubar->Append(fileMenu, wxString::Format("&%s", _L("File")));
     if (editMenu)
         m_menubar->Append(editMenu, wxString::Format("&%s", _L("Edit")));
