@@ -1001,9 +1001,9 @@ TEST_CASE("Boolean intersect: result is closed manifold", "[boolean][intersect]"
 
 **Steps:**
 1. OrcaSlicer has a cut gizmo designed for splitting prints across plates. Adapt it.
-2. Strip the "add connectors/dowels" UI flow from the cut dialog.
-3. Default behavior: "Split to independent objects" with automatic capping (both halves become closed manifolds).
-4. The cut plane defaults to the XY plane at the object midpoint. User can drag it.
+
+2. Default behavior: "Split to independent objects" with automatic capping (both halves become closed manifolds).
+3. The cut plane defaults to the XY plane at the object midpoint. User can drag it.
 
 **Tests:**
 ```cpp
@@ -1039,7 +1039,7 @@ TEST_CASE("Plane cut: cut at z=0 yields full object and empty", "[cut][edge]") {
 }
 ```
 
-**Acceptance:** Plane cut produces two closed half-meshes. No connector UI. Tests pass.
+**Acceptance:** Plane cut produces two closed half-meshes. Tests pass.
 
 ---
 
