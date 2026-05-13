@@ -9,6 +9,9 @@
 
 namespace Slic3r {
 
+// PR 4.1: Value-returning boolean wrappers. Return empty mesh on failure.
+TriangleMesh mesh_subtract(TriangleMesh target, const TriangleMesh &tool);
+
 namespace MeshBoolean {
 
 using EigenMesh = std::pair<Eigen::MatrixXd, Eigen::MatrixXi>;

@@ -15,6 +15,7 @@ add_executable(${_TEST_NAME}_tests
     test_primitive_cylinder.cpp
     test_primitive_cone.cpp
     test_measure_gizmo.cpp
+    test_boolean_subtract.cpp
 )
 
 target_link_libraries(${_TEST_NAME}_tests test_common libslic3r_gui libslic3r Catch2::Catch2WithMain)

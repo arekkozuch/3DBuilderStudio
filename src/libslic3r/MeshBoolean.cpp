@@ -431,6 +431,24 @@ void minus(TriangleMesh &A, const TriangleMesh &B)
     _mesh_boolean_do(_cgal_diff, A, B);
 }
 
+} // namespace cgal
+} // namespace MeshBoolean
+
+TriangleMesh mesh_subtract(TriangleMesh target, const TriangleMesh &tool)
+{
+    if (tool.empty())
+        return target;
+    try {
+        MeshBoolean::cgal::minus(target, tool);
+    } catch (...) {
+        return TriangleMesh{};
+    }
+    return target;
+}
+
+namespace MeshBoolean {
+namespace cgal {
+
 void plus(TriangleMesh &A, const TriangleMesh &B)
 {
     _mesh_boolean_do(_cgal_union, A, B);
