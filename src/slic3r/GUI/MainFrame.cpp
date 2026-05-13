@@ -1756,6 +1756,10 @@ wxBoxSizer* MainFrame::create_side_tools()
 
     sizer->Layout();
 
+    // PR 2.4: MeshForge is not a slicer — hide Slice/Print buttons permanently.
+    slice_panel->Hide();
+    print_panel->Hide();
+
     m_filament_group_popup = new FilamentGroupPopup(m_slice_btn);
 
     auto try_hover_pop_up = [this]() {

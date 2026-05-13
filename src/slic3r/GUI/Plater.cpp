@@ -7692,10 +7692,7 @@ void Plater::priv::scale_selection_to_fit_print_volume()
 
 void Plater::priv::schedule_background_process()
 {
-    delayed_error_message.clear();
-    // Trigger the timer event after 0.5s
-    this->background_process_timer.Start(500, wxTIMER_ONE_SHOT);
-    // Notify the Canvas3D that something has changed, so it may invalidate some of the layer editing stuff.
+    // PR 2.4: Slicing disabled in MeshForge — background process never started.
     this->view3D->get_canvas3d()->set_config(this->config);
 }
 
@@ -15831,6 +15828,9 @@ bool Plater::is_multi_extruder_ams_empty()
 //BBS: add multiple plate reslice logic
 void Plater::reslice()
 {
+    // PR 2.4: Slicing disabled in MeshForge.
+    BOOST_LOG_TRIVIAL(info) << "Plater::reslice() called but slicing is disabled in MeshForge.";
+    return;
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(", Line %1%: enter, process_completed_with_error=%2%")%__LINE__ %p->process_completed_with_error;
     // There is "invalid data" button instead "slice now"
     if (p->process_completed_with_error == p->partplate_list.get_curr_plate_index())
