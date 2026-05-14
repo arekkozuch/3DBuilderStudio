@@ -2795,7 +2795,7 @@ void TabPrint::update_description_lines()
 void TabPrint::toggle_options()
 {
     if (!m_active_page) return;
-    // BBS: whether the preset is Bambu Lab printer
+    // BBS: whether the preset is a BBL printer
     if (m_preset_bundle) {
         bool is_BBL_printer = wxGetApp().preset_bundle->is_bbl_vendor();
         m_config_manipulation.set_is_BBL_Printer(is_BBL_printer);
@@ -5390,7 +5390,7 @@ void TabPrinter::toggle_options()
             ExtruderType(extruders->values[extruder_id]), NozzleVolumeType(nozzle_volumes->values[extruder_id]), "printer_extruder_variant", stride);
     };
 
-    //BBS: whether the preset is Bambu Lab printer
+    //BBS: whether the preset is a BBL printer
     bool is_BBL_printer = false;
     if (m_preset_bundle) {
        is_BBL_printer = wxGetApp().preset_bundle->is_bbl_vendor();

@@ -248,7 +248,7 @@ extern bool is_shapes_dir(const std::string& dir);
 //BBS: add json support
 extern bool is_json_file(const std::string& path);
 
-// Orca: custom protocal support utils
+// custom protocal support utils
 inline bool is_meshforge_open(const std::string& url) { return boost::starts_with(url, "orcaslicer://open"); }
 inline bool is_prusaslicer_open(const std::string& url) { return boost::starts_with(url, "prusaslicer://open"); }
 inline bool is_bambustudio_open(const std::string& url) { return boost::starts_with(url, "bambustudio://open") || boost::starts_with(url, "bambustudioopen://"); }
@@ -721,7 +721,7 @@ bool install_vendor_bundles_from_resources(const std::vector<std::string>& bundl
                                            const std::string& resource_subdir = "profiles",
                                            const std::string& data_subdir     = "system");
 
-// Orca: Since 1.7.9 Boost deprecated save_string_file and load_string_file, copy and modified from boost 1.7.8
+// Since 1.7.9 Boost deprecated save_string_file and load_string_file, copy and modified from boost 1.7.8
 void save_string_file(const boost::filesystem::path& p, const std::string& str);
 void load_string_file(const boost::filesystem::path& p, std::string& str);
 

@@ -1164,7 +1164,7 @@ ExtruderGroup::ExtruderGroup(wxWindow * parent, int index, wxString const &title
     wxBoxSizer * hsizer_nozzle = new wxBoxSizer(wxHORIZONTAL);
     hsizer_nozzle->Add(label_flow, 0, wxALIGN_CENTER);
     hsizer_nozzle->Add(combo_flow, 1, wxEXPAND);
-    label_flow->Hide(); // TODO: Orca hack, hide flow selection
+    label_flow->Hide(); // TODO: review this hack, hide flow selection
     combo_flow->Hide();
     if (index < 0) {
         label_ams->Hide();
@@ -1524,7 +1524,7 @@ void Sidebar::priv::update_sync_status(const MachineObject *obj)
     auto is_same_nozzle_info = [obj](const ExtruderInfo &left, const ExtruderInfo &right) {
         bool is_same_nozzle_type = true;
         if (obj->is_nozzle_flow_type_supported())
-            is_same_nozzle_type = true;//left.nozzle_volue_type == right.nozzle_volue_type; // TODO: Orca hack
+            is_same_nozzle_type = true;//left.nozzle_volue_type == right.nozzle_volue_type; // TODO: review this hack
         return abs(left.diameter - right.diameter) < EPSILON && is_same_nozzle_type;
     };
 
@@ -1840,7 +1840,7 @@ Sidebar::Sidebar(Plater *parent)
         p->combo_printer->Bind(wxEVT_SET_FOCUS,  [this, printer_focus_bg](auto& e) {printer_focus_bg(true ); e.Skip();});
         p->combo_printer->Bind(wxEVT_KILL_FOCUS, [this, printer_focus_bg](auto& e) {printer_focus_bg(false); e.Skip();});
 
-        /* ORCA This part moved to titlebar
+        /* This part moved to titlebar
         p->btn_connect_printer = new ScalableButton(p->panel_printer_preset, wxID_ANY, "monitor_signal_strong");
         p->btn_connect_printer->SetBackgroundColour(wxColour(255, 255, 255));
         p->btn_connect_printer->SetToolTip(_L("Connection"));
@@ -2043,7 +2043,7 @@ Sidebar::Sidebar(Plater *parent)
         BedType bed_type = (BedType)bed_type_value;
         project_config.set_key_value("curr_bed_type", new ConfigOptionEnum<BedType>(bed_type));
 
-        /* ORCA THIS PART MOVED TO TITLEBAR
+        /* THIS PART MOVED TO TITLEBAR
         // Sync printer information
         btn_sync = new Button(p->m_panel_printer_content, _L("Sync info"), "printer_sync", 0, 32);
         //btn_sync->SetFont(Label::Body_8);
@@ -4080,7 +4080,7 @@ void Sidebar::update_printer_thumbnail()
     if (printer_thumbnails.find(printer_type) != printer_thumbnails.end()) // Use known cache first
         p->image_printer->SetBitmap(create_scaled_bitmap(printer_thumbnails[printer_type], this, PRINTER_THUMBNAIL_SIZE.GetHeight()));
     else {
-        /* ORCA this part check images folder for BBL covers but not checks file existence and causes crash on Linux
+        /* this part check images folder for BBL covers but not checks file existence and causes crash on Linux
         *       BBL covers already exist on profile folder so no need to use this section
         try {
             // No cache, try dedicated printer preview
@@ -6462,8 +6462,8 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
 
                             //    // show notification about temporarily installed presets
                             //    if (!names.empty()) {
-                            //        std::string notif_text = into_u8(_L_PLURAL("The preset below was temporarily installed on the active instance of PrusaSlicer",
-                            //                                                   "The presets below were temporarily installed on the active instance of PrusaSlicer",
+                            //        std::string notif_text = into_u8(_L_PLURAL("The preset below was temporarily installed on the active instance of MeshForge",
+                            //                                                   "The presets below were temporarily installed on the active instance of MeshForge",
                             //                                                   names.size())) + ":";
                             //        for (std::string& name : names)
                             //            notif_text += "\n - " + name;
@@ -6715,9 +6715,9 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                 // if (answer_convert_from_imperial_units == wxOK_DEFAULT) {
                 //    RichMessageDialog dlg(q, format_wxstr(_L_PLURAL(
                 //        "The dimensions of the object from file %s seem to be defined in inches.\n"
-                //        "The internal unit of PrusaSlicer is a millimeter. Do you want to recalculate the dimensions of the object?",
+                //        "The internal unit of MeshForge is a millimeter. Do you want to recalculate the dimensions of the object?",
                 //        "The dimensions of some objects from file %s seem to be defined in inches.\n"
-                //        "The internal unit of PrusaSlicer is a millimeter. Do you want to recalculate the dimensions of these objects?", model.objects.size()), from_path(filename))
+                //        "The internal unit of MeshForge is a millimeter. Do you want to recalculate the dimensions of these objects?", model.objects.size()), from_path(filename))
                 //        + "\n", _L("The object is too small"), wxICON_QUESTION | wxYES_NO);
                 //    dlg.ShowCheckBox(_L("Apply to all the remaining small objects being loaded."));
                 //    int answer = dlg.ShowModal();
@@ -10489,7 +10489,7 @@ void Plater::priv::on_change_color_mode(SimpleEvent& evt) {
 void Plater::priv::apply_color_mode()
 {
     const bool is_dark         = wxGetApp().dark_mode();
-    wxColour   orca_color      = wxColour(59, 68, 70);//wxColour(ColorRGBA::ORCA().r_uchar(), ColorRGBA::ORCA().g_uchar(), ColorRGBA::ORCA().b_uchar());
+    wxColour   orca_color      = wxColour(59, 68, 70);//wxColour(ColorRGBA::ACCENT().r_uchar(), ColorRGBA::ACCENT().g_uchar(), ColorRGBA::ACCENT().b_uchar());
     orca_color                 = is_dark ? StateColor::darkModeColorFor(orca_color) : StateColor::lightModeColorFor(orca_color);
     wxColour sash_color = is_dark ? wxColour(38, 46, 48) : wxColour(206, 206, 206);
     m_aui_mgr.GetArtProvider()->SetColour(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR, sash_color);

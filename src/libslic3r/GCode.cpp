@@ -5283,7 +5283,7 @@ LayerResult GCode::process_layer(
                     }
                 }
 
-                // Orca(#7946): set current obj regardless of the `enable_overhang_speed` value, because
+                // set current obj regardless of the `enable_overhang_speed` value, because
                 // `enable_overhang_speed` is a PrintRegionConfig and here we don't have a region yet.
                 // And no side effect doing this even if `enable_overhang_speed` is off, so don't bother
                 // checking anything here.

@@ -1647,7 +1647,7 @@ void AppConfig::add_cloud_provider(const std::string& provider)
 void AppConfig::remove_cloud_provider(const std::string& provider)
 {
     if (provider == "meshforge")
-        return; // Cannot remove orca
+        return; // Cannot remove
     auto providers = get_cloud_providers();
     providers.erase(std::remove(providers.begin(), providers.end(), provider), providers.end());
     set_cloud_providers(providers);

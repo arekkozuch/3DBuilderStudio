@@ -54,7 +54,7 @@ public:
     std::string set_print_acceleration(unsigned int acceleration)   { return set_acceleration_internal(Acceleration::Print, acceleration); }
     std::string set_travel_acceleration(unsigned int acceleration)  { return set_acceleration_internal(Acceleration::Travel, acceleration); }
     std::string set_jerk_xy(double jerk);
-    // Orca: set acceleration and jerk in one command for Klipper
+    // set acceleration and jerk in one command for Klipper
     std::string set_accel_and_jerk(unsigned int acceleration, double jerk);
     std::string set_junction_deviation(double junction_deviation); 
     std::string set_pressure_advance(double pa) const;
@@ -169,7 +169,7 @@ public:
     double          m_x_offset{ 0 };
     double          m_y_offset{ 0 };
 
-    // Orca: slicing resolution in mm
+    // slicing resolution in mm
     double          m_resolution = 0.01;
     
     std::string m_gcode_label_objects_start;

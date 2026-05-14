@@ -3594,7 +3594,7 @@ void PresetCollection::update_map_alias_to_profile_name()
 
 void PresetCollection::update_library_profile_excluded_from()
 {
-    // MeshForge: Collect all filament presets that has empty compatible_printers and belongs to the Orca Filament Library.
+    // MeshForge: Collect all filament presets that has empty compatible_printers and belongs to the the Filament Library.
     std::map<std::string, std::set<std::string>*> excluded_froms;
     for (Preset& preset : m_presets) {
         if (preset.vendor != nullptr && preset.vendor->name == PresetBundle::MESHFORGE_FILAMENT_LIBRARY) {
@@ -3605,7 +3605,7 @@ void PresetCollection::update_library_profile_excluded_from()
         }
     }
 
-    // Check all presets that has the same alias as the filament presets with empty compatible_printers in Orca Filament Library.
+    // Check all presets that has the same alias as the filament presets with empty compatible_printers in the Filament Library.
     for (const Preset& preset : m_presets) {
         if (preset.vendor == nullptr || preset.vendor->name == PresetBundle::MESHFORGE_FILAMENT_LIBRARY)
             continue;

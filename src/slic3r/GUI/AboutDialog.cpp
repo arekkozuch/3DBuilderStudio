@@ -110,7 +110,7 @@ void CopyrightsDialog::fill_entries()
         { "Open Cascade",                                   "",      "https://www.opencascade.com" },
         { "OpenGL",                                         "",      "https://www.opengl.org" },
         { "PoEdit",                                         "",      "https://poedit.net" },
-        { "PrusaSlicer",                                    "",      "https://www.prusa3d.com" },
+        { "Slic3r / upstream slicer community",             "",      "https://slic3r.org" },
         { "Real-Time DXT1/DXT5 C compression library",      "",      "https://github.com/Cyan4973/RygsDXTc" },
         { "SemVer",                                         "",      "https://semver.org" },
         { "Shinyprofiler",                                  "",      "https://code.google.com/p/shinyprofiler" },
@@ -149,7 +149,7 @@ wxString CopyrightsDialog::get_html_text()
         _L("License"),
         _L("MeshForge is licensed under "),
         "https://www.gnu.org/licenses/agpl-3.0.html",_L("GNU Affero General Public License, version 3"),
-        _L("MeshForge is based on PrusaSlicer and BambuStudio"),
+        _L("MeshForge is built on the open-source slicer community codebase (AGPL-3.0)"),
         _L("Libraries"),
         _L("This software uses open source components whose copyright and other proprietary rights belong to their respective owners"));
 

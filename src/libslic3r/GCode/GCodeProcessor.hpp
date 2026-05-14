@@ -184,11 +184,11 @@ class Print;
             float travel_dist{ 0.0f }; // mm
             float fan_speed{ 0.0f }; // percentage
             float temperature{ 0.0f }; // Celsius degrees
-// ORCA: Add Pressure Advance visualization support
+// Add Pressure Advance visualization support
             float pressure_advance{ 0.0f };
-            // ORCA: Add Acceleration visualization support
+            // Add Acceleration visualization support
             float acceleration{ 0.0f }; // mm/s^2
-            // ORCA: Add Jerk visualization support
+            // Add Jerk visualization support
             float jerk{ 0.0f }; // mm/s
             std::array<float, static_cast<size_t>(PrintEstimatedStatistics::ETimeMode::Count)> time{ 0.0f, 0.0f }; // s
             float layer_duration{ 0.0f }; // s
@@ -615,7 +615,7 @@ class Print;
             // Additional load / unload times for a filament exchange sequence.
             float filament_load_times;
             float filament_unload_times;
-            //Orca:  time for tool change
+            //  time for tool change
             float machine_tool_change_time;
 
             std::array<TimeMachine, static_cast<size_t>(PrintEstimatedStatistics::ETimeMode::Count)> machines;
@@ -789,7 +789,7 @@ class Print;
         float m_travel_dist; // mm
         float m_fan_speed; // percentage
         float m_z_offset; // mm
-// ORCA: Add Pressure Advance visualization support
+// Add Pressure Advance visualization support
         float m_pressure_advance;
         ExtrusionRole m_extrusion_role;
         std::vector<int> m_filament_maps;
@@ -895,7 +895,7 @@ class Print;
         //BBS: set offset for gcode writer
         void set_xy_offset(double x, double y) { m_x_offset = x; m_y_offset = y; }
 
-        // Orca: if true, only change new layer if ETags::Layer_Change occurs
+        // if true, only change new layer if ETags::Layer_Change occurs
         // otherwise when we got a lift of z during extrusion, a new layer will be added
         void detect_layer_based_on_tag(bool enabled) { m_detect_layer_based_on_tag = enabled; }
 
@@ -995,7 +995,7 @@ class Print;
         // Disable fan
         void process_M107(const GCodeReader::GCodeLine& line);
 
-// ORCA: Add Pressure Advance visualization support
+// Add Pressure Advance visualization support
         // Set pressure advance
         void process_M900(const GCodeReader::GCodeLine& line);
         void process_M572(const GCodeReader::GCodeLine &line);

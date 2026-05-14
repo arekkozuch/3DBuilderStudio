@@ -24,7 +24,7 @@
 
 #include "GCode/PressureEqualizer.hpp"
 #include "GCode/SmallAreaInfillFlowCompensator.hpp"
-// ORCA: post processor below used for Dynamic Pressure advance
+// post processor below used for Dynamic Pressure advance
 #include "GCode/AdaptivePAProcessor.hpp"
 
 #include "GCode/TimelapsePosPicker.hpp"
@@ -392,13 +392,13 @@ private:
     std::string     preamble();
     // BBS
     std::string     change_layer(coordf_t print_z);
-    // Orca: pass the complete collection of region perimeters to the extrude loop to check whether the wipe before external loop
+    // pass the complete collection of region perimeters to the extrude loop to check whether the wipe before external loop
     // should be executed
     std::string extrude_entity(const ExtrusionEntity&      entity,
                                const std::string&          description       = "",
                                double                      speed             = -1.,
                                const ExtrusionEntitiesPtr& region_perimeters = ExtrusionEntitiesPtr());
-    // Orca: pass the complete collection of region perimeters to the extrude loop to check whether the wipe before external loop
+    // pass the complete collection of region perimeters to the extrude loop to check whether the wipe before external loop
     // should be executed
     std::string extrude_loop(const ExtrusionLoop&        loop,
                              const std::string&          description,
@@ -408,7 +408,7 @@ private:
     std::string extrude_multi_path(const ExtrusionMultiPath& multipath, const std::string& description = "", double speed = -1.);
     std::string extrude_path(const ExtrusionPath& path, const std::string& description = "", double speed = -1.);
 
-    // Orca: Adaptive PA variables
+    // Adaptive PA variables
     // Used for adaptive PA when extruding paths with multiple, varying flow segments.
     // This contains the sum of the mm3_per_mm values weighted by the length of each path segment.
     // The m_multi_flow_segment_path_pa_set constrains the PA change request to the first extrusion segment.
@@ -419,7 +419,7 @@ private:
     // Adaptive PA last set flow to enable issuing of PA change commands when adaptive PA for overhangs
     // is enabled
     double          m_last_mm3_mm = 0;
-    // Orca: Adaptive PA code segment end
+    // Adaptive PA code segment end
 
     // Extruding multiple objects with soluble / non-soluble / combined supports
     // on a multi-material printer, trying to minimize tool switches.
@@ -557,7 +557,7 @@ private:
     bool m_enable_exclude_object;
     std::vector<size_t> m_label_objects_ids;
     std::string _encode_label_ids_to_base64(std::vector<size_t> ids);
-    // ORCA: Add support for role based fan speed control
+    // Add support for role based fan speed control
     std::array<bool, ExtrusionRole::erCount> m_is_role_based_fan_on;
     std::array<int, ExtrusionRole::erCount>  m_role_based_fan_marker_layer;
     // Markers for the Pressure Equalizer to recognize the extrusion type.

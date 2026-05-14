@@ -417,7 +417,7 @@ public:
     bool fix_cut_selection(wxDataViewItemArray &sels);
 
     ModelVolume* get_selected_model_volume();
-#if 0 // ORCA: disabled alongside definition in GUI_ObjectList.cpp (see #if 0 block there)
+#if 0 // disabled alongside definition in GUI_ObjectList.cpp (see #if 0 block there)
     void change_part_type();
 #endif
 	void set_volume_type(ModelVolumeType new_type);

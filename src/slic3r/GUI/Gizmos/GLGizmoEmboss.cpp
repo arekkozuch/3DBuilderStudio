@@ -2209,7 +2209,7 @@ void GLGizmoEmboss::draw_style_list() {
     if (m_style_manager.exist_stored_style())
         ImGui::Text("%s", title.c_str());
     else
-        ImGui::TextColored(ImGuiWrapper::COL_ORCA, "%s", title.c_str());
+        ImGui::TextColored(ImGuiWrapper::COL_ACCENT, "%s", title.c_str());
         
     ImGui::SameLine(m_gui_cfg->input_offset);
 

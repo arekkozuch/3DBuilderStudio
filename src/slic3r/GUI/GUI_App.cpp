@@ -3324,7 +3324,7 @@ bool GUI_App::on_init_network(bool try_backup)
         m_agent->start();
     }
 
-    // When using Orca cloud alongside the BBL network plugin, the BBL DLL agent still
+    // When using cloud alongside the BBL network plugin, the BBL DLL agent still
     // needs to be created and configured (config dir, certs, country, start) so that
     // BBLPrinterAgent can use it for LAN discovery and printer communication.
     if (should_load_networking_plugin && !m_networking_need_update) {
@@ -3448,7 +3448,7 @@ void GUI_App::switch_printer_agent()
 void GUI_App::select_machine(const std::string& agent_id)
 {
     // Skip for BBL agent for now - uses its own device discovery/selection
-    // Orca todo: revisit in future if we want to support auto-switching for BBL printers
+    // TODO: revisit in future if we want to support auto-switching for BBL printers
     if (agent_id == BBL_PRINTER_AGENT_ID) {
         return;
     }
@@ -3494,7 +3494,7 @@ void GUI_App::select_machine(const std::string& agent_id)
         machine.dev_name = dev_id;
         machine.printer_type = preset.config.opt_string("printer_model");
         auto access_code = preset.config.opt_string("printhost_apikey");
-        // Orca expect non empty access code
+        // expect non-empty access code
         if (access_code.empty()) {
             access_code = "88888888";
         }
@@ -6215,7 +6215,7 @@ void GUI_App::update_single_bundle(wxCommandEvent& evt)
             std::string initial_version = preset_bundle->bundles.m_bundles[bundle_id].version;
             preset_bundle->bundles.ReadUnlock();
 
-            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "ORCA : CallAfter from update_single_bundle function actually updating subscribed presets";
+            BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "CallAfter from update_single_bundle function actually updating subscribed presets";
             
             preset_bundle->bundles.WriteLock();
             
@@ -6246,7 +6246,7 @@ void GUI_App::sync_bundle(std::string bundle_id, std::string version)
 {
     // if(preset_bundle->bundles.pauseReads.load())
     // {
-    //     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "ORCA : Update thread sync_bundle function yielded to main thread. 1";
+    //     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "Update thread sync_bundle function yielded to main thread. 1";
     //     return; // if the main thread acquires the lock at the start of our operations, we will yield
     // }
     if (!m_agent || !m_agent->is_user_login()) return;
@@ -6330,7 +6330,7 @@ void GUI_App::sync_bundle(std::string bundle_id, std::string version)
 
                 // if(!preset_bundle->bundles.pauseReads.load()) // check again if we can actually update so as to not block the main thread 
                 // {
-                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "ORCA : CallAfter from sync_bundle function actually updating subscribed presets";
+                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "CallAfter from sync_bundle function actually updating subscribed presets";
                     
                     preset_bundle->bundles.WriteLock();
                     
@@ -6427,7 +6427,7 @@ void GUI_App::check_bundle_updates()
     int updates_available = 0;
 
     for (auto& [bundle_id, local_metadata] : preset_bundle->bundles.m_bundles) {
-        // Only check subscribed bundles (those with UUID-style IDs from Orca Cloud)
+        // Only check subscribed bundles (those with UUID-style IDs from Cloud)
         // Skip external bundles (those with name+timestamp IDs)
         if (!local_metadata.is_subscribed) {
             continue;
@@ -6664,7 +6664,7 @@ void GUI_App::start_sync_user_preset(bool with_progress_dlg)
                                 // Sync each bundle individually
                                 // if(!preset_bundle->bundles.pauseReads.load()) // if pause is true we will skip updating this frame altogether
                                 // {   
-                                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "ORCA : Update thread syncing bundles";
+                                    BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << __LINE__ << "Update thread syncing bundles";
                                     sync_bundle(bundle_entry.first, bundle_entry.second);
                                 // }
                                 // Small delay between bundle syncs to avoid overwhelming the server

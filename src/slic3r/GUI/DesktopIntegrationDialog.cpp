@@ -401,7 +401,7 @@ void DesktopIntegrationDialog::perform_desktop_integration()
         // Desktop file
         std::string desktop_file = GUI::format(
             "[Desktop Entry]\n"
-            "Name=Bambu Gcode Viewer%1%\n"
+            "Name=MeshForge GCode Viewer%1%\n"
             "GenericName=3D Printing Software\n"
             "Icon=MeshForge-gcodeviewer%2%\n"
             "Exec=\"%3%\" --gcodeviewer %%F\n"

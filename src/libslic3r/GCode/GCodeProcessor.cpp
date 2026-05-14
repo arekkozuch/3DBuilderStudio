@@ -455,7 +455,7 @@ void GCodeProcessor::TimeMachine::calculate_time(GCodeProcessorResult& result, P
                 if ((position - prev_move.position).norm() > EPSILON &&
                     (position - curr_move.position).norm() > EPSILON) {
                     const float delta_extruder = interpolate ? lerp(prev_move.delta_extruder, curr_move.delta_extruder, t) : curr_move.delta_extruder;
-                    const float feedrate = curr_move.feedrate; //  ORCA: set feedrate to the gcode feed rate to prevent visualiser from
+                    const float feedrate = curr_move.feedrate; //  set feedrate to the gcode feed rate to prevent visualiser from
                                                                 // displaying erroneous speed transition when actual speed/actual flow views are NOT selected.
                                                                 // interpolate ? lerp(prev_move.feedrate, curr_move.feedrate, t) : curr_move.feedrate;
                     const float width = interpolate ? lerp(prev_move.width, curr_move.width, t) : curr_move.width;
@@ -486,7 +486,7 @@ void GCodeProcessor::TimeMachine::calculate_time(GCodeProcessorResult& result, P
                 if ((position - prev_move.position).norm() > EPSILON &&
                     (position - curr_move.position).norm() > EPSILON) {
                     const float delta_extruder = interpolate ? lerp(prev_move.delta_extruder, curr_move.delta_extruder, t) : curr_move.delta_extruder;
-                    const float feedrate = curr_move.feedrate; //  ORCA: set feedrate to the gcode feed rate to prevent visualiser from
+                    const float feedrate = curr_move.feedrate; //  set feedrate to the gcode feed rate to prevent visualiser from
                                                                 // displaying erroneous speed transition when actual speed/actual flow views are NOT selected.
                                                                 // interpolate ? lerp(prev_move.feedrate, curr_move.feedrate, t) : curr_move.feedrate;
                     const float width = interpolate ? lerp(prev_move.width, curr_move.width, t) : curr_move.width;
@@ -1250,7 +1250,7 @@ void GCodeProcessor::run_post_process()
                     warning += gcode_line;
                     warning += "Generated M104 lines may be incorrect.";
                     BOOST_LOG_TRIVIAL(error) << warning;
-                    // Orca todo
+                    // TODO
                     if (m_print != nullptr)
                         m_print->active_step_add_warning(PrintStateBase::WarningLevel::CRITICAL, warning);
                 }
@@ -2534,7 +2534,7 @@ void GCodeProcessor::process_file(const std::string& filename, std::function<voi
             // Get the correct printer vendor based on the `printer_model` field
             auto printer_model_opt = config.opt<ConfigOptionString>("printer_model");
             if (printer_model_opt && !printer_model_opt->value.empty()) {
-                // TODO: Orca hack, proper vendor check?
+                // TODO: review this hack, proper vendor check?
                 GCodeProcessor::s_IsBBLPrinter = boost::starts_with(printer_model_opt->value, "Bambu Lab");
             }
 

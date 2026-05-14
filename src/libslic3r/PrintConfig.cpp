@@ -10771,7 +10771,7 @@ OtherSlicingStatesConfigDef::OtherSlicingStatesConfigDef()
     def->label   = L("Number of extruders");
     def->tooltip = L("Total number of extruders, regardless of whether they are used in the current print.");
 
-    // Options from PS not used in Orca
+    // Options from upstream not used here
     //    def = this->add("initial_filament_type", coString);
     //    def->label = L("Initial filament type");
     //    def->tooltip = L("String containing filament type of the first used extruder.");

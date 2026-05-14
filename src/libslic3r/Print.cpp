@@ -3641,7 +3641,7 @@ std::string PrintStatistics::finalize_output_path(const std::string &path_in) co
      return true;
  }
 
-// MeshForge: Implement prusa's filament shrink compensation approach, but amended so 100% from the user is the equivalent to 0 in orca.
+// MeshForge: Implement prusa's filament shrink compensation approach, but amended so 100% from the user is the equivalent to 0
  // Returns scaling for each axis representing shrinkage compensations in each axis.
 Vec3d Print::shrinkage_compensation() const
 {

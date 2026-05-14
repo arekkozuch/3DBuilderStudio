@@ -84,7 +84,7 @@ SlicingParameters SlicingParameters::create_from_config(
     
 
     /* -------------------------------------------------- */
-    /*  ORCA: Zero-gap interface detection (asymmetric)   */
+    /* Zero-gap interface detection (asymmetric)   */
     /* -------------------------------------------------- */
 
     const bool zero_topZ_contact =
@@ -146,7 +146,7 @@ SlicingParameters SlicingParameters::create_from_config(
     params.max_layer_height = std::max(params.max_layer_height, params.layer_height);
 
     /* -------------------------------------------------- */
-    /*                ORCA: Gap assignment                */
+    /* Gap assignment                */
     /* -------------------------------------------------- */
 
     // MeshForge: Raft contact (raft -> object)

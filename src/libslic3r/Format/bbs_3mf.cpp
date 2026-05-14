@@ -4766,7 +4766,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             return true;
         }
 
-        // TODO: Orca: support legacy text info
+        // TODO: support legacy text info
         /*
         TextInfo text_info;
         text_info.m_text      = xml_unescape(bbs_get_attribute_value_string(attributes, num_attributes, TEXT_ATTR));
@@ -7216,7 +7216,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
                 return false;
             }
 
-            // Orca#7574: always use "model" type to follow the 3MF Core Specification:
+            // always use "model" type to follow the 3MF Core Specification:
             // https://github.com/3MFConsortium/spec_core/blob/20c079eef39e45ed223b8443dc9f34cbe32dc2c2/3MF%20Core%20Specification.md#3431-item-element
             // > Note: items MUST NOT reference objects of type "other", either directly or recursively.
             // This won't break anything because when loading the file the upstream slicer simply does not care about the actual object type at all (as long as it's one of "model" & "other");

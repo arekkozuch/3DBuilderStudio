@@ -29,7 +29,7 @@
 #define PRESET_TEMPLATE_DIR "Template"
 #define PRESET_CUSTOM_VENDOR "Custom"
 
-// Orca: bundle import directories
+// bundle import directories
 #define PRESET_LOCAL_DIR          "_local"
 #define PRESET_SUBSCRIBED_DIR     "_subscribed"
 #define PRESET_BUNDLE_METADATA    "bundle_metadata.json"
@@ -259,15 +259,15 @@ public:
     // and to match the "inherits" field of user profiles with updated system profiles.
     std::vector<std::string> renamed_from;
 
-    // Orca: maintain a list of printer models that are excluded from this preset, designed for filaments without compatible_printer defined
+    // maintain a list of printer models that are excluded from this preset, designed for filaments without compatible_printer defined
     // (hence they are visible to all printer models by default) in Orca Filament Library. However, we might have speciliazed filament for
     // certain printer models defined in the vendor profile as well, in this case we want to hide this generic preset for these printer models.
     std::set<std::string> m_excluded_from;
 
-    // Orca: flag to indicate if this preset is from Orca Filament Library
+    // flag to indicate if this preset is from Orca Filament Library
     bool m_from_orca_filament_lib = false;
 
-    // Orca: bundle tracking - imported preset bundles. Bundle ID: UUID (OrcaCloud) or name+timestamp (external).
+    // bundle tracking - imported preset bundles. Bundle ID: UUID (OrcaCloud) or name+timestamp (external).
     // Presence of bundle_id is the source of truth for "came from a bundle".
     std::string         bundle_id;
     bool                is_from_bundle() const { return ! bundle_id.empty(); }
@@ -667,7 +667,7 @@ public:
     {
         return const_cast<PresetCollection*>(this)->find_preset(name, first_visible_if_not_found);
     }
-    // Orca: find preset, if not found, keep searching in the renamed history. This is function should only be used when find
+    // find preset, if not found, keep searching in the renamed history. This is function should only be used when find
     // system(parent) presets for custom preset.
     Preset* find_preset2(const std::string& name, bool auto_match = true);
     const Preset* find_preset2(const std::string& name, bool auto_match = true) const
@@ -805,7 +805,7 @@ protected:
     // Update m_map_system_profile_renamed from loaded system profiles.
     void 			update_map_system_profile_renamed();
 
-    // Orca: update m_excluded_from loaded system profiles.
+    // update m_excluded_from loaded system profiles.
     void 			update_library_profile_excluded_from();
 
 
@@ -907,7 +907,7 @@ private:
     //BBS: mutex
     std::recursive_mutex          m_mutex;
 
-    // Orca: used for validation only
+    // used for validation only
     int m_errors = 0;
 };
 

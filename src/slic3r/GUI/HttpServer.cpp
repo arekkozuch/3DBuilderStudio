@@ -293,7 +293,7 @@ std::shared_ptr<HttpServer::Response> HttpServer::auth_handle_request(const std:
         }
     }
 
-    // Ticket-based redirect: Bambu Lab's auth server redirects here after a
+    // Ticket-based redirect: auth server redirects here after a
     // third-party (Google) OAuth so that the access token never travels through
     // the URL. We exchange the ticket via the network plugin's get_my_token,
     // then run the same get_my_profile + change_user flow as access_token.

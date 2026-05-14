@@ -302,7 +302,7 @@ private:
     bool m_networking_cancel_update { false };
     std::shared_ptr<UpgradeNetworkJob> m_upgrade_network_job;
 
-    // ORCA: for installing vendors on the main thread when presets to be synced requires it
+    // for installing vendors on the main thread when presets to be synced requires it
     // vendor structure is:
     // [vendor_name]: { model: variants, model: variants, ... }
     // filaments structure is:
@@ -522,7 +522,7 @@ public:
 
     bool            maybe_migrate_user_presets_on_login();
 
-    // ORCA: functions for loading unloaded vendors to allow for proper inheritance when syncing user presets/bundles
+    // functions for loading unloaded vendors to allow for proper inheritance when syncing user presets/bundles
     bool            check_preset_parent_available(const std::pair<std::string, std::map<std::string, std::string>>& preset_data);
     void            add_pending_vendor_preset(const std::pair<std::string, std::map<std::string, std::string>>& preset_data);
     void            load_pending_vendors();
@@ -741,7 +741,7 @@ public:
     bool            hot_reload_network_plugin();
     std::string     get_latest_network_version() const;
     bool            has_network_update_available() const;
-    // Orca: return the client version to report to Bambu servers. Pinned to
+    // return the client version to report to Bambu servers. Pinned to
     // 01.10.01.50 when the legacy network plugin lacks get_my_token support
     // so the auth server stays on the ?access_token= redirect path.
     std::string     get_bbl_client_version();

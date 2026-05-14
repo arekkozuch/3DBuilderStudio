@@ -3677,7 +3677,7 @@ Preset *PresetBundle::get_similar_printer_preset(std::string printer_model, std:
     }
     if (printer_presets.empty())
         return nullptr;
-    auto prefer_printer = printers.get_selected_preset().alias; //.name ORCA use alias instead "name" for calling system presets. otherwise nozzle combo will not change printer presets if they custom named
+    auto prefer_printer = printers.get_selected_preset().alias; 
 
     if (!printer_variant.empty())
         boost::replace_all(prefer_printer, printer_variant_old, printer_variant);
@@ -5334,7 +5334,7 @@ bool PresetBundle::has_errors() const
     for (auto& preset : filaments) {
         if (!preset.is_system)
             continue;
-        // It's per design that the Orca Filament Library can have the empty compatible_printers.
+        // It's per design that the the Filament Library can have the empty compatible_printers.
         if(preset.vendor->name == PresetBundle::MESHFORGE_FILAMENT_LIBRARY)
             continue;
         auto* compatible_printers = dynamic_cast<const ConfigOptionStrings*>(preset.config.option("compatible_printers"));

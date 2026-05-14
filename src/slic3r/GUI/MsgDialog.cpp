@@ -108,7 +108,7 @@ void MsgDialog::on_dpi_changed(const wxRect &suggested_rect)
 
          while (i != m_buttons.end()) {
              MsgButton *bd   = i->second;
-             /* ORCA not required since all buttons has same size and Rescale re applies its style
+             /* not required since all buttons has same size and Rescale re applies its style
              wxSize     bsize;
 
 
@@ -139,7 +139,7 @@ void MsgDialog::SetButtonLabel(wxWindowID btn_id, const wxString& label, bool se
 Button* MsgDialog::add_button(wxWindowID btn_id, bool set_focus /*= false*/, const wxString& label/* = wxString()*/)
 {
     Button* btn = new Button(this, label, "", 0, 0, btn_id);
-    /* ORCA not required since all buttons has same size and Rescale re applies its style
+    /* not required since all buttons has same size and Rescale re applies its style
     ButtonSizeType type;
 
     if (label.length() < 5) {

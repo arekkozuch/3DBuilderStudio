@@ -1495,7 +1495,7 @@ void PartPlate::register_raycasters_for_picking(GLCanvas3D &canvas)
 		register_model_for_picking(canvas, m_plate_name_edit_icon, picking_id_component(6));
     register_model_for_picking(canvas, m_move_front_icon, picking_id_component(7));
 
-    // Only register filament map button for H2D (dual-extruder Bambu Lab) printers
+    // Only register filament map button for H2D (dual-extruder) printers
     PresetBundle* preset = wxGetApp().preset_bundle;
     bool dual_bbl = (preset && preset->is_bbl_vendor() && preset->get_printer_extruder_count() == 2);
     if (dual_bbl)

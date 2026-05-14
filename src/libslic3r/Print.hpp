@@ -204,7 +204,7 @@ struct PrintInstance
     // 
     // instance id
     size_t               id;
-    // Orca: unique id used by marlin/rrf cancel object feature
+    // unique id used by marlin/rrf cancel object feature
     size_t               unique_id;
 
     //BBS: instance_shift is too large because of multi-plate, apply without plate offset.
@@ -417,7 +417,7 @@ public:
     // The slicing parameters are dependent on various configuration values
     // (layer height, first layer height, raft settings, print nozzle diameter etc).
     const SlicingParameters&    slicing_parameters() const { return m_slicing_params; }
-    // Orca: XYZ shrinkage compensation has introduced the const Vec3d &object_shrinkage_compensation parameter to the function below
+    // XYZ shrinkage compensation has introduced the const Vec3d &object_shrinkage_compensation parameter to the function below
     static SlicingParameters    slicing_parameters(const DynamicPrintConfig &full_config, const ModelObject &model_object, float object_max_z, const Vec3d &object_shrinkage_compensation);
 
     size_t                      num_printing_regions() const throw() { return m_shared_regions->all_regions.size(); }
@@ -1107,7 +1107,7 @@ public:
         return std::all_of(this->objects().begin(), this->objects().end(), [&](PrintObject* obj) { return obj->height() < scale_(this->config().nozzle_height.value); });
     }
     
-    // Orca: Implement prusa's filament shrink compensation approach
+    // Implement prusa's filament shrink compensation approach
     // Returns if all used filaments have same shrinkage compensations.
      bool has_same_shrinkage_compensations() const;
     // Returns scaling for each axis representing shrinkage compensations in each axis.
@@ -1192,7 +1192,7 @@ private:
 
 public:
     //BBS: this was a print config and now seems to be useless so we move it to here
-    // ORCA: parameter below is now back to being a user option (min_skirt_length)
+    // parameter below is now back to being a user option (min_skirt_length)
     //static float min_skirt_length;
 };
 

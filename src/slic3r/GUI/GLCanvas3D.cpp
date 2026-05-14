@@ -4648,7 +4648,7 @@ void GLCanvas3D::on_mouse(wxMouseEvent& evt)
                 render();
             }
 
-            //ORCA allow right click on empty space while an object selected
+            // allow right click on empty space while an object selected
             if (m_hover_plate_idxs.empty() && m_hover_volume_idxs.empty() && (m_canvas_type == CanvasView3D) && !m_mouse.dragging) {
                 deselect_all();
                 render();
@@ -6038,7 +6038,7 @@ static void debug_output_thumbnail(const ThumbnailData& thumbnail_data)
         }
     }
 
-    image.SaveFile("C:/bambu/test/test.png", wxBITMAP_TYPE_PNG);
+    image.SaveFile("C:/tmp/test.png", wxBITMAP_TYPE_PNG);
 }
 #endif // ENABLE_THUMBNAIL_GENERATOR_DEBUG_OUTPUT
 
@@ -8194,7 +8194,7 @@ void GLCanvas3D::_render_imgui_select_plate_toolbar()
     float window_width       = button_width + (margin_size + button_margin + ImGui::GetStyle().WindowPadding.x) * 2 + (show_scroll ? scrollbar_size : 0);
 
     ImVec4 window_bg     = m_is_dark ? ImVec4(.13f, .13f, .15f, .5f) : ImVec4(1.f, 1.f, 1.f, .7f);
-    ImVec4 button_active = ImGuiWrapper::COL_ORCA; // MeshForge: Use orca color for selected sliced plate border
+    ImVec4 button_active = ImGuiWrapper::COL_ACCENT; // MeshForge: Use accent color for selected sliced plate border
     ImVec4 button_hover  = ImVec4(0.67f, 0.67f, 0.67, m_is_dark ? .6f : 1.0f);
     ImVec4 scroll_col    = ImVec4(0.77f, 0.77f, 0.77f, m_is_dark ? .6f : 1.0f);
     ImU32  plate_bg      = m_is_dark ? IM_COL32(255, 255, 255, 10) : IM_COL32(0, 0, 0, 10);
@@ -8599,7 +8599,7 @@ void GLCanvas3D::_render_canvas_toolbar()
     ImGui::PushStyleColor(ImGuiCol_Text              , m_is_dark ? ImVec4(1, 1, 1, .88f) : ImVec4(50 / 255.f, 58 / 255.f, 61 / 255.f, 1.f));
     ImGui::PushStyleColor(ImGuiCol_TextDisabled      , m_is_dark ? ImVec4(1, 1, 1, .44f) : ImVec4(50 / 255.f, 58 / 255.f, 61 / 255.f, .5f));
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered     , ImVec4(0, 0, 0, 0.f)); // bg color for menu item
-    ImGui::PushStyleColor(ImGuiCol_BorderActive      , ImGuiWrapper::COL_ORCA);
+    ImGui::PushStyleColor(ImGuiCol_BorderActive      , ImGuiWrapper::COL_ACCENT);
     ImGui::PushStyleVar(ImGuiStyleVar_PopupBorderSize, 0.f     );
     ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding  , 8.f * sc);
     ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1.f * sc);
@@ -9722,7 +9722,7 @@ void GLCanvas3D::_set_warning_notification(EWarning warning, bool state)
                         if (language.find("zh") == 0)
                         	region = L"zh";
                         // Use the generic dual-nozzle PLA+PETG guide rather than the H2D-specific page
-                        // so the link is relevant for all dual-extrusion printers, not just Bambu H2D. (#12073)
+                        // so the link is relevant for all dual-extrusion printers, not just H2D. (#12073)
                         wxGetApp().open_browser_with_warning_dialog(wxString::Format(L"https://wiki.bambulab.com/%s/filament-acc/filament/pla-and-petg-dual-extrusion", region));
                         return false;
                     });

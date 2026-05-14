@@ -80,7 +80,7 @@ enum BundleType{
     Subscribed,
 };
 
-// Orca: Bundle metadata structure for imported preset bundles
+// Bundle metadata structure for imported preset bundles
 struct BundleMetadata
 {
     std::string                     id;         // Bundle ID: UUID (OrcaCloud) or name+timestamp (external)
@@ -158,7 +158,7 @@ public:
                                                     bool                            apply_extruder,
                                                     std::optional<std::vector<int>> filament_maps_new);
 
-    // ORCA: utility function to find the vendor for a given preset name
+    // utility function to find the vendor for a given preset name
     static std::string find_preset_vendor(const std::string& preset_name, Preset::Type type);
 
     PresetBundle();
@@ -193,7 +193,7 @@ public:
     // BBS Load user presets
     PresetsConfigSubstitutions load_user_presets(std::string user, ForwardCompatibilitySubstitutionRule rule);
     PresetsConfigSubstitutions load_user_presets(AppConfig &config, std::map<std::string, std::map<std::string, std::string>>& my_presets, ForwardCompatibilitySubstitutionRule rule);
-    // Orca: Import subscribed bundle presets (load and save to disk in one operation), handles one bundle at a time
+    // Import subscribed bundle presets (load and save to disk in one operation), handles one bundle at a time
     PresetsConfigSubstitutions update_subscribed_presets(AppConfig& config,
                                                          const std::map<std::string, std::map<std::string, std::string>>& bundle_presets,
                                                          const BundleMetadata& remote_metadata,
@@ -254,7 +254,7 @@ public:
 
     std::optional<FilamentBaseInfo> get_filament_by_filament_id(const std::string& filament_id, const std::string& printer_name = std::string()) const;
 
-    // Orca: get vendor type
+    // get vendor type
     VendorType get_current_vendor_type();
     // Vendor related handy functions
     bool is_bbl_vendor() { return get_current_vendor_type() == VendorType::Marlin_BBL; }
@@ -292,7 +292,7 @@ public:
     void reset_default_nozzle_volume_type();
 
     std::vector<int> get_used_tpu_filaments(const std::vector<int> &used_filaments);
-    // Orca: update selected filament and print
+    // update selected filament and print
     void           update_selections(AppConfig &config);
     void set_calibrate_printer(std::string name);
 
@@ -341,11 +341,11 @@ public:
     // and the system profiles will point to the VendorProfile instances owned by PresetBundle::vendors.
     VendorMap                   vendors;
 
-    // Orca: for OrcaFilamentLibrary
+    // for OrcaFilamentLibrary
     std::map<std::string, DynamicPrintConfig> m_config_maps;
     std::map<std::string, std::string> m_filament_id_maps;
 
-    // Orca: Bundle metadata and cached preset names
+    // Bundle metadata and cached preset names
     // std::map<std::string, BundleMetadata>  m_bundles;
     fs::path dir_user_presets_local;
     fs::path dir_user_presets_subscribed;
@@ -408,7 +408,7 @@ public:
     // Don't do any config substitutions when loading a system profile, perform and report substitutions otherwise.
     /*std::pair<PresetsConfigSubstitutions, size_t> load_configbundle(
         const std::string &path, LoadConfigBundleAttributes flags, ForwardCompatibilitySubstitutionRule compatibility_rule);*/
-    //Orca: load config bundle from json, pass the base bundle to support cross vendor inheritance
+    // load config bundle from json, pass the base bundle to support cross vendor inheritance
     std::pair<PresetsConfigSubstitutions, size_t> load_vendor_configs_from_json(
         const std::string &path, const std::string &vendor_name, LoadConfigBundleAttributes flags, ForwardCompatibilitySubstitutionRule compatibility_rule, const PresetBundle* base_bundle = nullptr);
 
@@ -473,7 +473,7 @@ public:
         return      { Preset::TYPE_PRINTER, Preset::TYPE_SLA_PRINT, Preset::TYPE_SLA_MATERIAL };
     }
 
-    // Orca: for validation only
+    // for validation only
     bool has_errors() const;
 
 private:
@@ -502,7 +502,7 @@ private:
     DynamicPrintConfig          full_fff_config(bool apply_extruder, std::optional<std::vector<int>> filament_maps=std::nullopt) const;
     DynamicPrintConfig          full_sla_config() const;
 
-    // Orca: used for validation only
+    // used for validation only
     bool validation_mode = false;
     std::string vendor_to_validate = "";
     int m_errors = 0;

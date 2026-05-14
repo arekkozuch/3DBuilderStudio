@@ -5474,7 +5474,7 @@ ModelVolume* ObjectList::get_selected_model_volume()
 }
 
 // MeshForge: kept as dead code (not called by any active path). Preserved in #if 0
-// form for traceability with upstream Bambu Studio -- removing outright would
+// form for traceability with upstream this upstream slicer -- removing outright would
 // produce merge conflicts on every BBL sync. The active "Change Type" UI goes
 // through the submenu in GUI_Factories.cpp -> ObjectList::set_volume_type().
 #if 0

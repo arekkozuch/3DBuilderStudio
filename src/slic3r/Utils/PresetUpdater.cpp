@@ -667,7 +667,7 @@ void PresetUpdater::priv::sync_vendor_config(const std::string& vendor_id)
         + "?vendor=" + Http::url_encode(vendor_id)
         + "&orca_version=" + Http::url_encode(MESHFORGE_VERSION);
 
-    std::string online_version_str; // this represents the PROFILE VERSION, not ORCA VERSION
+    std::string online_version_str; // this represents the PROFILE VERSION, not the profile version
     std::string download_url_str;
 
     Http::get(url)
@@ -1172,7 +1172,7 @@ Updates PresetUpdater::priv::get_printer_config_updates(bool update) const
 }
 
 // Generates a list of bundle updates that are to be performed.
-// Version of slic3r that was running the last time and which was read out from PrusaSlicer.ini is provided
+// Version of slic3r that was running the last time and which was read out from the config file is provided
 // as a parameter.
 // MeshForge: OTA profile updates should be loacated in ota/profiles folder
 Updates PresetUpdater::priv::get_config_updates(const Semver &old_slic3r_version) const

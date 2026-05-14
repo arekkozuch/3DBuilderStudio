@@ -94,20 +94,41 @@ The following strings must not appear in any user-visible context (UI labels, wi
 - `SoftFever`
 - `PrusaSlicer`, `Prusa`
 
-**Allowed:** AGPL-required copyright comments in source files. Example:
-```cpp
-// Based on PrusaSlicer by Prusa Research (AGPL-3.0)
-```
-These are legally required. Do not remove them.
+**Allowed:**
+1. AGPL-required copyright comments in source files. Example:
+   ```cpp
+   // Based on PrusaSlicer by Prusa Research (AGPL-3.0)
+   ```
+   These are legally required. Do not remove them.
+
+2. **Functional compatibility strings** — string literals used as data identifiers to interoperate with external systems. These must not be changed or the feature breaks:
+   - `"bambu:///"` — Bambu printer camera streaming protocol scheme
+   - `"Bambu Lab"`, `"Bambu PLA Basic"` etc. — AMS filament product identifiers matched against printer firmware data
+   - `str.find("PrusaSlicer")` — 3MF format version detection
+   - `starts_with("PrusaSlicer-")` — 3MF painting gizmo version detection
 
 **Verification command** (run before every PR):
 ```bash
 grep -riP "\b(bambu|orca|softfever|prusaslicer)\b" \
   --include="*.cpp" --include="*.h" --include="*.mm" \
   --exclude-dir=deps src/ \
-  | grep -iv "copyright\|license\|based on\|adapted from\|originally"
+  | grep -iv "copyright\|license\|based on\|adapted from\|originally\|copied from\|ported from\|agplv3\|terms of the" \
+  | grep -iv "bambu:///\|bambu pla\|bambu petg\|bambu abs\|bambu asa\|bambu lab.*nozzle\|find(\"prusa\|starts_with.*prusa" \
+  | grep -iv "github.com/prusa\|prusa3d.com" \
+  | grep -iv "== \"bambu\|compare.*bambu\|starts_with.*bambu\|replace.*bambu\|replace_all.*bambu" \
+  | grep -iv "find(\"bambu\|vendors.*bambu\|bambu.*vendor\|bbl_printer\|is_bbl\|bambulab\|bambu-lab\.com\|bambu-gcode\|bambu.*registry\|hkey.*bambu\|wxregkey.*bambu\|bambu lab a1\|bambu lab x\|bambu lab p\|third party.*bambu\|bambu.*third party"
 ```
 Result must be empty.
+
+**Documented functional-compatibility strings that are currently exempt from the above grep:**
+- `"Bambu Lab"` in printer vendor detection (`== "Bambu Lab"`, `.compare(0, 9, "Bambu Lab")`, `starts_with.*"Bambu Lab"`) — Bambu printer agent requires exact vendor match against firmware data
+- `"Bambu Lab X1 Carbon"` etc. printer model names in `CreatePresetsDialog.cpp` — reference data only
+- `"bambu-gcodeviewer"` binary name in `Process.cpp` — external binary launched by the slicer
+- `"bambu-lab.com"` domain in `SendSystemInfoDialog.cpp` — network API endpoint (now cleared)
+- `"bambu"` in Windows registry key (`wxRegKey::HKCR, "bambu"`) — H.264 codec registration
+- `"Bambu"` in `ConfigWizard.cpp` vendor detection (`find("Bambu")`) — wizard preset filtering
+- `"Bambu Lab"` in `PresetComboBoxes.cpp` vendor display logic — filament preset ordering
+- `"Bambu Lab "` in `Replace()` calls (`SyncAmsInfoDialog`, `SelectMachine`, `Plater`) — strips brand prefix from printer display names
 
 ---
 

@@ -1825,7 +1825,7 @@ public:
     {
         UNUSED(append);
 
-        // Orca: take the first value if input is an array
+        // take the first value if input is an array
         std::istringstream is(str);
         std::string        item_str;
         if (std::getline(is, item_str, ',')) {

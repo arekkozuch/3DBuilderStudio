@@ -573,7 +573,7 @@ int OrcaCloudServiceAgent::change_user(std::string user_info)
             return success ? BAMBU_NETWORK_SUCCESS : BAMBU_NETWORK_ERR_INVALID_HANDLE;
         }
 
-        // Orca cloud session payload (default flow)
+        // cloud session payload (default flow)
         const json* session_node = nullptr;
         if (tree.contains("data") && tree["data"].is_object()) {
             const auto& data = tree["data"];
@@ -1680,15 +1680,15 @@ bool OrcaCloudServiceAgent::set_user_session(const json& session_json, bool noti
 
     std::string user_id, username, nickname, avatar;
     if (session_json.contains("user") && session_json["user"].is_object()) {
-        // Nested format (Orca cloud / GoTrue response)
+        // Nested format (cloud / GoTrue response)
         const auto& user = session_json["user"];
         user_id = safe_str(user, "id");
         if (user.contains("user_metadata") && user["user_metadata"].is_object()) {
 
             const auto& meta = user["user_metadata"];
-            username = safe_str(meta, "username"); // Orca Cloud's unique username 
+            username = safe_str(meta, "username"); // Cloud's unique username 
 
-            nickname = safe_str(meta, "display_name"); // Orca Cloud's primary display name field
+            nickname = safe_str(meta, "display_name"); // Cloud's primary display name field
             // Fallback to different name from different providers if display_name is not set
             if (nickname.empty())
                 nickname = safe_str(meta, "full_name");

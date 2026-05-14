@@ -347,7 +347,7 @@ public:
     // Remove all unnecessary data.
     void garbage_collect();
 
-    // Orca: remap the state of triangles according to the state_map
+    // remap the state of triangles according to the state_map
     void remap_triangle_state(const EnforcerBlockerStateMap& state_map);
 
 

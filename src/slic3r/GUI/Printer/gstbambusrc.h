@@ -1,5 +1,5 @@
 /* bambusrc for gstreamer
- * integration with proprietary Bambu Lab blob for getting raw h.264 video
+ * integration with proprietary native blob for getting raw h.264 video
  *
  * Copyright (C) 2023 Joshua Wise <joshua@accelerated.tech>
  *

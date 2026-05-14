@@ -169,11 +169,11 @@ public:
     // EViewType::ActualSpeed
     // EViewType::FanSpeed
     // EViewType::Temperature
-    // ORCA: Add Pressure Advance visualization support
+    // Add Pressure Advance visualization support
     // EViewType::PressureAdvance
-    // ORCA: Add Acceleration visualization support
+    // Add Acceleration visualization support
     // EViewType::Acceleration
-    // ORCA: Add Jerk visualization support
+    // Add Jerk visualization support
     // EViewType::Jerk
     // EViewType::VolumetricFlowRate
     // EViewType::ActualVolumetricFlowRate
@@ -191,11 +191,11 @@ public:
     // EViewType::ActualSpeed
     // EViewType::FanSpeed
     // EViewType::Temperature
-    // ORCA: Add Pressure Advance visualization support
+    // Add Pressure Advance visualization support
     // EViewType::PressureAdvance
-    // ORCA: Add Acceleration visualization support
+    // Add Acceleration visualization support
     // EViewType::Acceleration
-    // ORCA: Add Jerk visualization support
+    // Add Jerk visualization support
     // EViewType::Jerk
     // EViewType::VolumetricFlowRate
     // EViewType::ActualVolumetricFlowRate

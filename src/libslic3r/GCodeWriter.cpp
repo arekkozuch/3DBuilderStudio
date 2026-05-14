@@ -211,7 +211,7 @@ std::string GCodeWriter::set_chamber_temperature(int temperature, bool wait)
     return gcode.str();
 }
 
-// copied from PrusaSlicer
+// adapted from upstream slicer
 std::string GCodeWriter::set_acceleration_internal(Acceleration type, unsigned int acceleration)
 {
     // Clamp the acceleration to the allowed maximum.

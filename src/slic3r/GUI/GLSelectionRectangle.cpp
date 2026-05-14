@@ -172,7 +172,7 @@ namespace GUI {
             }
 #endif // !SLIC3R_OPENGL_ES
 
-            m_rectangle.set_color(ColorRGBA::ORCA()); // MeshForge: use orca color for selection rectangle
+            m_rectangle.set_color(ColorRGBA::ACCENT()); // MeshForge: use accent color for selection rectangle
             m_rectangle.render();
             shader->stop_using();
         }

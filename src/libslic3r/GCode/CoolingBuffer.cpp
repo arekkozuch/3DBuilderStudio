@@ -780,7 +780,7 @@ std::string CoolingBuffer::apply_layer_cooldown(
             internal_bridge_fan_speed   = EXTRUDER_CONFIG(internal_bridge_fan_speed);
             internal_bridge_fan_control = internal_bridge_fan_speed >=0;
             
-            if( internal_bridge_fan_speed < 0 ) { // MeshForge: Backwards compatibility setting for Orca internal bridge fan speed setting - if set at -1 (which is the default) use the overhang fan speed settings.
+            if( internal_bridge_fan_speed < 0 ) { // MeshForge: Backwards compatibility - if set at -1 (default) use the overhang fan speed settings.
                 internal_bridge_fan_speed = overhang_fan_speed;
                 internal_bridge_fan_control = overhang_fan_control;
             }

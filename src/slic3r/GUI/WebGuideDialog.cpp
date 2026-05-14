@@ -860,7 +860,7 @@ bool GuideFrame::apply_config(AppConfig *app_config, PresetBundle *preset_bundle
             variant.clear();
         return std::string();
     };
-    // Orca "custom" printers are considered first, then 3rd party.
+    // "custom" printers are considered first, then 3rd party.
     if (preferred_model = get_preferred_printer_model(PresetBundle::MESHFORGE_DEFAULT_BUNDLE, preferred_variant);
         preferred_model.empty()) {
         for (const auto& bundle : enabled_vendors) {
