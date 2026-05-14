@@ -36,7 +36,7 @@
 #include "Semver.hpp"
 
 #if 0
-// Saves around 32% RAM after slicing step, 6.7% after G-code export (tested on PrusaSlicer 2.2.0 final).
+// Saves around 32% RAM after slicing step, 6.7% after G-code export (tested on upstream slicer 2.2.0 final).
 using coord_t = int32_t;
 #else
 //FIXME At least FillRectilinear2 and std::boost Voronoi require coord_t to be 32bit.

@@ -837,7 +837,7 @@ void Preset::set_visible_from_appconfig(const AppConfig &app_config)
     } else if (type == TYPE_FILAMENT || type == TYPE_SLA_MATERIAL) {
     	const std::string &section_name = (type == TYPE_FILAMENT) ? AppConfig::SECTION_FILAMENTS : AppConfig::SECTION_MATERIALS;
     	if (app_config.has_section(section_name)) {
-            // Check whether this profile is marked as "installed" in PrusaSlicer.ini,
+            // Check whether this profile is marked as "installed" in the slicer config,
     		// or whether a profile is marked as "installed", which this profile may have been renamed from.
 	    	const std::map<std::string, std::string> &installed = app_config.get_section(section_name);
 	    	auto has = [&installed](const std::string &name) {
@@ -1539,7 +1539,7 @@ void PresetCollection::load_presets(
     std::function<void(Preset&)> preset_loaded_fn, const PresetOrigin &load_origin)
 {
     // Don't use boost::filesystem::canonical() on Windows, it is broken in regard to reparse points,
-    // see https://github.com/prusa3d/PrusaSlicer/issues/732
+    // see https://github.com/prusa3d/PrusaSlicer/issues/732 (upstream issue tracker)
     boost::filesystem::path dir = boost::filesystem::absolute(boost::filesystem::path(dir_path) / subdir).make_preferred();
     const PresetOrigin resolved_origin = detect_origin_from_path(dir, load_origin);
 
@@ -3996,7 +3996,7 @@ void PhysicalPrinterCollection::load_printers(
     PresetsConfigSubstitutions& substitutions, ForwardCompatibilitySubstitutionRule substitution_rule)
 {
     // Don't use boost::filesystem::canonical() on Windows, it is broken in regard to reparse points,
-    // see https://github.com/prusa3d/PrusaSlicer/issues/732
+    // see https://github.com/prusa3d/PrusaSlicer/issues/732 (upstream issue tracker)
     boost::filesystem::path dir = boost::filesystem::absolute(boost::filesystem::path(dir_path) / subdir).make_preferred();
     m_dir_path = dir.string();
     if(!boost::filesystem::exists(dir))

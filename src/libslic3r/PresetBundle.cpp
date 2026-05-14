@@ -2474,7 +2474,7 @@ void PresetBundle::load_installed_filaments(AppConfig &config)
     BOOST_LOG_TRIVIAL(info) << __FUNCTION__ << boost::format(": enter, printer size %1%")%printers.size();
     //if (! config.has_section(AppConfig::SECTION_FILAMENTS)
     //    || config.get_section(AppConfig::SECTION_FILAMENTS).empty()) {
-        // Compatibility with the PrusaSlicer 2.1.1 and older, where the filament profiles were not installable yet.
+        // Compatibility with the upstream slicer 2.1.1 and older, where the filament profiles were not installable yet.
         // Find all filament profiles, which are compatible with installed printers, and act as if these filament profiles
         // were installed.
         std::unordered_set<const Preset*> compatible_filaments;
@@ -2534,7 +2534,7 @@ void PresetBundle::load_installed_sla_materials(AppConfig &config)
 {
     if (! config.has_section(AppConfig::SECTION_MATERIALS)) {
         std::unordered_set<const Preset*> comp_sla_materials;
-		// Compatibility with the PrusaSlicer 2.1.1 and older, where the SLA material profiles were not installable yet.
+		// Compatibility with the upstream slicer 2.1.1 and older, where the SLA material profiles were not installable yet.
 		// Find all SLA material profiles, which are compatible with installed printers, and act as if these SLA material profiles
 		// were installed.
         for (const Preset &printer : printers)
@@ -4132,7 +4132,7 @@ ConfigSubstitutions PresetBundle::load_config_file(const std::string &path, Forw
 
 //some filament presets split from one to sperate ones
 //following map recording these filament presets
-//for example: previously ''Bambu PLA Basic @BBL H2D 0.6 nozzle' was saved in ''Bambu PLA Basic @BBL H2D' with 0.4
+//for example: previously a filament preset with nozzle size in the name was saved without it, and needs to be migrated
 static std::map<std::string, std::map<std::string, std::string>> filament_preset_convert = {
 {"Bambu Lab H2D 0.6 nozzle", {{"Bambu PLA Basic @BBL H2D", "Bambu PLA Basic @BBL H2D 0.6 nozzle"},
                               {"Bambu PLA Matte @BBL H2D", "Bambu PLA Matte @BBL H2D 0.6 nozzle"},

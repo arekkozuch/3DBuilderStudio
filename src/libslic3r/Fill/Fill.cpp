@@ -348,7 +348,7 @@ struct SurfaceFill {
 
 
 // Detect narrow infill regions
-// Based on the anti-vibration algorithm from PrusaSlicer:
+// Based on the anti-vibration algorithm from the upstream slicer:
 // https://github.com/prusa3d/PrusaSlicer/blob/5dc04b4e8f14f65bbcc5377d62cad3e86c2aea36/src/libslic3r/Fill/FillEnsuring.cpp#L37-L273
 
 static coord_t _MAX_LINE_LENGTH_TO_FILTER() // 4 mm.

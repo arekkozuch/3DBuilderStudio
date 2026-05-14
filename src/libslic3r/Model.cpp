@@ -1650,7 +1650,7 @@ Polygon ModelObject::convex_hull_2d(const Transform3d& trafo_instance) const
         if (v->is_model_part()) {
             //BBS: use convex hull vertex instead of all
             append(pts, its_convex_hull_2d_above(v->get_convex_hull().its, (trafo_instance * v->get_matrix()).cast<float>(), 0.0f).points);
-	    // The next commented line instead of the previous + the rest of this #if0 section is the same as PrusaSlicer until https://github.com/prusa3d/PrusaSlicer/commit/2f7f3578d531f2d34f7732a64449606d86bb4aaa where it was parallelised.
+	    // The next commented line instead of the previous + the rest of this #if0 section is the same as the upstream slicer until https://github.com/prusa3d/PrusaSlicer/commit/2f7f3578d531f2d34f7732a64449606d86bb4aaa where it was parallelised.
             //append(pts, its_convex_hull_2d_above(v->mesh().its, (trafo_instance * v->get_matrix()).cast<float>(), 0.0f).points);
 	    // its_convex_hull_2d_above calls its_collect_mesh_projection_points_above
 	    // The latter multiplies each vertex by the full matrix
@@ -1659,7 +1659,7 @@ Polygon ModelObject::convex_hull_2d(const Transform3d& trafo_instance) const
     }
     return Geometry::convex_hull(std::move(pts));
 #else
-    // This seems to differ from PrusaSlicer (and the old code above) in that
+    // This seems to differ from the upstream slicer (and the old code above) in that
     // points below the Z plane aren't treated specially.
     Points pts;
     for (const ModelVolume *v : this->volumes)

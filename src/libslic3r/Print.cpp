@@ -1252,7 +1252,7 @@ StringObjectException Print::check_multi_filament_valid(const Print& print)
     return ret;
 }
 
-// MeshForge: this g92e0 regex is used copied from PrusaSlicer
+// MeshForge: this g92e0 regex is copied from the upstream slicer
 // Matches "G92 E0" with various forms of writing the zero and with an optional comment.
 boost::regex regex_g92e0 { "^[ \\t]*[gG]92[ \\t]*[eE](0(\\.0*)?|\\.0+)[ \\t]*(;.*)?$" };
 
@@ -1574,7 +1574,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
                 }
 #endif
 
-                // Prusa: Fixing crashes with invalid tip diameter or branch diameter
+                // Upstream fix: Fixing crashes with invalid tip diameter or branch diameter
                 // https://github.com/prusa3d/PrusaSlicer/commit/96b3ae85013ac363cd1c3e98ec6b7938aeacf46d
                 if (is_tree(object->config().support_type.value)) {
                     if (object->config().support_style == smsTreeOrganic ||
@@ -1673,7 +1673,7 @@ StringObjectException Print::validate(StringObjectException *warning, Polygons* 
     }
 
     // MeshForge: G92 E0 is not supported when using absolute extruder addressing
-    // This check is copied from PrusaSlicer, the original author is Vojtech Bubnik
+    // This check is copied from the upstream slicer, the original author is Vojtech Bubnik
     if(!is_BBL_printer()) {
         bool before_layer_gcode_resets_extruder =
             boost::regex_search(m_config.before_layer_change_gcode.value, regex_g92e0);
@@ -3202,7 +3202,7 @@ void Print::_make_wipe_tower()
     // Check whether there are any layers in m_tool_ordering, which are marked with has_wipe_tower,
     // they print neither object, nor support. These layers are above the raft and below the object, and they
     // shall be added to the support layers to be printed.
-    // see https://github.com/prusa3d/PrusaSlicer/issues/607
+    // see https://github.com/prusa3d/PrusaSlicer/issues/607 (upstream issue tracker)
     {
         size_t idx_begin = size_t(-1);
         size_t idx_end   = m_wipe_tower_data.tool_ordering.layer_tools().size();

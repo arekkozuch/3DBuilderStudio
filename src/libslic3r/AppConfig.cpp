@@ -71,11 +71,11 @@ std::string AppConfig::get_hms_host()
     std::string host = "";
 // #if !BBL_RELEASE_TO_PUBLIC
 //     if (sel == ENV_DEV_HOST)
-//         host = "e-dev.bambu-lab.com";
+//         host = "e-dev.cloud-host.com";
 //     else if (sel == ENV_QAT_HOST)
-//         host = "e-qa.bambu-lab.com";
+//         host = "e-qa.cloud-host.com";
 //     else if (sel == ENV_PRE_HOST)
-//         host = "e-pre.bambu-lab.com";
+//         host = "e-pre.cloud-host.com";
 //     else if (sel == ENV_PRODUCT_HOST)
 //         host = "e.bambulab.com";
 //     return host;
@@ -821,7 +821,7 @@ std::string AppConfig::load()
             // Migrate add bbl cloud if installed_networking is true
             bool enable_bbl_cloud = get_bool("installed_networking");
             if (enable_bbl_cloud) {
-                // Legacy Bambu-only user: give them both providers
+                // Legacy cloud-only user: give them both providers
                 set(SETTING_CLOUD_PROVIDERS, "meshforge;bbl");
             } else {
                 set(SETTING_CLOUD_PROVIDERS, "meshforge");
@@ -996,7 +996,7 @@ void AppConfig::save()
 #endif
 
     // Rename the config atomically.
-    // On Windows, the rename is likely NOT atomic, thus it may fail if PrusaSlicer crashes on another thread in the meanwhile.
+    // On Windows, the rename is likely NOT atomic, thus it may fail if the process crashes on another thread in the meanwhile.
     // To cope with that, we already made a backup of the config on Windows.
     rename_file(path_pid, path);
     m_dirty = false;
@@ -1059,7 +1059,7 @@ std::string AppConfig::load()
 #endif // WIN32
             BOOST_LOG_TRIVIAL(info) << format("Failed to parse configuration file \"%1%\": %2%", AppConfig::loading_path(), ex.what());
         if (!recovered) {
-            // Report the initial error of parsing PrusaSlicer.ini.
+            // Report the initial error of parsing the config file.
             // Error while parsing config file. We'll customize the error message and rethrow to be displayed.
             // ! But to avoid the use of _utf8 (related to use of wxWidgets)
             // we will rethrow this exception from the place of load() call, if returned value wouldn't be empty
@@ -1205,7 +1205,7 @@ void AppConfig::save()
 #endif
 
     // Rename the config atomically.
-    // On Windows, the rename is likely NOT atomic, thus it may fail if PrusaSlicer crashes on another thread in the meanwhile.
+    // On Windows, the rename is likely NOT atomic, thus it may fail if the process crashes on another thread in the meanwhile.
     // To cope with that, we already made a backup of the config on Windows.
     rename_file(path_pid, path);
     m_dirty = false;
