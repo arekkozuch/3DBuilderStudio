@@ -468,7 +468,7 @@ static std::vector<Vec2d> get_path_of_change_filament(const Print& print)
                 // add tag for processor
                 gcode += ";" + GCodeProcessor::reserved_tag(GCodeProcessor::ETags::Wipe_Start) + "\n";
                 //BBS: don't need to enable cooling makers when this is the last wipe. Because no more cooling layer will clean this "_WIPE"
-                //Softfever:
+                // upstream:
                 std::string cooling_mark = "";
                 if (gcodegen.enable_cooling_markers() && !is_last)
                     cooling_mark = /*gcodegen.config().role_based_wipe_speed ? ";_EXTERNAL_PERIMETER" : */";_WIPE";
@@ -2599,7 +2599,7 @@ void GCode::_do_export(Print& print, GCodeOutputStream &file, ThumbnailsGenerato
       // Append full config, delimited by two 'phony' configuration keys
       // CONFIG_BLOCK_START and CONFIG_BLOCK_END. The delimiters are structured
       // as configuration key / value pairs to be parsable by older versions of
-      // PrusaSlicer G-code viewer.
+      // upstream G-code viewer.
     {
         if (is_bbl_printers) {
             file.write("; CONFIG_BLOCK_START\n");

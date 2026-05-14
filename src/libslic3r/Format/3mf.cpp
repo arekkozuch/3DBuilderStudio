@@ -54,7 +54,7 @@ const unsigned int VERSION_3MF_COMPATIBLE = 2;
 const char* SLIC3RPE_3MF_VERSION = "slic3rpe:Version3mf"; // definition of the metadata name saved into .model file
 
 // Painting gizmos data version numbers
-// 0 : 3MF files saved by older PrusaSlicer or the painting gizmo wasn't used. No version definition in them.
+// 0 : 3MF files saved by older upstream slicer or the painting gizmo wasn't used. No version definition in them.
 // 1 : Introduction of painting gizmos data versioning. No other changes in painting gizmos data.
 const unsigned int FDM_SUPPORTS_PAINTING_VERSION = 1;
 const unsigned int SEAM_PAINTING_VERSION         = 1;
@@ -522,7 +522,7 @@ ModelVolumeType type_from_string(const std::string &s)
         unsigned int m_version;
         bool m_check_version;
 
-        // Semantic version of PrusaSlicer, that generated this 3MF.
+        // Semantic version of the upstream slicer that generated this 3MF.
         boost::optional<Semver> m_prusa_generator_version;
         unsigned int m_fdm_supports_painting_version = 0;
         unsigned int m_seam_painting_version         = 0;
@@ -811,7 +811,7 @@ ModelVolumeType type_from_string(const std::string &s)
         close_zip_reader(&archive);
 
         if (m_version == 0) {
-            // if the 3mf was not produced by PrusaSlicer and there is more than one instance,
+            // if the 3mf was not produced by upstream and there is more than one instance,
             // split the object in as many objects as instances
             size_t curr_models_count = m_model->objects.size();
             size_t i = 0;
@@ -1035,7 +1035,7 @@ ModelVolumeType type_from_string(const std::string &s)
             // Each config line is prefixed with a semicolon (G-code comment), that is ugly.
 
             // Replacing the legacy function with load_from_ini_string_commented leads to issues when
-            // parsing 3MFs from before PrusaSlicer 2.0.0 (which can have duplicated entries in the INI.
+            // parsing 3MFs from before upstream 2.0.0 (which can have duplicated entries in the INI.
             // See https://github.com/prusa3d/PrusaSlicer/issues/7155. We'll revert it for now.
             //config_substitutions.substitutions = config.load_from_ini_string_commented(std::move(buffer), config_substitutions.rule);
             ConfigBase::load_from_gcode_string_legacy(config, buffer.data(), config_substitutions);
@@ -1408,7 +1408,7 @@ ModelVolumeType type_from_string(const std::string &s)
         //        std::string         extra;
         //        pt::ptree attr_tree = tree.find("<xmlattr>")->second;
         //        if (attr_tree.find("type") == attr_tree.not_found()) {
-        //            // It means that data was saved in old version (2.2.0 and older) of PrusaSlicer
+        //            // It means that data was saved in old version (2.2.0 and older) of the upstream slicer
         //            // read old data ...
         //            std::string gcode       = tree.get<std::string> ("<xmlattr>.gcode");
         //            // ... and interpret them to the new data
@@ -1574,7 +1574,7 @@ ModelVolumeType type_from_string(const std::string &s)
         }
 
         if (m_version == 0) {
-            // if the 3mf was not produced by PrusaSlicer and there is only one object,
+            // if the 3mf was not produced by upstream and there is only one object,
             // set the object name to match the filename
             if (m_model->objects.size() == 1)
                 m_model->objects.front()->name = m_name;
@@ -1951,7 +1951,7 @@ ModelVolumeType type_from_string(const std::string &s)
             return false;
         }
 
-        // Added because of github #3435, currently not used by PrusaSlicer
+        // Added because of github #3435, currently not used by the upstream slicer
         // int instances_count_id = get_attribute_value_int(attributes, num_attributes, INSTANCESCOUNT_ATTR);
 
         m_objects_metadata.insert({ object_id, ObjectMetadata() });
@@ -2132,14 +2132,14 @@ ModelVolumeType type_from_string(const std::string &s)
             if (m_prusa_generator_version &&
                 *m_prusa_generator_version >= *Semver::parse("2.4.0-alpha1") &&
                 *m_prusa_generator_version < *Semver::parse("2.4.0-alpha3"))
-                // PrusaSlicer 2.4.0-alpha2 contained a bug, where all vertices of a single object were saved for each volume the object contained.
+                // Upstream 2.4.0-alpha2 contained a bug, where all vertices of a single object were saved for each volume the object contained.
                 // Remove the vertices, that are not referenced by any face.
                 its_compactify_vertices(its, true);
 
             TriangleMesh triangle_mesh(std::move(its), volume_data.mesh_stats);
 
             if (m_version == 0) {
-                // if the 3mf was not produced by PrusaSlicer and there is only one instance,
+                // if the 3mf was not produced by upstream and there is only one instance,
                 // bake the transformation into the geometry to allow the reload from disk command
                 // to work properly
                 if (object.instances.size() == 1) {
@@ -2344,7 +2344,7 @@ ModelVolumeType type_from_string(const std::string &s)
         }
 
         // Adds content types file ("[Content_Types].xml";).
-        // The content of this file is the same for each PrusaSlicer 3mf.
+        // The content of this file is the same for each upstream 3mf.
         if (!_add_content_types_file_to_archive(archive)) {
             close_zip_writer(&archive);
             boost::filesystem::remove(filename);
@@ -2361,7 +2361,7 @@ ModelVolumeType type_from_string(const std::string &s)
         }
 
         // Adds relationships file ("_rels/.rels").
-        // The content of this file is the same for each PrusaSlicer 3mf.
+        // The content of this file is the same for each upstream 3mf.
         // The relationshis file contains a reference to the geometry file "3D/3dmodel.model", the name was chosen to be compatible with CURA.
         if (!_add_relationships_file_to_archive(archive)) {
             close_zip_writer(&archive);
@@ -3096,7 +3096,7 @@ ModelVolumeType type_from_string(const std::string &s)
         for (const IdToObjectDataMap::value_type& obj_metadata : objects_data) {
             const ModelObject* obj = obj_metadata.second.object;
             if (obj != nullptr) {
-                // Output of instances count added because of github #3435, currently not used by PrusaSlicer
+                // Output of instances count added because of github #3435, currently not used by the upstream slicer
                 stream << " <" << OBJECT_TAG << " " << ID_ATTR << "=\"" << obj_metadata.first << "\" " << INSTANCESCOUNT_ATTR << "=\"" << obj->instances.size() << "\">\n";
 
                 // stores object's name
@@ -3249,12 +3249,12 @@ bool _3MF_Exporter::_add_custom_gcode_per_print_z_file_to_archive( mz_zip_archiv
 }
 
 // Perform conversions based on the config values available.
-//FIXME provide a version of PrusaSlicer that stored the project file (3MF).
+//FIXME provide a version of the upstream slicer that stored the project file (3MF).
 static void handle_legacy_project_loaded(unsigned int version_project_file, DynamicPrintConfig& config)
 {
     if (! config.has("brim_object_gap")) {
         if (auto *opt_elephant_foot   = config.option<ConfigOptionFloat>("elefant_foot_compensation", false); opt_elephant_foot) {
-            // Conversion from older PrusaSlicer which applied brim separation equal to elephant foot compensation.
+            // Conversion from older upstream which applied brim separation equal to elephant foot compensation.
             auto *opt_brim_separation = config.option<ConfigOptionFloat>("brim_object_gap", true);
             opt_brim_separation->value = opt_elephant_foot->value;
         }

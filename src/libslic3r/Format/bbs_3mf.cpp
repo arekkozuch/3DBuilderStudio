@@ -1419,7 +1419,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
         if (is_bbl_3mf) {
             *is_bbl_3mf = m_is_bbl_3mf;
         }
-        // If the MeshForge tag is present, use it as file_version (ignoring the Bambu Application version).
+        // If the MeshForge tag is present, use it as file_version (ignoring the upstream application version).
         // Otherwise fall back to the version parsed from the Application tag.
         if (m_orca_slicer_version) {
             file_version = *m_orca_slicer_version;
@@ -3241,7 +3241,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
                         std::string         extra;
                         pt::ptree attr_tree = tree.find("<xmlattr>")->second;
                         if (attr_tree.find("type") == attr_tree.not_found()) {
-                            // It means that data was saved in old version (2.2.0 and older) of PrusaSlicer
+                            // It means that data was saved in old version (2.2.0 and older) of the upstream slicer
                             // read old data ...
                             std::string gcode = tree.get<std::string>("<xmlattr>.gcode");
                             // ... and interpret them to the new data
@@ -4270,7 +4270,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             return false;
         }
 
-        // Added because of github #3435, currently not used by PrusaSlicer
+        // Added because of github #3435, currently not used by the upstream slicer
         // int instances_count_id = bbs_get_attribute_value_int(attributes, num_attributes, INSTANCESCOUNT_ATTR);
 
         m_objects_metadata.insert({ object_id, ObjectMetadata() });
@@ -7219,8 +7219,8 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             // Orca#7574: always use "model" type to follow the 3MF Core Specification:
             // https://github.com/3MFConsortium/spec_core/blob/20c079eef39e45ed223b8443dc9f34cbe32dc2c2/3MF%20Core%20Specification.md#3431-item-element
             // > Note: items MUST NOT reference objects of type "other", either directly or recursively.
-            // This won't break anything because when loading the file Orca (and Bambu) simply does not care about the actual object type at all (as long as it's one of "model" & "other");
-            // But PrusaSlicer requires the type to be "model".
+            // This won't break anything because when loading the file the upstream slicer simply does not care about the actual object type at all (as long as it's one of "model" & "other");
+            // But the upstream slicer requires the type to be "model".
             std::string type = "model";
 
             output_buffer += "  <";
@@ -7794,7 +7794,7 @@ void PlateData::parse_filament_info(GCodeProcessorResult *result)
             auto object_data = obj_metadata.second;
             const ModelObject *obj = object_data.object;
             if (obj != nullptr) {
-                // Output of instances count added because of github #3435, currently not used by PrusaSlicer
+                // Output of instances count added because of github #3435, currently not used by the upstream slicer
                 //stream << "  <"  << OBJECT_TAG << " " << ID_ATTR << "=\"" << obj_metadata.first << "\" " << INSTANCESCOUNT_ATTR << "=\"" << obj->instances.size() << "\">\n";
                 stream << "  <" << OBJECT_TAG << " " << ID_ATTR << "=\"" << object_data.object_id << "\">\n";
 
@@ -8527,12 +8527,12 @@ bool _BBS_3MF_Exporter::_add_auxiliary_dir_to_archive(mz_zip_archive &archive, c
 }
 
 // Perform conversions based on the config values available.
-//FIXME provide a version of PrusaSlicer that stored the project file (3MF).
+//FIXME provide a version of the upstream slicer that stored the project file (3MF).
 static void handle_legacy_project_loaded(unsigned int version_project_file, DynamicPrintConfig& config)
 {
     if (! config.has("brim_object_gap")) {
         if (auto *opt_elephant_foot   = config.option<ConfigOptionFloat>("elefant_foot_compensation", false); opt_elephant_foot) {
-            // Conversion from older PrusaSlicer which applied brim separation equal to elephant foot compensation.
+            // Conversion from older upstream which applied brim separation equal to elephant foot compensation.
             auto *opt_brim_separation = config.option<ConfigOptionFloat>("brim_object_gap", true);
             opt_brim_separation->value = opt_elephant_foot->value;
         }
