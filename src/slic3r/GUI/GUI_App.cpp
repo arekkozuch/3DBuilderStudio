@@ -2205,7 +2205,7 @@ bool GUI_App::init_opengl()
 #endif
 }
 
-// gets path to PrusaSlicer.ini, returns semver from first line comment
+// gets path to app config .ini, returns semver from first line comment
 static boost::optional<Semver> parse_semver_from_ini(std::string path)
 {
     std::ifstream stream(path);
@@ -2259,7 +2259,7 @@ void GUI_App::init_webview_runtime()
 
 void GUI_App::init_app_config()
 {
-	// Profiles for the alpha are stored into the PrusaSlicer-alpha directory to not mix with the current release.
+	// Profiles for the alpha are stored into the app-alpha directory to not mix with the current release.
     SetAppName(SLIC3R_APP_KEY);
 //	SetAppName(SLIC3R_APP_KEY "-alpha");
 //  SetAppName(SLIC3R_APP_KEY "-beta");
@@ -5861,13 +5861,13 @@ bool GUI_App::maybe_migrate_user_presets_on_login()
     };
 
     // Determine the source directory to migrate from.
-    // Priority: 1) Bambu Cloud user folder (if user was logged in), 2) "default" folder, 3) any other user-ID folder
+    // Priority: 1) cloud user folder (if user was logged in), 2) "default" folder, 3) any other user-ID folder
     fs::path source_dir;
     bool source_is_default = false;
     bool source_is_bbl = false;
     fs::path default_dir = user_base / DEFAULT_USER_FOLDER_NAME;
 
-    // Check if the user was previously logged into Bambu Cloud and has presets there
+    // Check if the user was previously logged into the cloud service and has presets there
     if (m_agent->is_user_login(BBL_CLOUD_PROVIDER)) {
         std::string bbl_user_id = m_agent->get_user_id(BBL_CLOUD_PROVIDER);
         if (!bbl_user_id.empty() && bbl_user_id != new_user_id) {
@@ -5875,7 +5875,7 @@ bool GUI_App::maybe_migrate_user_presets_on_login()
             if (has_json_presets(bbl_dir)) {
                 source_dir = bbl_dir;
                 source_is_bbl = true;
-                BOOST_LOG_TRIVIAL(info) << "Migration source: Bambu Cloud user folder: " << source_dir;
+                BOOST_LOG_TRIVIAL(info) << "Migration source: cloud user folder: " << source_dir;
             }
         }
     }
@@ -6981,7 +6981,7 @@ bool GUI_App::load_language(wxString language, bool initial)
     if (initial) {
     	// There is a static list of lookup path prefixes in wxWidgets. Add ours.
 	    wxFileTranslationsLoader::AddCatalogLookupPathPrefix(from_u8(localization_dir()));
-    	// Get the active language from PrusaSlicer.ini, or empty string if the key does not exist.
+    	// Get the active language from the app config, or empty string if the key does not exist.
         language = app_config->get("language");
         if (! language.empty())
         	BOOST_LOG_TRIVIAL(info) << boost::format("language provided by MeshForge.conf: %1%") % language;
@@ -7008,7 +7008,7 @@ bool GUI_App::load_language(wxString language, bool initial)
                     temp_locale.Init();
                     // Set the current translation's language to default, otherwise GetBestTranslation() may not work (see the wxWidgets source code).
                     wxTranslations::Get()->SetLanguage(wxLANGUAGE_DEFAULT);
-                    // Let the wxFileTranslationsLoader enumerate all translation dictionaries for PrusaSlicer
+                    // Let the wxFileTranslationsLoader enumerate all translation dictionaries for MeshForge
                     // and try to match them with the system specific "preferred languages".
                     // There seems to be a support for that on Windows and OSX, while on Linuxes the code just returns wxLocale::GetSystemLanguage().
                     // The last parameter gets added to the list of detected dictionaries. This is a workaround
@@ -7046,7 +7046,7 @@ bool GUI_App::load_language(wxString language, bool initial)
 	}
 
     if (language_info == nullptr) {
-        // PrusaSlicer does not support the Right to Left languages yet.
+        // MeshForge does not support the Right to Left languages yet.
         if (m_language_info_system != nullptr && m_language_info_system->LayoutDirection != wxLayout_RightToLeft)
             language_info = m_language_info_system;
         if (m_language_info_best != nullptr && m_language_info_best->LayoutDirection != wxLayout_RightToLeft)
@@ -8019,7 +8019,7 @@ void GUI_App::OSXStoreOpenFiles(const wxArrayString &fileNames)
         if (is_gcode_file(into_u8(filename)))
             ++ num_gcodes;
     if (fileNames.size() == num_gcodes) {
-        // Opening PrusaSlicer by drag & dropping a G-Code onto MeshForge icon in Finder,
+        // Opening MeshForge by drag & dropping a G-Code onto MeshForge icon in Finder,
         // just G-codes were passed. Switch to G-code viewer mode.
         m_app_mode = EAppMode::GCodeViewer;
         unlock_lockfile(get_instance_hash_string() + ".lock", data_dir() + "/cache/");

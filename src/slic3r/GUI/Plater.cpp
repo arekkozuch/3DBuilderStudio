@@ -6114,7 +6114,7 @@ std::vector<size_t> Plater::priv::load_files(const std::vector<fs::path>& input_
                         }
                     }
                     else if (en_3mf_file_type == En3mfType::From_BBS) {
-                        // No MeshForge tag - check Bambu/Application version
+                        // No MeshForge tag - check upstream application version
                         Semver orca_tag_start_version(2, 3, 2);
                         if (file_version <= orca_tag_start_version) {
                             // Compatible old version (before MeshForge tagging was introduced after 2.3.2).
