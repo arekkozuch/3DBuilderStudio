@@ -275,7 +275,7 @@ SideTools::SideTools(wxWindow *parent, wxWindowID id, const wxPoint &pos, const 
     wxBoxSizer* connection_sizer_H = new wxBoxSizer(wxHORIZONTAL);
 
     // MeshForge standardized HyperLink
-    m_hyperlink = new HyperLink(m_connection_info, _L("Failed to connect to the server"), wxT("https://wiki.bambulab.com/en/software/bambu-studio/failed-to-connect-printer"));
+    m_hyperlink = new HyperLink(m_connection_info, _L("Failed to connect to the server"), wxT("#"));
 
     m_more_err_open = ScalableBitmap(this, "monitir_err_open", 16);
     m_more_err_close = ScalableBitmap(this, "monitir_err_close", 16);

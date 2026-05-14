@@ -877,7 +877,7 @@ wxBoxSizer* PrintOptionsDialog::create_settings_group(wxWindow* parent)
     line_sizer->Add(FromDIP(5), 0, 0, 0);
     line_sizer->Add(m_cb_save_remote_print_file_to_storage, 0, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(5));
     line_sizer->Add(text_save_remote_print_file_to_storage, 1, wxALL | wxALIGN_CENTER_VERTICAL, FromDIP(5));
-    text_save_remote_print_file_to_storage_explain = new Label(parent, _L("Save the printing files initiated from Bambu Studio, Bambu Handy and MakerWorld on External Storage"));
+    text_save_remote_print_file_to_storage_explain = new Label(parent, _L("Save the printing files initiated from cloud or remote sources to External Storage"));
     text_save_remote_print_file_to_storage_explain->SetForegroundColour(STATIC_TEXT_EXPLAIN_COL);
     text_save_remote_print_file_to_storage_explain->SetFont(Label::Body_12);
     text_save_remote_print_file_to_storage_explain->Wrap(FromDIP(400));

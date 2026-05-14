@@ -1449,7 +1449,7 @@ void PreferencesDialog::create_items()
     g_sizer->Add(create_item_title(_L("Send to Slicer")), 1, wxEXPAND);
 
     auto item_slicer_path = create_item_input(
-        _L("Slicer path"), "", _L("Full path to the slicer application used by the \"Send to Slicer\" button (e.g. /Applications/PrusaSlicer.app/Contents/MacOS/PrusaSlicer)"),
+        _L("Slicer path"), "", _L("Full path to the slicer application used by the \"Send to Slicer\" button (e.g. /Applications/MeshForge.app/Contents/MacOS/MeshForge)"),
         "send_to_slicer_path", [](wxString) {});
     g_sizer->Add(item_slicer_path);
 
@@ -1544,7 +1544,7 @@ void PreferencesDialog::create_items()
     auto item_region           = create_item_region_combobox(_L("Login region"), "");
     g_sizer->Add(item_region);
  
-    auto item_stealth_mode     = create_item_checkbox(_L("Stealth mode"), _L("This disables all cloud services e.g. MeshForge Cloud and Bambu Cloud. This stops the transmission of data to Bambu's cloud services too. Users who don't use BBL machines or use LAN mode only can safely turn on this function."), "stealth_mode");
+    auto item_stealth_mode     = create_item_checkbox(_L("Stealth mode"), _L("This disables all cloud services and stops any outbound network transmissions. Users who only use local/LAN mode can safely enable this."), "stealth_mode");
     g_sizer->Add(item_stealth_mode);
 
     auto item_network_test     = create_item_button(_L("Network test"), _L("Test") + " " + dots, "", _L("Open Network Test"), []() {
@@ -1560,11 +1560,11 @@ void PreferencesDialog::create_items()
         auto sizer = new wxBoxSizer(wxHORIZONTAL);
         sizer->AddSpacer(FromDIP(DESIGN_LEFT_MARGIN));
 
-        auto text = new wxStaticText(m_parent, wxID_ANY, _L("Enable Bambu Cloud"),
+        auto text = new wxStaticText(m_parent, wxID_ANY, _L("Enable Cloud Printing"),
             wxDefaultPosition, DESIGN_TITLE_SIZE, wxST_NO_AUTORESIZE);
         text->SetForegroundColour(DESIGN_GRAY900_COLOR);
         text->SetFont(::Label::Body_14);
-        text->SetToolTip(_L("Allow logging into Bambu Cloud alongside MeshForge Cloud. When enabled, a Bambu login section appears on the homepage."));
+        text->SetToolTip(_L("Allow logging into a cloud printing provider. When enabled, a cloud login section appears on the homepage."));
         text->Wrap(DESIGN_TITLE_SIZE.x);
 
         auto cb = new ::CheckBox(m_parent);
@@ -1911,9 +1911,9 @@ wxBoxSizer* PreferencesDialog::create_debug_page()
     auto title_host = create_item_title(_L("Host Setting"));
     // MeshForge RadioGroup
     auto radio_group = new RadioGroup(m_parent, {
-        _L("DEV host: api-dev.bambu-lab.com/v1"), // 0
-        _L("QA  host: api-qa.bambu-lab.com/v1"),  // 1
-        _L("PRE host: api-pre.bambu-lab.com/v1"), // 2
+        _L("DEV host"), // 0
+        _L("QA  host"), // 1
+        _L("PRE host"), // 2
         _L("Product host")                        // 3
     }, wxVERTICAL);
 

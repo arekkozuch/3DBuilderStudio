@@ -3606,7 +3606,7 @@ void PrintConfigDef::init_fff_params()
     // MeshForge
     def = this->add("enable_power_loss_recovery", coEnum);
     def->label = L("Power Loss Recovery");
-    def->tooltip = L("Choose how to control power loss recovery. When set to Printer configuration, the slicer will not emit power loss recovery G-code and will leave the printer's configuration unchanged. Applicable to Bambu Lab or Marlin 2 firmware based printers.");
+    def->tooltip = L("Choose how to control power loss recovery. When set to Printer configuration, the slicer will not emit power loss recovery G-code and will leave the printer's configuration unchanged. Applicable to firmware-based printers that support power loss recovery.");
     def->mode = comAdvanced;
     def->enum_keys_map = &ConfigOptionEnum<PowerLossRecoveryMode>::get_enum_values();
     def->enum_values.push_back("printer_configuration");
@@ -4568,7 +4568,7 @@ void PrintConfigDef::init_fff_params()
                      "It defines the maximum rate by which the extruded volumetric flow in mm³/s can change over time. "
                      "Higher values mean higher extrusion rate changes are allowed, resulting in faster speed transitions.\n\n" 
                      "A value of 0 disables the feature.\n\n"
-                     "For a high speed, high flow direct drive printer (like the Bambu lab or Voron) this value is usually not needed. "
+                     "For a high speed, high flow direct drive printer this value is usually not needed. "
                      "However it can provide some marginal benefit in certain cases where feature speeds vary greatly. For example, "
                      "when there are aggressive slowdowns due to overhangs. In these cases a high value of around 300-350 mm³/s² is "
                      "recommended as this allows for just enough smoothing to assist pressure advance achieve a smoother flow transition.\n\n"
@@ -5773,7 +5773,7 @@ void PrintConfigDef::init_fff_params()
 
     def = this->add("wipe_tower_type", coEnum);
     def->label = L("Wipe tower type");
-    def->tooltip = L("Choose the wipe tower implementation for multi-material prints. Type 1 is recommended for Bambu and Qidi printers with a filament cutter. Type 2 offers better compatibility with multi-tool and MMU printers and provide overall better compatibility.");
+    def->tooltip = L("Choose the wipe tower implementation for multi-material prints. Type 1 is recommended for printers with a filament cutter. Type 2 offers better compatibility with multi-tool and MMU printers.");
     def->enum_keys_map = &ConfigOptionEnum<WipeTowerType>::get_enum_values();
     def->enum_values.emplace_back("type1");
     def->enum_values.emplace_back("type2");

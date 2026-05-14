@@ -171,7 +171,7 @@ void check_filaments(std::string  model_id,
 
             // Error in description
             L("TPU is not supported by AMS.");
-            L("AMS does not support 'Bambu Lab PET-CF'.");
+            L("AMS does not support PET-CF filament.");
 
             // Warning in description
             L("Please cold pull before printing TPU to avoid clogging. You may use cold pull maintenance on the printer.");

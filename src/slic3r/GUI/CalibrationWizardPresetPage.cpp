@@ -897,7 +897,7 @@ void CalibrationPresetPage::create_filament_list_panel(wxWindow* parent)
 {
     auto panel_sizer = new wxBoxSizer(wxVERTICAL);
 
-    m_filament_list_tips = new Label(parent, _L("Tips for calibration material:\n- Materials that can share same hot bed temperature\n- Different filament brand and family (Brand = Bambu, Family = Basic, Matte)"));
+    m_filament_list_tips = new Label(parent, _L("Tips for calibration material:\n- Materials that can share same hot bed temperature\n- Different filament brand and family (e.g. Brand = Generic, Family = PLA)"));
     m_filament_list_tips->Hide();
     m_filament_list_tips->SetFont(Label::Body_13);
     m_filament_list_tips->SetForegroundColour(wxColour(145, 145, 145));
@@ -1037,7 +1037,7 @@ void CalibrationPresetPage::create_multi_extruder_filament_list_panel(wxWindow *
 
     m_filament_list_tips = new Label(
         parent,
-        _L("Tips for calibration material:\n- Materials that can share same hot bed temperature\n- Different filament brand and family (Brand = Bambu, Family = Basic, Matte)"));
+        _L("Tips for calibration material:\n- Materials that can share same hot bed temperature\n- Different filament brand and family (e.g. Brand = Generic, Family = PLA)"));
     m_filament_list_tips->Hide();
     m_filament_list_tips->SetFont(Label::Body_13);
     m_filament_list_tips->SetForegroundColour(wxColour(145, 145, 145));

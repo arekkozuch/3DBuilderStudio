@@ -958,7 +958,7 @@ void AMSMaterialsSetting::Popup(wxString filament, wxString sn, wxString temp_mi
             m_comboBox_filament->Hide();
             m_readonly_filament->Show();
             if (bambu_filament_name.empty()) {
-                m_readonly_filament->SetLabel("Bambu " + filament);
+                m_readonly_filament->SetLabel(filament);
             }
             else {
                 m_readonly_filament->SetLabel(bambu_filament_name);

@@ -235,7 +235,7 @@ public:
     GCodeViewerTaskBarIcon(wxTaskBarIconType iconType = wxTBI_DEFAULT_TYPE) : wxTaskBarIcon(iconType) {}
     wxMenu *CreatePopupMenu() override {
         wxMenu *menu = new wxMenu;
-        append_menu_item(menu, wxID_ANY, _L("Open PrusaSlicer"), _L("Open a new PrusaSlicer"),
+        append_menu_item(menu, wxID_ANY, _L("Open MeshForge"), _L("Open a new MeshForge window"),
             [](wxCommandEvent&) { start_new_slicer(nullptr, true); }, "", nullptr);
         //append_menu_item(menu, wxID_ANY, _L("G-code Viewer") + dots, _L("Open new G-code Viewer"),
         //    [](wxCommandEvent&) { start_new_gcodeviewer_open_file(); }, "", nullptr);

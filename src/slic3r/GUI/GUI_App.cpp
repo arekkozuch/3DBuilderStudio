@@ -1810,7 +1810,7 @@ void GUI_App::remove_old_networking_plugins()
 
 int GUI_App::updating_bambu_networking()
 {
-    DownloadProgressDialog dlg(_L("Downloading Bambu Network Plug-in"));
+    DownloadProgressDialog dlg(_L("Downloading Network Plug-in"));
     dlg.ShowModal();
     return 0;
 }
@@ -4089,7 +4089,7 @@ void GUI_App::ShowDownNetPluginDlg() {
         });
         if (iter != dialogStack.end())
             return;
-        DownloadProgressDialog dlg(_L("Downloading Bambu Network Plug-in"));
+        DownloadProgressDialog dlg(_L("Downloading Network Plug-in"));
         dlg.ShowModal();
     } catch (std::exception &) {
         ;
@@ -5513,7 +5513,7 @@ bool GUI_App::process_network_msg(std::string dev_id, std::string msg)
             BOOST_LOG_TRIVIAL(info) << "process_network_msg, unsigned_studio";
             MessageDialog
                 msg_dlg(nullptr,
-                        _L("To use MeshForge with Bambu Lab printers, you need to enable LAN mode and Developer mode on your printer.\n\n"
+                        _L("To use MeshForge with this printer, you need to enable LAN mode and Developer mode on your printer.\n\n"
                            "Please go to your printer's settings and:\n"
                            "1. Turn on LAN mode\n"
                            "2. Enable Developer mode\n\n"
@@ -5912,7 +5912,7 @@ bool GUI_App::maybe_migrate_user_presets_on_login()
     wxString source_description;
     if (source_is_bbl) {
         source_description = wxString::Format(
-            _L("your Bambu Cloud profile (user ID: \"%s\")"),
+            _L("your cloud profile (user ID: \"%s\")"),
             from_u8(source_dir.filename().string()));
     } else if (source_is_default) {
         source_description = _L("your default profile");

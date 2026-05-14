@@ -1860,15 +1860,15 @@ ModelVolumeType type_from_string(const std::string &s)
         } else if (m_curr_metadata_name == SLIC3RPE_FDM_SUPPORTS_PAINTING_VERSION) {
             m_fdm_supports_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_fdm_supports_painting_version, FDM_SUPPORTS_PAINTING_VERSION,
-                _(L("The selected 3MF contains FDM supports painted object using a newer version of PrusaSlicer and is not compatible.")));
+                _(L("The selected 3MF contains FDM supports painted with a newer slicer version and is not compatible.")));
         } else if (m_curr_metadata_name == SLIC3RPE_SEAM_PAINTING_VERSION) {
             m_seam_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_seam_painting_version, SEAM_PAINTING_VERSION,
-                _(L("The selected 3MF contains seam painted object using a newer version of PrusaSlicer and is not compatible.")));
+                _(L("The selected 3MF contains seam painted with a newer slicer version and is not compatible.")));
         } else if (m_curr_metadata_name == SLIC3RPE_MM_PAINTING_VERSION) {
             m_mm_painting_version = (unsigned int) atoi(m_curr_characters.c_str());
             check_painting_version(m_mm_painting_version, MM_PAINTING_VERSION,
-                _(L("The selected 3MF contains multi-material painted object using a newer version of PrusaSlicer and is not compatible.")));
+                _(L("The selected 3MF contains multi-material painted with a newer slicer version and is not compatible.")));
         }
 
         return true;

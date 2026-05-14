@@ -598,7 +598,7 @@ void SelectMachinePopup::update_other_devices()
     wxBoxSizer* placeholder_sizer = new wxBoxSizer(wxVERTICAL);
 
     // MeshForge standardized HyperLink
-    m_hyperlink = new HyperLink(m_placeholder_panel, _L("Can't find my devices?"), wxT("https://wiki.bambulab.com/en/software/bambu-studio/failed-to-connect-printer"));
+    m_hyperlink = new HyperLink(m_placeholder_panel, _L("Can't find my devices?"), wxT("#"));
     m_hyperlink->SetFont(::Label::Body_12);
     placeholder_sizer->Add(m_hyperlink, 0, wxALIGN_CENTER | wxALL, 5);
 

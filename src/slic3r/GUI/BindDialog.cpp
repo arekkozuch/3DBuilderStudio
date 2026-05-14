@@ -99,7 +99,7 @@ PingCodeBindDialog::PingCodeBindDialog(Plater* plater /*= nullptr*/)
     m_status_text->SetForegroundColour(wxColour(38, 46, 48));
 
     // MeshForge standardized HyperLink
-    m_link_show_ping_code_wiki = new HyperLink(request_bind_panel, _L("Can't find Pin Code?"), "https://wiki.bambulab.com/en/bambu-studio/manual/pin-code");
+    m_link_show_ping_code_wiki = new HyperLink(request_bind_panel, _L("Can't find Pin Code?"), "#");
 
     m_text_input_title = new wxStaticText(request_bind_panel, wxID_ANY, _L("Pin Code"));
     m_text_input_title->SetFont(Label::Body_14);
@@ -449,9 +449,9 @@ PingCodeBindDialog::~PingCodeBindDialog() {
      m_link_Terms_title->SetMaxSize(wxSize(FromDIP(450), -1));
      m_link_Terms_title->Wrap(FromDIP(450));
      m_link_Terms_title->Bind(wxEVT_LEFT_DOWN, [this](auto& e) {
-         wxString txt = _L("Thank you for purchasing a Bambu Lab device. Before using your Bambu Lab device, please read the terms and conditions. "
-                           "By clicking to agree to use your Bambu Lab device, you agree to abide by the Privacy Policy and Terms of Use (collectively, the \"Terms\"). "
-                           "If you do not comply with or agree to the Bambu Lab Privacy Policy, please do not use Bambu Lab equipment and services.");
+         wxString txt = _L("Before using your printer, please read the terms and conditions. "
+                           "By clicking to agree, you agree to abide by the Privacy Policy and Terms of Use (collectively, the \"Terms\"). "
+                           "If you do not comply with or agree to the Privacy Policy, please do not use the equipment and services.");
          ConfirmBeforeSendDialog confirm_dlg(this, wxID_ANY, _L("Terms and Conditions"), ConfirmBeforeSendDialog::VisibleButtons::ONLY_CONFIRM); // MeshForge VisibleButtons instead ButtonStyle 
          confirm_dlg.update_text(txt);
          confirm_dlg.CenterOnParent();

@@ -122,7 +122,7 @@ ZUserLogin::ZUserLogin(std::shared_ptr<ICloudServiceAgent> cloud_agent)
         m_line_top->SetBackgroundColour(wxColour(166, 169, 170));
         m_sizer_main->Add(m_line_top, 0, wxEXPAND, 0);
 
-        auto* m_message = new wxStaticText(this, wxID_ANY, _L("Bambu Network plug-in not detected."), wxDefaultPosition, wxDefaultSize, 0);
+        auto* m_message = new wxStaticText(this, wxID_ANY, _L("Network plug-in not detected."), wxDefaultPosition, wxDefaultSize, 0);
         m_message->SetForegroundColour(*wxBLACK);
         m_message->Wrap(FromDIP(360));
 

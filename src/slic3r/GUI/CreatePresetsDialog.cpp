@@ -1065,7 +1065,7 @@ wxWindow *CreateFilamentPresetDialog::create_dialog_buttons()
             } else {
                 vendor_name = into_u8(m_filament_custom_vendor_input->GetTextCtrl()->GetValue());
                 if (vendor_name == "Bambu" || vendor_name == "Generic") {
-                    MessageDialog dlg(this, _L("\"Bambu\" or \"Generic\" cannot be used as a Vendor for custom filaments."), wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Info"),
+                    MessageDialog dlg(this, _L("\"Generic\" and reserved vendor names cannot be used as a Vendor for custom filaments."), wxString(SLIC3R_APP_FULL_NAME) + " - " + _L("Info"),
                                       wxYES | wxYES_DEFAULT | wxCENTRE);
                     dlg.ShowModal();
                     return;
@@ -5032,7 +5032,7 @@ wxPanel *PresetTree::get_child_item(wxPanel *parent, std::shared_ptr<Preset> pre
     if (preset->inherits() == "" && preset->base_id != "") base_id_error = true;
     if (base_id_error) {
         // MeshForge standardized HyperLink
-        HyperLink *m_download_hyperlink = new HyperLink(panel, _L("[Delete Required]"), "https://wiki.bambulab.com/en/software/bambu-studio/custom-filament-issue");
+        HyperLink *m_download_hyperlink = new HyperLink(panel, _L("[Delete Required]"), "#");
         m_download_hyperlink->SetFont(Label::Body_10);
         sizer->Add(m_download_hyperlink, 0, wxEXPAND | wxALL, 5);
     }

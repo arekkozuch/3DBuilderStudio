@@ -243,7 +243,7 @@ void CalibrationFlowRateStartPage::create_page(wxWindow* parent)
 
     create_about(parent,
         _L("About this calibration"),
-        _L("Flow Rate Calibration measures the ratio of expected to actual extrusion volumes. The default setting works well in Bambu Lab printers and official filaments as they were pre-calibrated and fine-tuned. For a regular filament, you usually won't need to perform a Flow Rate Calibration unless you still see the listed defects after you have done other calibrations. For more details, please check out the wiki article."));
+        _L("Flow Rate Calibration measures the ratio of expected to actual extrusion volumes. The default setting works well with pre-calibrated printers and official filaments. For a regular filament, you usually won't need to perform a Flow Rate Calibration unless you still see the listed defects after you have done other calibrations. For more details, please check out the wiki article."));
         
     m_top_sizer->Add(m_about_title);
     m_top_sizer->Add(m_about_content);
@@ -255,7 +255,7 @@ void CalibrationFlowRateStartPage::create_page(wxWindow* parent)
     auto_cali_title->SetMinSize({CALIBRATION_START_PAGE_TEXT_MAX_LENGTH, -1});
 
     auto auto_cali_content = new Label(this, 
-        _L("Auto Flow Rate Calibration utilizes Bambu Lab's Micro-Lidar technology, directly measuring the calibration patterns. However, please be advised that the efficacy and accuracy of this method may be compromised with specific types of materials. Particularly, filaments that are transparent or semi-transparent, sparkling-particled, or have a high-reflective finish may not be suitable for this calibration and can produce less-than-desirable results.\
+        _L("Auto Flow Rate Calibration uses on-printer sensor technology to directly measure calibration patterns. However, please be advised that the efficacy and accuracy of this method may be compromised with specific types of materials. Particularly, filaments that are transparent or semi-transparent, sparkling-particled, or have a high-reflective finish may not be suitable for this calibration and can produce less-than-desirable results.\
 \n\nThe calibration results may vary between each calibration or filament. We are still improving the accuracy and compatibility of this calibration through firmware updates over time.\
 \n\nCaution: Flow Rate Calibration is an advanced process, to be attempted only by those who fully understand its purpose and implications. Incorrect usage can lead to sub-par prints or printer damage. Please make sure to carefully read and understand the process before doing it."));
     auto_cali_content->SetFont(Label::Body_14);
